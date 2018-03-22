@@ -59,16 +59,17 @@ namespace Voltaire
             if (message == null) return;
             var context = new SocketCommandContext(_client, message);
 
+            // Create a number to track where the prefix ends and the command begins
+            var prefix = $"!volt ";
+            int argPos = prefix.Length - 1;
+
             // short circut DMs
-            if (context.IsPrivate && !context.User.IsBot)
+            if (context.IsPrivate && !context.User.IsBot && !(message.HasStringPrefix(prefix, ref argPos)))
             {
                 await SendCommandAsync(context, 0);
                 return;
             }
 
-            // Create a number to track where the prefix ends and the command begins
-            var prefix = $"!volt ";
-            int argPos = prefix.Length - 1;
             // Determine if the message is a command, based on if it starts with '!' or a mention prefix
             if (!(message.HasStringPrefix(prefix, ref argPos) || message.HasMentionPrefix(_client.CurrentUser, ref argPos))) return;
             // quick logging

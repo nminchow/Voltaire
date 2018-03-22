@@ -14,7 +14,7 @@ namespace Voltaire.Modules
     {
 
         [Command("send", RunMode = RunMode.Async)]
-        public async Task SendError(string _one, string _two)
+        public async Task SendError(string _one)
         {
             await Context.Channel.SendMessageAsync("Please specify your channel name, ex: `send some-channel hello`");
         }
