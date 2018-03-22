@@ -15,7 +15,7 @@ namespace Voltaire.Controllers.Messages
             var chanel = guild.TextChannels.Where(x => x.Name.ToLower().Contains(channelName.ToLower()));
             if (!chanel.Any())
             {
-                await currentChannel.SendMessageAsync("The channel you specified couldn't be found in the target guild(server).");
+                await currentChannel.SendMessageAsync("The channel you specified couldn't be found. Please specify your channel using the following command: `send (channel_name) (message)` ex: `send some-channel you guys suck`");
             }
             await chanel.OrderByDescending(x => x.Name.Length).First().SendMessageAsync(message);
             await currentChannel.SendMessageAsync("Sent!");

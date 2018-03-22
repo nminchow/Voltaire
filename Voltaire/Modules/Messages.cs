@@ -12,7 +12,12 @@ namespace Voltaire.Modules
 {
     public class Messages : ModuleBase<SocketCommandContext>
     {
-        public Messages() { }
+
+        [Command("send", RunMode = RunMode.Async)]
+        public async Task SendError(string _one, string _two)
+        {
+            await Context.Channel.SendMessageAsync("Please specify your channel name, ex: `send some-channel hello`");
+        }
 
         [Command("send", RunMode = RunMode.Async)]
         public async Task Send(string channelName, [Remainder] string message)

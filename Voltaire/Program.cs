@@ -57,6 +57,15 @@ namespace Voltaire
             // Don't process the command if it was a System Message
             var message = messageParam as SocketUserMessage;
             if (message == null) return;
+            var context = new SocketCommandContext(_client, message);
+
+            // short circut DMs
+            if (context.IsPrivate && !context.User.IsBot)
+            {
+                await SendCommandAsync(context, 0);
+                return;
+            }
+
             // Create a number to track where the prefix ends and the command begins
             var prefix = $"!volt ";
             int argPos = prefix.Length - 1;
@@ -64,10 +73,13 @@ namespace Voltaire
             if (!(message.HasStringPrefix(prefix, ref argPos) || message.HasMentionPrefix(_client.CurrentUser, ref argPos))) return;
             // quick logging
             Console.WriteLine(message.ToString());
-            // Create a Command Context
-            var context = new SocketCommandContext(_client, message);
             // Execute the command. (result does not indicate a return value, 
             // rather an object stating if the command executed successfully)
+            await SendCommandAsync(context, argPos);
+        }
+
+        private async Task SendCommandAsync(SocketCommandContext context, int argPos)
+        {
             var result = await _commands.ExecuteAsync(context, argPos, _services);
             if (!result.IsSuccess)
                 await context.Channel.SendMessageAsync(result.ErrorReason);

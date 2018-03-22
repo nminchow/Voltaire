@@ -22,7 +22,7 @@ namespace Voltaire.Controllers.Messages
                     await SendToGuild.LookupAndSendAsync(candidateGuilds.First(), context.Channel, channelName, message);
                     break;
                 default:
-                    await context.Channel.SendMessageAsync("It looks like you belong to multiple guilds(servers) where Voltaire is installed. Please specify your guild using the following command: `!volt send_guild (guild_name) (channel_name) (message)` ex: `!volt send_guild \"l33t g4amerz\" some-channel you guys suck`");
+                    await context.Channel.SendMessageAsync("It looks like you belong to multiple guilds(servers) where Voltaire is installed. Please specify your guild using the following command: `send_guild (guild_name) (channel_name) (message)` ex: `send_guild \"l33t g4amerz\" some-channel you guys suck`");
                     break;
             }
         }
