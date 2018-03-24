@@ -28,7 +28,13 @@ namespace Voltaire.Modules
         [Command("send_guild", RunMode = RunMode.Async)]
         public async Task SendGuild(string guildName, string channelName, [Remainder] string message)
         {
-            await Controllers.Messages.SendToGuild.PerformAsync(Context, guildName, channelName, message);
+            await SendToGuild.PerformAsync(Context, guildName, channelName, message);
+        }
+
+        [Command("send_dm", RunMode = RunMode.Async)]
+        public async Task SendDirectMessage(string userName, [Remainder] string message)
+        {
+            await Controllers.Messages.SendDirectMessage.PerformAsync(Context, userName, message);
         }
     }
 }

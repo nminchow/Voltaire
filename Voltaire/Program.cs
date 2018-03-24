@@ -25,6 +25,9 @@ namespace Voltaire
 
             _client = new DiscordSocketClient();
             _client.Log += Log;
+            _client.JoinedGuild += Controllers.Helpers.JoinedGuild.AnnoiceJoinChannel;
+            _client.UserJoined += Controllers.Helpers.UserJoined.SendJoinedMessage;
+
 
             _commands = new CommandService();
 
@@ -67,13 +70,14 @@ namespace Voltaire
             if (context.IsPrivate && !context.User.IsBot && !(message.HasStringPrefix(prefix, ref argPos)))
             {
                 await SendCommandAsync(context, 0);
+                Console.WriteLine("processed message!");
                 return;
             }
 
             // Determine if the message is a command, based on if it starts with '!' or a mention prefix
             if (!(message.HasStringPrefix(prefix, ref argPos) || message.HasMentionPrefix(_client.CurrentUser, ref argPos))) return;
             // quick logging
-            Console.WriteLine(message.ToString());
+            Console.WriteLine("processed message!");
             // Execute the command. (result does not indicate a return value, 
             // rather an object stating if the command executed successfully)
             await SendCommandAsync(context, argPos);
