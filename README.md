@@ -1,6 +1,6 @@
-# Voltaire!
+# Voltaire
 
-**Voltaire!** is a discord bot that allows you to send messages to the guild and to specific users anonymously. When Voltaire is installed, type `!volt help` to get a list of commands.
+**Voltaire** is a discord bot that allows you to send messages to the guild and to specific users anonymously. When Voltaire is installed, type `!volt help` to get a list of commands.
 
 [Official Voltaire Discord](https://discord.gg/xyzMyJH)
 
