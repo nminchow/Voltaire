@@ -17,7 +17,7 @@ namespace Voltaire.Controllers.Messages
             var user = currentContext.Client.Guilds
                 .Where(x => x.Users.ToLookup(u => u.Id)[currentContext.User.Id] != null)
                 .Aggregate(new List<SocketGuildUser>(), (acc, item) => acc.Concat(item.Users).ToList())
-                .FirstOrDefault(x => x.Username.ToLower() == userName.ToLower() && !x.IsBot);
+                .FirstOrDefault(x => (x.Username.ToLower() == userName.ToLower() || x.Id.ToString() == userName) && !x.IsBot);
 
             if (user == null)
             {

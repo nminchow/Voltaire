@@ -12,12 +12,17 @@ namespace Voltaire.Controllers.Messages
     {
         public static async Task LookupAndSendAsync(SocketGuild guild, ISocketMessageChannel currentChannel, string channelName, string message)
         {
-            var chanel = guild.TextChannels.Where(x => x.Name.ToLower().Contains(channelName.ToLower()));
+            var chanel = guild.TextChannels.Where(x => x.Name.ToLower().Contains(channelName.ToLower()) || x.Id.ToString() == channelName);
             if (!chanel.Any())
             {
                 await currentChannel.SendMessageAsync("The channel you specified couldn't be found. Please specify your channel using the following command: `send (channel_name) (message)` ex: `send some-channel you guys suck`");
             }
-            await chanel.OrderByDescending(x => x.Name.Length).First().SendMessageAsync(message);
+            await SendToChannel(currentChannel, chanel.OrderByDescending(x => x.Name.Length).First(), message);
+        }
+
+        public static async Task SendToChannel(ISocketMessageChannel currentChannel, SocketTextChannel channel, string message)
+        {
+            await channel.SendMessageAsync(message);
             await currentChannel.SendMessageAsync("Sent!");
         }
 

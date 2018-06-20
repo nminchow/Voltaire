@@ -23,8 +23,12 @@ namespace Voltaire.Views.Info
                 Description = "Voltaire allows you to send messages to a discord guild (server) anonymously.\n\n" +
                 "Most commands should be direct messaged to this bot user, which will then relay them to the desired channel.\n\n" +
                 "**Direct Message Commands:**",
-                Color = new Color(111, 111, 111)
-
+                Color = new Color(111, 111, 111),
+                Footer = new EmbedFooterBuilder
+                {
+                    Text = "Developer note: the {user name} and {channel name} arguments above can also be User IDs and Channel IDs.",
+                    IconUrl = ""
+                }
             };
 
             embed.AddField("send {channel name} {message}", "Sends an anonymous message to the specified channel." +
