@@ -26,7 +26,8 @@ namespace Voltaire
             _client = new DiscordSocketClient();
             _client.Log += Log;
             _client.JoinedGuild += Controllers.Helpers.JoinedGuild.AnnoiceJoinChannel;
-            _client.UserJoined += Controllers.Helpers.UserJoined.SendJoinedMessage;
+            // disable joined message for now
+            //_client.UserJoined += Controllers.Helpers.UserJoined.SendJoinedMessage;
 
 
             _commands = new CommandService();

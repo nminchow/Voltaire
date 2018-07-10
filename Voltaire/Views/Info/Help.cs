@@ -35,7 +35,7 @@ namespace Voltaire.Views.Info
                 $"\nex: `send {ChannelName(context)} The cake is a lie.`");
             embed.AddField("send_dm {user name} {message}", "Sends an anonymous message to the specified user." +
                 $"\nex: `send_dm @Voltaire The right man in the wrong place can make all the difference in the world.`");
-            embed.AddField("send_guild {channel name} {message}", "This command is only needed if you belong to " +
+            embed.AddField("send_guild \"{guild name}\" {channel name} {message}", "This command is only needed if you belong to " +
                 "multiple guilds that have Voltaire installed. It allows you to specify which guild you are sending to." +
                 $"\nex: `send_guild \"{GuildName(context)}\" {ChannelName(context)} A man chooses, a slave obeys.`");
             embed.AddField("!volt help", "(callable from anywhere) Display this help dialogue.");
