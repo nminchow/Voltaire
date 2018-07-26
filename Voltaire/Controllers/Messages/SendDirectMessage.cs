@@ -16,7 +16,7 @@ namespace Voltaire.Controllers.Messages
             try
             {
                 Console.WriteLine("Starting DM Query");
-                var guildList = currentContext.Client.Guilds.Where(x => x.Users.ToLookup(u => u.Id)[currentContext.User.Id] != null);
+                var guildList = currentContext.Client.Guilds.Where(x => x.Users.ToLookup(u => u.Id).Contains(currentContext.User.Id));
                 Console.WriteLine("Got guilds");
                 var userList = guildList.Aggregate(new List<SocketGuildUser>(), (acc, item) => acc.Concat(item.Users).ToList());
                 Console.WriteLine("Got users");
