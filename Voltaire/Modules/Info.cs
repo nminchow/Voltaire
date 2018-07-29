@@ -1,4 +1,5 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -20,7 +21,7 @@ namespace Voltaire.Modules
         [Summary("get admin command overview")]
         public async Task AdminInfo()
         {
-            var view = Views.Info.Help.Response(Context);
+            var view = Views.Info.Admin.Response(Context);
             await Context.Channel.SendMessageAsync(view.Item1, embed: view.Item2);
         }
     }
