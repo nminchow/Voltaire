@@ -4,9 +4,10 @@ using System.Text;
 
 namespace Voltaire.Models
 {
-    class Guild
+    public class Guild
     {
         public int ID { get; set; }
         public string DiscordId { get; set; }
+        public bool AllowDirectMessage { get; set; } = true;
     }
 }

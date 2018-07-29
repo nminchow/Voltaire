@@ -10,24 +10,28 @@ namespace Voltaire.Controllers.Messages
 {
     class SendDirectMessage
     {
-        public static async Task PerformAsync(SocketCommandContext currentContext, string userName, string message)
+        public static async Task PerformAsync(SocketCommandContext currentContext, string userName, string message, DataBase db)
         {
             userName = userName.StartsWith('@') ? userName.Substring(1) : userName;
             try
             {
-                Console.WriteLine("Starting DM Query");
                 var guildList = currentContext.Client.Guilds.Where(x => x.Users.ToLookup(u => u.Id).Contains(currentContext.User.Id));
-                Console.WriteLine("Got guilds");
-                var userList = guildList.Aggregate(new List<SocketGuildUser>(), (acc, item) => acc.Concat(item.Users).ToList());
-                Console.WriteLine("Got users");
-                Console.WriteLine(userList.Count());
-                var user = userList.FirstOrDefault(x => (x.Username.ToLower() == userName.ToLower() || x.Id.ToString() == userName) && !x.IsBot);
-                Console.WriteLine("Completed DM Query");
-                if (user == null)
+
+                var allUsersList = guildList.Aggregate(new List<SocketGuildUser>(), (acc, item) => acc.Concat(item.Users).ToList());
+
+                var userList = allUsersList.Where(x => (x.Username.ToLower() == userName.ToLower() || x.Id.ToString() == userName) && !x.IsBot);
+
+                var user = userList.Where(x => FilterGuild(x, db)).FirstOrDefault();
+
+                if (user == null && userList.Any())
+                {
+                    await currentContext.Channel.SendMessageAsync("user found, but channel permissions do not allow annonymous direct messaging");
+                    return;
+                } else if (user == null)
                 {
                     await currentContext.Channel.SendMessageAsync("user not found");
                     return;
-                }
+                } 
 
                 var userChannel = await user.GetOrCreateDMChannelAsync();
                 await userChannel.SendMessageAsync($"an anonymous user says: {message}");
@@ -38,6 +42,11 @@ namespace Voltaire.Controllers.Messages
                 Console.WriteLine(ex.ToString());
             }
             
+        }
+
+        private static bool FilterGuild(SocketGuildUser user, DataBase db)
+        {
+            return !db.Guilds.Any(x => x.DiscordId == user.Guild.Id.ToString() && !x.AllowDirectMessage);
         }
     }
 }

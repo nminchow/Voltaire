@@ -38,6 +38,7 @@ namespace Voltaire.Views.Info
             embed.AddField("send_guild \"{guild name}\" {channel name} {message}", "This command is only needed if you belong to " +
                 "multiple guilds that have Voltaire installed. It allows you to specify which guild you are sending to." +
                 $"\nex: `send_guild \"{GuildName(context)}\" {ChannelName(context)} A man chooses, a slave obeys.`");
+            embed.AddField("admin", "Get a list of admin commands.");
             embed.AddField("!volt help", "(callable from anywhere) Display this help dialogue.");
 
             return new Tuple<string, Embed>("", embed);

@@ -15,5 +15,13 @@ namespace Voltaire.Modules
             var view = Views.Info.Help.Response(Context);
             await Context.Channel.SendMessageAsync(view.Item1, embed: view.Item2);
         }
+
+        [Command("admin", RunMode = RunMode.Async)]
+        [Summary("get admin command overview")]
+        public async Task AdminInfo()
+        {
+            var view = Views.Info.Help.Response(Context);
+            await Context.Channel.SendMessageAsync(view.Item1, embed: view.Item2);
+        }
     }
 }

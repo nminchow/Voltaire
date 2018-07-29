@@ -13,6 +13,13 @@ namespace Voltaire.Modules
     public class Messages : ModuleBase<SocketCommandContext>
     {
 
+        private DataBase _database;
+
+        public Messages(DataBase database)
+        {
+            _database = database;
+        }
+
         [Command("send", RunMode = RunMode.Async)]
         public async Task SendError(string _one)
         {
@@ -34,7 +41,7 @@ namespace Voltaire.Modules
         [Command("send_dm", RunMode = RunMode.Async)]
         public async Task SendDirectMessage(string userName, [Remainder] string message)
         {
-            await Controllers.Messages.SendDirectMessage.PerformAsync(Context, userName, message);
+            await Controllers.Messages.SendDirectMessage.PerformAsync(Context, userName, message, _database);
         }
     }
 }

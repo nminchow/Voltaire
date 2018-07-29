@@ -37,6 +37,7 @@ namespace Voltaire
             _services = new ServiceCollection()
                 .AddSingleton(_client)
                 .AddSingleton(_commands)
+                .AddSingleton(new DataBase(configuration.GetConnectionString("sql")))
                 .BuildServiceProvider();
 
             await InstallCommandsAsync();
