@@ -1,5 +1,7 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
+using DiscordBotsList.Api;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +13,24 @@ namespace Voltaire.Controllers.Helpers
 {
     public static class JoinedGuild
     {
-        public static async Task AnnoiceJoinChannel(SocketGuild guild)
+        public static Func<SocketGuild, Task> Joined(DataBase db, string token)
         {
-            var view = Views.Info.JoinedGuild.Response();
-            await guild.TextChannels.First().SendMessageAsync(text: view.Item1, embed: view.Item2);
+            Func<SocketGuild, Task> convert = async delegate (SocketGuild guild)
+            {
+                IConfiguration configuration = LoadConfig.Load();
+
+                FindOrCreateGuild.Perform(guild, db);
+                db.SaveChanges();
+
+                var view = Views.Info.JoinedGuild.Response();
+                await guild.TextChannels.First().SendMessageAsync(text: view.Item1, embed: view.Item2);
+
+                AuthDiscordBotListApi DblApi = new AuthDiscordBotListApi(425833927517798420, token);
+                var me = await DblApi.GetMeAsync();
+                await me.UpdateStatsAsync(db.Guilds.Count());
+            };
+
+            return convert;
         }
     }
 }

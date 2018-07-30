@@ -22,10 +22,11 @@ namespace Voltaire
         {
 
             IConfiguration configuration = LoadConfig.Load();
+            var db = new DataBase(configuration.GetConnectionString("sql"));
 
             _client = new DiscordSocketClient();
             _client.Log += Log;
-            _client.JoinedGuild += Controllers.Helpers.JoinedGuild.AnnoiceJoinChannel;
+            _client.JoinedGuild += Controllers.Helpers.JoinedGuild.Joined(db, configuration["discordBotListToken"]);
             // disable joined message for now
             //_client.UserJoined += Controllers.Helpers.UserJoined.SendJoinedMessage;
 
@@ -37,7 +38,7 @@ namespace Voltaire
             _services = new ServiceCollection()
                 .AddSingleton(_client)
                 .AddSingleton(_commands)
-                .AddSingleton(new DataBase(configuration.GetConnectionString("sql")))
+                .AddSingleton(db)
                 .BuildServiceProvider();
 
             await InstallCommandsAsync();
