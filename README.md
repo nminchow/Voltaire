@@ -7,7 +7,6 @@
 ## Built With
 
 * [Discord.net](https://github.com/RogueException/Discord.Net) - Bot Framework
-* [SpotifyAPI-NET](https://github.com/JohnnyCrazy/SpotifyAPI-NET) - Spotify API Wrapper
 
 ## Contributing
 
@@ -15,7 +14,6 @@ Pull requests are welcome!
 
 ## Upcoming Features / TODO
 1. Allow users to respond to DMs.
-2. Allow server admins to disable/enable certain functionaltiy.
 
 ## License
 
