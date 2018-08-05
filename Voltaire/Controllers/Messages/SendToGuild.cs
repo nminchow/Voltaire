@@ -17,7 +17,7 @@ namespace Voltaire.Controllers.Messages
             {
                 await currentChannel.SendMessageAsync("The channel you specified couldn't be found. Please specify your channel using the following command: `send (channel_name) (message)` ex: `send some-channel you guys suck`");
             }
-            await SendToChannel(currentChannel, chanel.OrderByDescending(x => x.Name.Length).First(), message);
+            await SendToChannel(currentChannel, chanel.OrderBy(x => x.Name.Length).First(), message);
         }
 
         public static async Task SendToChannel(ISocketMessageChannel currentChannel, SocketTextChannel channel, string message)
