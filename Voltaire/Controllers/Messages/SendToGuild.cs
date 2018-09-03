@@ -14,7 +14,7 @@ namespace Voltaire.Controllers.Messages
             {
                 await context.Channel.SendMessageAsync("The channel you specified couldn't be found. Please specify your channel using the following command: `send (channel_name) (message)` ex: `send some-channel you guys suck`");
             }
-            await SendWithPrefix.Send(context, chanel.OrderBy(x => x.Name.Length).First(), message, db);
+            await SendWithPrefix.Send(context, chanel.OrderBy(x => x.Name.Length).First(), guild, message, db);
         }
 
         public static async Task PerformAsync(SocketCommandContext context, string guildName, string channelName, string message, DataBase db)

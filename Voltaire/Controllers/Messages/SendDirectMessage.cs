@@ -34,7 +34,7 @@ namespace Voltaire.Controllers.Messages
                 } 
 
                 var userChannel = await user.GetOrCreateDMChannelAsync();
-                await SendWithPrefix.Send(currentContext, userChannel, message, db, "an anonymous user says: ");
+                await SendWithPrefix.Send(currentContext, userChannel, user.Guild, message, db, "an anonymous user says: ");
             }
             catch (Exception ex)
             {

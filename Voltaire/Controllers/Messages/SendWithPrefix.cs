@@ -13,9 +13,9 @@ namespace Voltaire.Controllers.Messages
 {
     class SendWithPrefix
     {
-        public static async Task Send(SocketCommandContext context, IMessageChannel channel, string message, DataBase db, string defaultPrefix = "")
+        public static async Task Send(SocketCommandContext context, IMessageChannel channel, SocketGuild settingSource, string message, DataBase db, string defaultPrefix = "")
         {
-            if (UseUserIdentifier(context.Guild, db))
+            if (UseUserIdentifier(settingSource, db))
             {
                 string password = LoadConfig.Instance.config["encryptionKey"];
 
@@ -47,6 +47,7 @@ namespace Voltaire.Controllers.Messages
 
         private static bool UseUserIdentifier(SocketGuild guild, DataBase db)
         {
+            
             return db.Guilds.FirstOrDefault(x => x.DiscordId == guild.Id.ToString())?.UseUserIdentifiers ?? false;
         }
     }
