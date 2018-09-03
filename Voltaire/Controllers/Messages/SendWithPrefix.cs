@@ -2,10 +2,10 @@
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using Rijndael256;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,11 +17,28 @@ namespace Voltaire.Controllers.Messages
         {
             if (UseUserIdentifier(context.Guild, db))
             {
-                var generator = new Generator();
-
                 string password = LoadConfig.Instance.config["encryptionKey"];
-                var name = Rijndael.Encrypt((context.User.Id).ToString(), password, KeySize.Aes256);
-                defaultPrefix = $"{name} says: ";
+
+                var cipher = new RijndaelManaged()
+                {
+                    Padding = PaddingMode.Zeros,
+                    Mode = CipherMode.ECB,
+                    KeySize = 256,
+                    Key = Convert.FromBase64String(password)
+                };
+
+                var transform = cipher.CreateEncryptor();
+                var id = (context.User.Id % 100000).ToString();
+                var bytes = transform.TransformFinalBlock(Encoding.UTF8.GetBytes(id), 0, id.Length);
+
+                // get the first bytes so adjacent IDs are still different, just in case
+                var integer = BitConverter.ToInt32(bytes, bytes.Length - 4);
+                var generator = new Generator(seed: integer)
+                {
+                    Casing = Casing.PascalCase,
+                    Parts = new WordBank[] { WordBank.Adverbs, WordBank.Verbs, WordBank.Nouns }
+                };
+                defaultPrefix = $"{generator.Generate()} says: ";
             }
 
             await channel.SendMessageAsync(defaultPrefix + message);

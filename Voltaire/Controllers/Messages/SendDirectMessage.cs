@@ -19,7 +19,7 @@ namespace Voltaire.Controllers.Messages
 
                 var allUsersList = guildList.Aggregate(new List<SocketGuildUser>(), (acc, item) => acc.Concat(item.Users).ToList());
 
-                var userList = allUsersList.Where(x => (x.Username.ToLower() == userName.ToLower() || x.Id.ToString() == userName) && !x.IsBot);
+                var userList = allUsersList.Where(x => x.Username != null && (x.Username.ToLower() == userName.ToLower() || x.Id.ToString() == userName) && !x.IsBot);
 
                 var user = userList.Where(x => FilterGuild(x, db)).FirstOrDefault();
 
@@ -34,8 +34,7 @@ namespace Voltaire.Controllers.Messages
                 } 
 
                 var userChannel = await user.GetOrCreateDMChannelAsync();
-                await SendWithPrefix.Send(currentContext, userChannel, message, db, $"an anonymous user says: {message}");
-                await currentContext.Channel.SendMessageAsync("Sent!");
+                await SendWithPrefix.Send(currentContext, userChannel, message, db, "an anonymous user says: ");
             }
             catch (Exception ex)
             {
