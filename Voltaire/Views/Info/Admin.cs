@@ -26,9 +26,12 @@ namespace Voltaire.Views.Info
                 Color = new Color(111, 111, 111)
             };
 
-            embed.AddField("!volt allow_dm {true|false}", "Allow or Disallow users to send direct messages to other members of the guild." +
+            embed.AddField("!volt allow_dm {true|false}", "Allow or disallow users to send direct messages to other members of the guild." +
                 $"\nex: `!volt allow_dm false`");
-           
+
+            embed.AddField("!volt user_identifiers {true|false}", "Enable or disable the use of a unique (yet annonymous) identifier for users when they send messages." +
+                $"\nex: `!volt user_identifiers false`");
+
             embed.AddField("!volt admin", "(callable from anywhere) Display this help dialogue.");
 
             return new Tuple<string, Embed>("", embed);

@@ -17,7 +17,7 @@ namespace Voltaire.Controllers.Helpers
         {
             Func<SocketGuild, Task> convert = async delegate (SocketGuild guild)
             {
-                IConfiguration configuration = LoadConfig.Load();
+                IConfiguration configuration = LoadConfig.Instance.config;
 
                 FindOrCreateGuild.Perform(guild, db);
                 db.SaveChanges();

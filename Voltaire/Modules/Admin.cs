@@ -21,9 +21,17 @@ namespace Voltaire.Modules
         [Command("allow_dm", RunMode = RunMode.Async)]
         [Summary("Allow Direct Messages To Be Sent Annonymously Through This Guild")]
         [RequireUserPermission(GuildPermission.Administrator)]
-        public async Task SetDjAsync(Boolean allow)
+        public async Task AllowDj(Boolean allow)
         {
             await Controllers.Settings.SetDirectMessageAccess.PerformAsync(Context, allow, _database);
+        }
+
+        [Command("user_identifiers", RunMode = RunMode.Async)]
+        [Summary("Use a Unique (Yet Annonymous) Identifier For Users When Sending Messages")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        public async Task UserIdentifiers(Boolean allow)
+        {
+            await Controllers.Settings.SetUseUserIdentifiers.PerformAsync(Context, allow, _database);
         }
     }
 }

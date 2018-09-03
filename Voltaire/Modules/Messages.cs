@@ -29,13 +29,13 @@ namespace Voltaire.Modules
         [Command("send", RunMode = RunMode.Async)]
         public async Task Send(string channelName, [Remainder] string message)
         {
-            await Controllers.Messages.Send.PerformAsync(Context, channelName, message);
+            await Controllers.Messages.Send.PerformAsync(Context, channelName, message, _database);
         }
 
         [Command("send_guild", RunMode = RunMode.Async)]
         public async Task SendGuild(string guildName, string channelName, [Remainder] string message)
         {
-            await SendToGuild.PerformAsync(Context, guildName, channelName, message);
+            await SendToGuild.PerformAsync(Context, guildName, channelName, message, _database);
         }
 
         [Command("send_dm", RunMode = RunMode.Async)]

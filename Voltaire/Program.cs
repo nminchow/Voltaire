@@ -21,7 +21,7 @@ namespace Voltaire
         public async Task MainAsync()
         {
 
-            IConfiguration configuration = LoadConfig.Load();
+            IConfiguration configuration = LoadConfig.Instance.config;
             var db = new DataBase(configuration.GetConnectionString("sql"));
 
             _client = new DiscordSocketClient();

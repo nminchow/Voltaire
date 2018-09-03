@@ -6,12 +6,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CodenameGenerator" Version="1.2.41" />
     <PackageReference Include="Discord.Net" Version="1.0.2" />
     <PackageReference Include="DiscordBotsList.Api" Version="1.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
+    <PackageReference Include="Rijndael256" Version="3.2.0" />
   </ItemGroup>
   
   <ItemGroup>

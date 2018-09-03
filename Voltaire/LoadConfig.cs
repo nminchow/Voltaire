@@ -6,15 +6,23 @@ using System.Text;
 
 namespace Voltaire
 {
-    public static class LoadConfig
+    public sealed class LoadConfig
     {
-        public static IConfiguration Load()
+
+        private static readonly Lazy<LoadConfig> lazy =
+            new Lazy<LoadConfig>(() => new LoadConfig());
+
+        public static LoadConfig Instance { get { return lazy.Value; } }
+
+        public IConfiguration config;
+
+        private LoadConfig()
         {
             var builder = new ConfigurationBuilder()
              .SetBasePath(Directory.GetCurrentDirectory())
              .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
-            return builder.Build();
+            config = builder.Build();
         }
     }
 }
