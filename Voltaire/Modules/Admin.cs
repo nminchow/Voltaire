@@ -33,5 +33,13 @@ namespace Voltaire.Modules
         {
             await Controllers.Settings.SetUseUserIdentifiers.PerformAsync(Context, allow, _database);
         }
+
+        [Command("new_identifiers", RunMode = RunMode.Async)]
+        [Summary("Rotate User Identifiers")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        public async Task UserIdentifiers()
+        {
+            await Controllers.Settings.GenerateGuildUserIdentifierSeed.PerformAsync(Context, _database);
+        }
     }
 }

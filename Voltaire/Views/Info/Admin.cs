@@ -32,6 +32,9 @@ namespace Voltaire.Views.Info
             embed.AddField("!volt user_identifiers {true|false}", "Enable or disable the use of a unique (yet annonymous) identifier for users when they send messages." +
                 $"\nex: `!volt user_identifiers false`");
 
+            embed.AddField("!volt new_identifiers", "Generate new random identifiers for users." +
+                $"\nex: `!volt new_identifiers`");
+
             embed.AddField("!volt admin", "(callable from anywhere) Display this help dialogue.");
 
             return new Tuple<string, Embed>("", embed);

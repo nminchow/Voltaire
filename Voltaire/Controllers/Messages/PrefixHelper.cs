@@ -16,15 +16,21 @@ namespace Voltaire.Controllers.Messages
 
         public static string ComputePrefix(SocketCommandContext context, SocketGuild guild, DataBase db, string defaultValue = "")
         {
-            return UseUserIdentifier(guild, db) ? Generate(context) : defaultValue;
+            if (!UseUserIdentifier(guild, db))
+            {
+                return defaultValue;
+            }
+            var seed = GuildUserIdentifierSeed(guild, db);
+            return Generate(context, seed);
         }
 
-        public static string Generate(SocketCommandContext context)
+        public static string Generate(SocketCommandContext context, int seed)
         {
             string password = LoadConfig.Instance.config["encryptionKey"];
 
-            var offset = (ulong)(new Random().Next(10, 30));
-            var id = (context.User.Id + offset).ToString();
+            //var offset = (ulong)(new Random().Next(0, 10000));
+            
+            var id = (context.User.Id + (ulong)seed).ToString();
 
             var bytes = GetHash(id, password);
 
@@ -37,7 +43,7 @@ namespace Voltaire.Controllers.Messages
             var generator = new Generator(seed: integer)
             {
                 Casing = Casing.PascalCase,
-                Parts = new WordBank[] { WordBank.Adverbs, WordBank.Verbs, WordBank.Nouns }
+                Parts = new WordBank[] { WordBank.Titles, WordBank.Nouns }
             };
             return $"{generator.Generate()} says: ";
         }
@@ -56,9 +62,14 @@ namespace Voltaire.Controllers.Messages
             return hashBytes;
         }
 
-        public static bool UseUserIdentifier(SocketGuild guild, DataBase db)
+        private static bool UseUserIdentifier(SocketGuild guild, DataBase db)
         {
             return db.Guilds.FirstOrDefault(x => x.DiscordId == guild.Id.ToString())?.UseUserIdentifiers ?? false;
+        }
+
+        private static int GuildUserIdentifierSeed(SocketGuild guild, DataBase db)
+        {
+            return db.Guilds.FirstOrDefault(x => x.DiscordId == guild.Id.ToString())?.UserIdentifierSeed ?? 0;
         }
     }
 }

@@ -10,5 +10,6 @@ namespace Voltaire.Models
         public string DiscordId { get; set; }
         public bool AllowDirectMessage { get; set; } = true;
         public bool UseUserIdentifiers { get; set; } = false;
+        public int UserIdentifierSeed { get; set; } = 0;
     }
 }
