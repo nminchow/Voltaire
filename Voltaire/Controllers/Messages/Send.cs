@@ -16,7 +16,7 @@ namespace Voltaire.Controllers.Messages
             switch (candidateGuilds.Count())
             {
                 case 0:
-                    await context.Channel.SendMessageAsync("It doesn't look like you belong to any servers where Voltaire is installed. Please add Voltaire to your desired server.");
+                    await context.Channel.SendMessageAsync("It doesn't look like you belong to any guilds(servers) where Voltaire is installed. Please add Voltaire to your desired server.");
                     break;
                 case 1:
                     await SendToGuild.LookupAndSendAsync(candidateGuilds.First(), context, channelName, message, db);
