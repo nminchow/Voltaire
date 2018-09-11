@@ -35,13 +35,25 @@ namespace Voltaire.Modules
         [Command("send_guild", RunMode = RunMode.Async)]
         public async Task SendGuild(string guildName, string channelName, [Remainder] string message)
         {
-            await SendToGuild.PerformAsync(Context, guildName, channelName, message, _database);
+            await SendToGuild.PerformAsync(Context, guildName, channelName, message, false, _database);
+        }
+
+        [Command("send_guild+r", RunMode = RunMode.Async)]
+        public async Task SendGuildRepliable(string guildName, string channelName, [Remainder] string message)
+        {
+            await SendToGuild.PerformAsync(Context, guildName, channelName, message, true, _database);
         }
 
         [Command("send_dm", RunMode = RunMode.Async)]
         public async Task SendDirectMessage(string userName, [Remainder] string message)
         {
             await Controllers.Messages.SendDirectMessage.PerformAsync(Context, userName, message, _database);
+        }
+
+        [Command("send_reply", RunMode = RunMode.Async)]
+        public async Task SendReply(string key, [Remainder] string message)
+        {
+            await Controllers.Messages.SendReply.PerformAsync(Context, key, message, _database);
         }
     }
 }

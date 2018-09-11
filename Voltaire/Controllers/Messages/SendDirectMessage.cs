@@ -16,8 +16,7 @@ namespace Voltaire.Controllers.Messages
             try
             {
                 var guildList = Send.GuildList(currentContext);
-
-                var allUsersList = guildList.Aggregate(new List<SocketGuildUser>(), (acc, item) => acc.Concat(item.Users).ToList());
+                List<SocketGuildUser> allUsersList = ToUserList(guildList);
 
                 var userList = allUsersList.Where(x => x.Username != null && (x.Username.ToLower() == userName.ToLower() || x.Id.ToString() == userName) && !x.IsBot);
 
@@ -27,14 +26,15 @@ namespace Voltaire.Controllers.Messages
                 {
                     await currentContext.Channel.SendMessageAsync("user found, but channel permissions do not allow annonymous direct messaging");
                     return;
-                } else if (user == null)
+                }
+                else if (user == null)
                 {
                     await currentContext.Channel.SendMessageAsync("user not found");
                     return;
-                } 
+                }
 
                 var userChannel = await user.GetOrCreateDMChannelAsync();
-                var prefix = PrefixHelper.ComputePrefix(currentContext,user.Guild, db, "an anonymous user says:");
+                var prefix = PrefixHelper.ComputePrefix(currentContext, user.Guild, db, "an anonymous user says:");
 
                 await userChannel.SendMessageAsync(prefix + message);
                 await currentContext.Channel.SendMessageAsync("Sent!");
@@ -44,6 +44,11 @@ namespace Voltaire.Controllers.Messages
                 Console.WriteLine(ex.ToString());
             }
             
+        }
+
+        public static List<SocketGuildUser> ToUserList(IEnumerable<SocketGuild> guildList)
+        {
+            return guildList.Aggregate(new List<SocketGuildUser>(), (acc, item) => acc.Concat(item.Users).ToList());
         }
 
         private static bool FilterGuild(SocketGuildUser user, DataBase db)

@@ -1,5 +1,6 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
+using Rijndael256;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,12 +20,26 @@ namespace Voltaire.Controllers.Messages
                     await context.Channel.SendMessageAsync("It doesn't look like you belong to any guilds(servers) where Voltaire is installed. Please add Voltaire to your desired server.");
                     break;
                 case 1:
-                    await SendToGuild.LookupAndSendAsync(candidateGuilds.First(), context, channelName, message, db);
+                    await SendToGuild.LookupAndSendAsync(candidateGuilds.First(), context, channelName, message, false, db);
                     break;
                 default:
                     await context.Channel.SendMessageAsync("It looks like you belong to multiple guilds(servers) where Voltaire is installed. Please specify your guild using the following command: `send_guild (guild_name) (channel_name) (message)` ex: `send_guild \"l33t g4amerz\" some-channel you guys suck`");
                     break;
             }
+        }
+
+        public static async Task SendMessageToChannel(ISocketMessageChannel channel, string message, bool reply, SocketUser user)
+        {
+            if (!reply)
+            {
+                await channel.SendMessageAsync(message);
+                return;
+            }
+
+            var key = LoadConfig.Instance.config["encryptionKey"];
+            var replyHash = Rijndael.Encrypt(user.Id.ToString(), key, KeySize.Aes256);
+            var view = Views.ReplyableMessage.Response(message, replyHash.ToString());
+            await channel.SendMessageAsync(view.Item1, embed: view.Item2);
         }
 
         public static IEnumerable<SocketGuild> GuildList(SocketCommandContext currentContext)
