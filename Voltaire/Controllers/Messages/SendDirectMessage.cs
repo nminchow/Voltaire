@@ -15,7 +15,7 @@ namespace Voltaire.Controllers.Messages
             userName = userName.StartsWith('@') ? userName.Substring(1) : userName;
             try
             {
-                var guildList = currentContext.Client.Guilds.Where(x => x.Users.ToLookup(u => u.Id).Contains(currentContext.User.Id));
+                var guildList = Send.GuildList(currentContext);
 
                 var allUsersList = guildList.Aggregate(new List<SocketGuildUser>(), (acc, item) => acc.Concat(item.Users).ToList());
 

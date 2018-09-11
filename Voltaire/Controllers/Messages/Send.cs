@@ -12,7 +12,7 @@ namespace Voltaire.Controllers.Messages
     {
         public static async Task PerformAsync(SocketCommandContext context, string channelName, string message, DataBase db)
         {
-            var candidateGuilds = context.Client.Guilds.Where(x => x.Users.ToLookup(u => u.Id)[context.User.Id] != null);
+            var candidateGuilds = GuildList(context);
             switch (candidateGuilds.Count())
             {
                 case 0:
@@ -25,6 +25,11 @@ namespace Voltaire.Controllers.Messages
                     await context.Channel.SendMessageAsync("It looks like you belong to multiple guilds(servers) where Voltaire is installed. Please specify your guild using the following command: `send_guild (guild_name) (channel_name) (message)` ex: `send_guild \"l33t g4amerz\" some-channel you guys suck`");
                     break;
             }
+        }
+
+        public static IEnumerable<SocketGuild> GuildList(SocketCommandContext currentContext)
+        {
+            return currentContext.Client.Guilds.Where(x => x.Users.ToLookup(u => u.Id).Contains(currentContext.User.Id));
         }
     }
 }
