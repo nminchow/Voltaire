@@ -39,6 +39,12 @@ namespace Voltaire.Views.Info
             embed.AddField("send_guild \"{guild name}\" {channel name} {message}", "This command is only needed if you belong to " +
                 "multiple guilds that have Voltaire installed. It allows you to specify which guild you are sending to." +
                 $"\nex: `send_guild \"{GuildName(context)}\" {ChannelName(context)} A man chooses, a slave obeys.`");
+            embed.AddField("+r", "All 3 of the above 'send' commands also have a version which will allow other users to reply anonymously. " +
+                "The reply version of the command is appended with a `+r` suffix." +
+                $"\nex: `send_guild+r \"{GuildName(context)}\" {ChannelName(context)} If we can just get back to Earth, and find Halsey, she fix this.`");
+            //embed.AddField("send_reply {reply code} {message}", "To reply to a message, it will need to have been originally sent with the +r suffix. The message will include" +
+            //    "a code at the bottom which can be used to reply." +
+            //    $"\nex: `send_reply iMIb62udZ7R/KCfhn634+AHvrrQ Don't make a girl a promise you know you can't keep.`");
             embed.AddField("!volt admin", "(server admin only - callable from guild channel) Get a list of admin commands.");
             embed.AddField("!volt help", "(callable from anywhere) Display this help dialogue.");
 

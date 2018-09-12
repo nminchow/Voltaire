@@ -29,7 +29,13 @@ namespace Voltaire.Modules
         [Command("send", RunMode = RunMode.Async)]
         public async Task Send(string channelName, [Remainder] string message)
         {
-            await Controllers.Messages.Send.PerformAsync(Context, channelName, message, _database);
+            await Controllers.Messages.Send.PerformAsync(Context, channelName, message, false, _database);
+        }
+
+        [Command("send+r", RunMode = RunMode.Async)]
+        public async Task SendRepliable(string channelName, [Remainder] string message)
+        {
+            await Controllers.Messages.Send.PerformAsync(Context, channelName, message, true, _database);
         }
 
         [Command("send_guild", RunMode = RunMode.Async)]
@@ -47,7 +53,19 @@ namespace Voltaire.Modules
         [Command("send_dm", RunMode = RunMode.Async)]
         public async Task SendDirectMessage(string userName, [Remainder] string message)
         {
-            await Controllers.Messages.SendDirectMessage.PerformAsync(Context, userName, message, _database);
+            await Controllers.Messages.SendDirectMessage.PerformAsync(Context, userName, message, false, _database);
+        }
+
+        [Command("send_dm+r", RunMode = RunMode.Async)]
+        public async Task SendDirectMessageRepliable(string userName, [Remainder] string message)
+        {
+            await Controllers.Messages.SendDirectMessage.PerformAsync(Context, userName, message, true, _database);
+        }
+
+        [Command("send_reply", RunMode = RunMode.Async)]
+        public async Task SendReplyError(string key)
+        {
+            await Context.Channel.SendMessageAsync("Please specify a message, ex: `send_reply iMIb62udZ7R/KCfhn634+AHvrrQ Don't make a girl a promise you know you can't keep.`");
         }
 
         [Command("send_reply", RunMode = RunMode.Async)]

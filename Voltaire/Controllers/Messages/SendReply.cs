@@ -23,8 +23,11 @@ namespace Voltaire.Controllers.Messages
                 await context.Channel.SendMessageAsync("Something is wrong with that reply code. It is possible the sender has left your guild.");
                 return;
             }
+
+            var prefix = PrefixHelper.ComputePrefix(context, user.Guild, db, "someone");
+
             var channel = await user.GetOrCreateDMChannelAsync();
-            await channel.SendMessageAsync($"someone replied: {message}");
+            await channel.SendMessageAsync($"{prefix} replied: {message}");
         }
     }
 }

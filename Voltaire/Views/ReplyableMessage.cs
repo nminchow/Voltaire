@@ -10,18 +10,26 @@ namespace Voltaire.Views
     public static class ReplyableMessage
     {
 
-        public static Tuple<string, Embed> Response(string message, string reply)
+        public static Tuple<string, Embed> Response(string username, string message, string reply)
         {
 
             var embed = new EmbedBuilder
             {
-                Description = message,
+                Description = message + "\n\n `Reply With:`",
                 Color = new Color(111, 111, 111),
                 Footer = new EmbedFooterBuilder
                 {
                     Text = $"send_reply {reply}"
                 }
             };
+
+            if (!string.IsNullOrEmpty(username))
+            {
+                embed.Author = new EmbedAuthorBuilder
+                {
+                    Name = username
+                };
+            }
 
             return new Tuple<string, Embed>("", embed);
         }

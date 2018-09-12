@@ -17,7 +17,8 @@ namespace Voltaire.Controllers.Messages
 
             var prefix = PrefixHelper.ComputePrefix(context, guild, db);
             var channel = candidateChannels.OrderBy(x => x.Name.Length).First();
-            await Send.SendMessageToChannel(channel, prefix + message, replyable, context.User);
+            var messageFunction = Send.SendMessageToChannel(channel, replyable, context.User);
+            await messageFunction(prefix, message);
             await context.Channel.SendMessageAsync("Sent!");
         }
 

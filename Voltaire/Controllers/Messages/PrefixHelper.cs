@@ -45,7 +45,7 @@ namespace Voltaire.Controllers.Messages
                 Casing = Casing.PascalCase,
                 Parts = new WordBank[] { WordBank.Titles, WordBank.Nouns }
             };
-            return $"{generator.Generate()} says: ";
+            return generator.Generate();
         }
 
         public static Byte[] GetHash(String text, String key)

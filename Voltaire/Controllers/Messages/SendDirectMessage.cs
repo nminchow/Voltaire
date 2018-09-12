@@ -10,7 +10,7 @@ namespace Voltaire.Controllers.Messages
 {
     class SendDirectMessage
     {
-        public static async Task PerformAsync(SocketCommandContext currentContext, string userName, string message, DataBase db)
+        public static async Task PerformAsync(SocketCommandContext currentContext, string userName, string message, bool replyable ,DataBase db)
         {
             userName = userName.StartsWith('@') ? userName.Substring(1) : userName;
             try
@@ -34,9 +34,9 @@ namespace Voltaire.Controllers.Messages
                 }
 
                 var userChannel = await user.GetOrCreateDMChannelAsync();
-                var prefix = PrefixHelper.ComputePrefix(currentContext, user.Guild, db, "an anonymous user says:");
-
-                await userChannel.SendMessageAsync(prefix + message);
+                var prefix = PrefixHelper.ComputePrefix(currentContext, user.Guild, db, "anonymous user");
+                var messageFunction = Send.SendMessageToChannel(userChannel, replyable, currentContext.User);
+                await messageFunction(prefix, message);
                 await currentContext.Channel.SendMessageAsync("Sent!");
             }
             catch (Exception ex)
