@@ -12,9 +12,6 @@
 
 Pull requests are welcome!
 
-## Upcoming Features / TODO
-1. Allow users to respond to DMs.
-
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
