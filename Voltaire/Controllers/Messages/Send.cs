@@ -40,7 +40,7 @@ namespace Voltaire.Controllers.Messages
                         await channel.SendMessageAsync(message);
                         return;
                     }
-                    await channel.SendMessageAsync($"{username} says: {message}");
+                    await channel.SendMessageAsync($"**{username}**: {message}");
                 };
             }
             return async (username, message) =>
