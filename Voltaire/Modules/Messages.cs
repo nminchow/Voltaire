@@ -21,6 +21,7 @@ namespace Voltaire.Modules
         }
 
         [Command("send", RunMode = RunMode.Async)]
+        [Summary("error message for malformed send")]
         public async Task SendError(string _one)
         {
             await Context.Channel.SendMessageAsync("Please specify your channel name, ex: `send some-channel hello`");
