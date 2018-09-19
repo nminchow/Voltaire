@@ -56,5 +56,11 @@ namespace Voltaire.Controllers.Messages
         {
             return currentContext.Client.Guilds.Where(x => x.Users.ToLookup(u => u.Id).Contains(currentContext.User.Id));
         }
+
+        public static async Task SendSentEmote(SocketCommandContext context)
+        {
+            var emote = Emote.Parse(LoadConfig.Instance.config["sent_emoji"]);
+            await context.Message.AddReactionAsync(emote);
+        }
     }
 }

@@ -1,5 +1,7 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,7 +21,7 @@ namespace Voltaire.Controllers.Messages
             var channel = candidateChannels.OrderBy(x => x.Name.Length).First();
             var messageFunction = Send.SendMessageToChannel(channel, replyable, context.User);
             await messageFunction(prefix, message);
-            await context.Channel.SendMessageAsync("Sent!");
+            await Send.SendSentEmote(context);
         }
 
 

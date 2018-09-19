@@ -37,7 +37,7 @@ namespace Voltaire.Controllers.Messages
                 var prefix = PrefixHelper.ComputePrefix(currentContext, user.Guild, db, "anonymous user");
                 var messageFunction = Send.SendMessageToChannel(userChannel, replyable, currentContext.User);
                 await messageFunction(prefix, message);
-                await currentContext.Channel.SendMessageAsync("Sent!");
+                await Send.SendSentEmote(currentContext);
             }
             catch (Exception ex)
             {
