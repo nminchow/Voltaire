@@ -1,6 +1,6 @@
 # Voltaire
 
-**Voltaire** is a discord bot that allows you to send messages to the guild and to specific users anonymously. When Voltaire is installed, type `!volt help` to get a list of commands.
+**Voltaire** is a discord bot that allows you to send messages anonymously. It supports sending messages to server channels as well as sending DMs to members of the server it has been added to. Voltaire has several admin settings (which can be viewed with `!volt admin`) to allow admins to best fit the bot to their use case. When Voltaire is added to your server, type `!volt help` to get a list of commands.
 
 [Official Voltaire Discord](https://discord.gg/xyzMyJH)
 
