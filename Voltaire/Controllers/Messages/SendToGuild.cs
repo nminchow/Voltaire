@@ -33,7 +33,7 @@ namespace Voltaire.Controllers.Messages
             switch (candidateGuilds.Count())
             {
                 case 0:
-                    await context.Channel.SendMessageAsync("No guilds with the specified name could be found. The guilds must have Voltaire installed and you must be a member of the guild.");
+                    await context.Channel.SendMessageAsync("No servers with the specified name could be found. The servers must have Voltaire installed and you must be a member of the server.");
                     break;
                 case 1:
                     await LookupAndSendAsync(candidateGuilds.First(), context, channelName, message, replyable, db);
@@ -46,7 +46,7 @@ namespace Voltaire.Controllers.Messages
                         await LookupAndSendAsync(exactNameMatch, context, channelName, message, replyable, db);
                         return;
                     }
-                    await context.Channel.SendMessageAsync("More than one guild with the spcified name was found. Please use a more specific guild name.");
+                    await context.Channel.SendMessageAsync("More than one server with the spcified name was found. Please use a more specific server name.");
                     break;
             }
         }

@@ -21,8 +21,9 @@ namespace Voltaire.Views.Info
                     Name = "Guide"
                 },
                 ThumbnailUrl = "https://nminchow.github.io/VoltaireWeb/images/quill.png",
-                Description = "Voltaire allows you to send messages to a discord guild (server) anonymously.\n\n" +
+                Description = "Voltaire allows you to send messages to a discord server anonymously.\n\n" +
                 "Most commands should be direct messaged to this bot user, which will then relay them to the desired channel.\n\n" +
+                "Support Server: https://discord.gg/xyzMyJH \n\n" +
                 "**Direct Message Commands:**",
                 Color = new Color(111, 111, 111),
                 Footer = new EmbedFooterBuilder
@@ -36,16 +37,16 @@ namespace Voltaire.Views.Info
                 $"\nex: `send {ChannelName(context)} The cake is a lie.`");
             embed.AddField("send_dm {user name} {message}", "Sends an anonymous message to the specified user." +
                 $"\nex: `send_dm @Voltaire The right man in the wrong place can make all the difference in the world.`");
-            embed.AddField("send_guild \"{guild name}\" {channel name} {message}", "This command is only needed if you belong to " +
-                "multiple guilds that have Voltaire installed. It allows you to specify which guild you are sending to." +
-                $"\nex: `send_guild \"{GuildName(context)}\" {ChannelName(context)} A man chooses, a slave obeys.`");
+            embed.AddField("send_server \"{server name}\" {channel name} {message}", "This command is only needed if you belong to " +
+                "multiple servers that have Voltaire installed. It allows you to specify which server you are sending to." +
+                $"\nex: `send_server \"{GuildName(context)}\" {ChannelName(context)} A man chooses, a slave obeys.`");
             embed.AddField("+r", "All 3 of the above 'send' commands also have a version which will allow other users to reply anonymously. " +
                 "The reply version of the command is appended with a `+r` suffix." +
-                $"\nex: `send_guild+r \"{GuildName(context)}\" {ChannelName(context)} If we can just get back to Earth, and find Halsey, she fix this.`");
+                $"\nex: `send_server+r \"{GuildName(context)}\" {ChannelName(context)} If we can just get back to Earth, and find Halsey, she can fix this.`");
             //embed.AddField("send_reply {reply code} {message}", "To reply to a message, it will need to have been originally sent with the +r suffix. The message will include" +
             //    "a code at the bottom which can be used to reply." +
             //    $"\nex: `send_reply iMIb62udZ7R/KCfhn634+AHvrrQ Don't make a girl a promise you know you can't keep.`");
-            embed.AddField("!volt admin", "(server admin only - callable from guild channel) Get a list of admin commands.");
+            embed.AddField("!volt admin", "(server admin only - callable from server channel) Get a list of admin commands.");
             embed.AddField("!volt help", "(callable from anywhere) Display this help dialogue.");
 
             return new Tuple<string, Embed>("", embed);

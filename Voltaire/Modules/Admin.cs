@@ -19,7 +19,7 @@ namespace Voltaire.Modules
         }
 
         [Command("allow_dm", RunMode = RunMode.Async)]
-        [Summary("Allow Direct Messages To Be Sent Annonymously Through This Guild")]
+        [Summary("Allow Direct Messages To Be Sent Annonymously Through This Server")]
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task AllowDj(Boolean allow)
         {

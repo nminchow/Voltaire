@@ -39,16 +39,28 @@ namespace Voltaire.Modules
             await Controllers.Messages.Send.PerformAsync(Context, channelName, message, true, _database);
         }
 
+        [Command("send_server", RunMode = RunMode.Async)]
+        public async Task SendServer(string guildName, string channelName, [Remainder] string message)
+        {
+            await SendToGuild.PerformAsync(Context, guildName, channelName, message, false, _database);
+        }
+
+        [Command("send_server+r", RunMode = RunMode.Async)]
+        public async Task SendServerRepliable(string guildName, string channelName, [Remainder] string message)
+        {
+            await SendToGuild.PerformAsync(Context, guildName, channelName, message, true, _database);
+        }
+
         [Command("send_guild", RunMode = RunMode.Async)]
         public async Task SendGuild(string guildName, string channelName, [Remainder] string message)
         {
-            await SendToGuild.PerformAsync(Context, guildName, channelName, message, false, _database);
+            await Context.Channel.SendMessageAsync($"This command has been changed to `send_server`\n\n ex: `send_server \"{guildName}\" {channelName} {message}`");
         }
 
         [Command("send_guild+r", RunMode = RunMode.Async)]
         public async Task SendGuildRepliable(string guildName, string channelName, [Remainder] string message)
         {
-            await SendToGuild.PerformAsync(Context, guildName, channelName, message, true, _database);
+            await Context.Channel.SendMessageAsync($"This command has been changed to `send_server+r`\n\n ex: `send_server+r \"{guildName}\" {channelName} {message}`");
         }
 
         [Command("send_dm", RunMode = RunMode.Async)]

@@ -21,12 +21,12 @@ namespace Voltaire.Views.Info
                 },
                 ThumbnailUrl = "https://nminchow.github.io/VoltaireWeb/images/quill.png",
                 Description = "These commands are only callable by admin users.\n\n" +
-                "Commands should be sent to the bot in a guild channel.\n\n" +
+                "Commands should be sent to the bot in a server channel.\n\n" +
                 "**Guild Channel Commands:**",
                 Color = new Color(111, 111, 111)
             };
 
-            embed.AddField("!volt allow_dm {true|false}", "Allow or disallow users to send direct messages to other members of the guild." +
+            embed.AddField("!volt allow_dm {true|false}", "Allow or disallow users to send direct messages to other members of the server." +
                 $"\nex: `!volt allow_dm false`");
 
             embed.AddField("!volt user_identifiers {true|false}", "Enable or disable the use of a unique (yet annonymous) identifier for users when they send messages." +

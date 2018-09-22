@@ -18,13 +18,13 @@ namespace Voltaire.Controllers.Messages
             switch (candidateGuilds.Count())
             {
                 case 0:
-                    await context.Channel.SendMessageAsync("It doesn't look like you belong to any guilds(servers) where Voltaire is installed. Please add Voltaire to your desired server.");
+                    await context.Channel.SendMessageAsync("It doesn't look like you belong to any servers where Voltaire is installed. Please add Voltaire to your desired server.");
                     break;
                 case 1:
                     await SendToGuild.LookupAndSendAsync(candidateGuilds.First(), context, channelName, message, reply, db);
                     break;
                 default:
-                    await context.Channel.SendMessageAsync("It looks like you belong to multiple guilds(servers) where Voltaire is installed. Please specify your guild using the following command: `send_guild (guild_name) (channel_name) (message)` ex: `send_guild \"l33t g4amerz\" some-channel you guys suck`");
+                    await context.Channel.SendMessageAsync("It looks like you belong to multiple servers where Voltaire is installed. Please specify your server using the following command: `send_server (server_name) (channel_name) (message)` ex: `send_server \"l33t g4amerz\" some-channel you guys suck`");
                     break;
             }
         }
