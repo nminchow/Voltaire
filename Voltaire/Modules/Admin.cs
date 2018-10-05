@@ -34,6 +34,22 @@ namespace Voltaire.Modules
             await Controllers.Settings.SetUseUserIdentifiers.PerformAsync(Context, allow, _database);
         }
 
+        [Command("permitted_role", RunMode = RunMode.Async)]
+        [Summary("Set the Role Allowed to Use Voltaire")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        public async Task PermittedRole(SocketRole role)
+        {
+            await Controllers.Settings.SetAllowedRole.PerformAsync(Context, role, _database);
+        }
+
+        [Command("permitted_role all", RunMode = RunMode.Async)]
+        [Summary("Allow All Users to Use Voltaire")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        public async Task PermittedRoleClear()
+        {
+            await Controllers.Settings.ClearAllowedRole.PerformAsync(Context, _database);
+        }
+
         [Command("new_identifiers", RunMode = RunMode.Async)]
         [Summary("Rotate User Identifiers")]
         [RequireUserPermission(GuildPermission.Administrator)]

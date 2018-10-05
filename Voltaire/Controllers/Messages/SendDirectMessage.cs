@@ -1,4 +1,5 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace Voltaire.Controllers.Messages
 {
     class SendDirectMessage
     {
-        public static async Task PerformAsync(SocketCommandContext currentContext, string userName, string message, bool replyable ,DataBase db)
+        public static async Task PerformAsync(SocketCommandContext currentContext, string userName, string message, bool replyable, DataBase db)
         {
             userName = userName.StartsWith('@') ? userName.Substring(1) : userName;
             try
@@ -20,14 +21,22 @@ namespace Voltaire.Controllers.Messages
 
                 var userList = allUsersList.Where(x => x.Username != null && (x.Username.ToLower() == userName.ToLower() || x.Id.ToString() == userName) && !x.IsBot);
 
-                var user = userList.Where(x => FilterGuild(x, db)).FirstOrDefault();
+                var allowDmList = userList.Where(x => FilterGuildByDirectMessageSetting(x, db));
 
-                if (user == null && userList.Any())
+                if (!allowDmList.Any() && userList.Any())
                 {
                     await currentContext.Channel.SendMessageAsync("user found, but channel permissions do not allow annonymous direct messaging");
                     return;
                 }
-                else if (user == null)
+
+                var user = allowDmList.Where(x => FilterGuildByRole(x,currentContext.User, db)).FirstOrDefault();
+
+                if (user == null && allowDmList.Any())
+                {
+                    await currentContext.Channel.SendMessageAsync("user found, but you do not have the role required to DM them");
+                    return;
+                }
+                else if(user == null)
                 {
                     await currentContext.Channel.SendMessageAsync("user not found");
                     return;
@@ -51,9 +60,25 @@ namespace Voltaire.Controllers.Messages
             return guildList.Aggregate(new List<SocketGuildUser>(), (acc, item) => acc.Concat(item.Users).ToList());
         }
 
-        private static bool FilterGuild(SocketGuildUser user, DataBase db)
+        private static bool FilterGuildByDirectMessageSetting(SocketGuildUser user, DataBase db)
         {
             return !db.Guilds.Any(x => x.DiscordId == user.Guild.Id.ToString() && !x.AllowDirectMessage);
+        }
+
+        private static bool FilterGuildByRole(SocketGuildUser reciver, IUser sender, DataBase db)
+        {
+            var guild = db.Guilds.FirstOrDefault(x => x.DiscordId == reciver.Guild.Id.ToString());
+            if (guild == null || guild.AllowedRole == null)
+            {
+                return true;
+            }
+            var role = reciver.Guild.Roles.FirstOrDefault(x => x.Id.ToString() == guild.AllowedRole);
+            if (role == null)
+            {
+                return false;
+            }
+
+            return role.Members.Contains(sender);
         }
     }
 }

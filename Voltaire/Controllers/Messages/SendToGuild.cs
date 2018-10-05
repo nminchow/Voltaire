@@ -27,8 +27,8 @@ namespace Voltaire.Controllers.Messages
 
         public static async Task PerformAsync(SocketCommandContext context, string guildName, string channelName, string message, bool replyable, DataBase db)
         {
-            var unfilteredLikst = Send.GuildList(context);
-            var candidateGuilds = unfilteredLikst.Where(x => x.Name.ToLower().Contains(guildName.ToLower()));
+            var unfilteredList = Send.GuildList(context);
+            var candidateGuilds = unfilteredList.Where(x => x.Name.ToLower().Contains(guildName.ToLower()));
 
             switch (candidateGuilds.Count())
             {
