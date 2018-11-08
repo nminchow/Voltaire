@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Rijndael256;
+using Voltaire.Controllers.Helpers;
 
 namespace Voltaire.Controllers.Messages
 {
@@ -24,7 +25,8 @@ namespace Voltaire.Controllers.Messages
                 return;
             }
 
-            var prefix = PrefixHelper.ComputePrefix(context, user.Guild, db, "someone");
+            var userGuild = FindOrCreateGuild.Perform(user.Guild, db);
+            var prefix = PrefixHelper.ComputePrefix(context, userGuild, "someone");
 
             var channel = await user.GetOrCreateDMChannelAsync();
             await channel.SendMessageAsync($"{prefix} replied: {message}");

@@ -8,19 +8,20 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Voltaire.Models;
 
 namespace Voltaire.Controllers.Messages
 {
     class PrefixHelper
     {
 
-        public static string ComputePrefix(SocketCommandContext context, SocketGuild guild, DataBase db, string defaultValue = "")
+        public static string ComputePrefix(SocketCommandContext context, Guild guild, string defaultValue = "")
         {
-            if (!UseUserIdentifier(guild, db))
+            if (!guild.UseUserIdentifiers)
             {
                 return defaultValue;
             }
-            var seed = GuildUserIdentifierSeed(guild, db);
+            var seed = guild.UserIdentifierSeed;
             return Generate(context, seed);
         }
 
@@ -60,16 +61,6 @@ namespace Voltaire.Controllers.Messages
                 hashBytes = hash.ComputeHash(textBytes);
 
             return hashBytes;
-        }
-
-        private static bool UseUserIdentifier(SocketGuild guild, DataBase db)
-        {
-            return db.Guilds.FirstOrDefault(x => x.DiscordId == guild.Id.ToString())?.UseUserIdentifiers ?? false;
-        }
-
-        private static int GuildUserIdentifierSeed(SocketGuild guild, DataBase db)
-        {
-            return db.Guilds.FirstOrDefault(x => x.DiscordId == guild.Id.ToString())?.UserIdentifierSeed ?? 0;
         }
     }
 }

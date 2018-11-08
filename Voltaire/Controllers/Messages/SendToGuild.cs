@@ -4,27 +4,12 @@ using Discord.WebSocket;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Voltaire.Controllers.Helpers;
 
 namespace Voltaire.Controllers.Messages
 {
     class SendToGuild
     {
-        public static async Task LookupAndSendAsync(SocketGuild guild, SocketCommandContext context, string channelName, string message, bool replyable, DataBase db)
-        {
-            var candidateChannels = guild.TextChannels.Where(x => x.Name.ToLower().Contains(channelName.ToLower()) || x.Id.ToString() == channelName);
-            if (!candidateChannels.Any())
-            {
-                await context.Channel.SendMessageAsync("The channel you specified couldn't be found. Please specify your channel using the following command: `send (channel_name) (message)` ex: `send some-channel you guys suck`");
-            }
-
-            var prefix = PrefixHelper.ComputePrefix(context, guild, db);
-            var channel = candidateChannels.OrderBy(x => x.Name.Length).First();
-            var messageFunction = Send.SendMessageToChannel(channel, replyable, context.User);
-            await messageFunction(prefix, message);
-            await Send.SendSentEmote(context);
-        }
-
-
         public static async Task PerformAsync(SocketCommandContext context, string guildName, string channelName, string message, bool replyable, DataBase db)
         {
             var unfilteredList = Send.GuildList(context);
@@ -41,7 +26,7 @@ namespace Voltaire.Controllers.Messages
                 default:
                     // check for exact match
                     var exactNameMatch = candidateGuilds.First(x => x.Name.ToLower() == guildName.ToLower());
-                    if(exactNameMatch != null)
+                    if (exactNameMatch != null)
                     {
                         await LookupAndSendAsync(exactNameMatch, context, channelName, message, replyable, db);
                         return;
@@ -49,6 +34,29 @@ namespace Voltaire.Controllers.Messages
                     await context.Channel.SendMessageAsync("More than one server with the spcified name was found. Please use a more specific server name.");
                     break;
             }
+        }
+
+        public static async Task LookupAndSendAsync(SocketGuild guild, SocketCommandContext context, string channelName, string message, bool replyable, DataBase db)
+        {
+            var dbGuild = FindOrCreateGuild.Perform(guild, db);
+            if (!UserHasRole.Perform(guild, context.User, dbGuild))
+            {
+                await context.Channel.SendMessageAsync("You do not have the role required to send messages to this server.");
+                return;
+            }
+
+            var candidateChannels = guild.TextChannels.Where(x => x.Name.ToLower().Contains(channelName.ToLower()) || x.Id.ToString() == channelName);
+            if (!candidateChannels.Any())
+            {
+                await context.Channel.SendMessageAsync("The channel you specified couldn't be found. Please specify your channel using the following command: `send (channel_name) (message)` ex: `send some-channel you guys suck`");
+                return;
+            }
+
+            var prefix = PrefixHelper.ComputePrefix(context, dbGuild);
+            var channel = candidateChannels.OrderBy(x => x.Name.Length).First();
+            var messageFunction = Send.SendMessageToChannel(channel, replyable, context.User);
+            await messageFunction(prefix, message);
+            await Send.SendSentEmote(context);
         }
     }
 }

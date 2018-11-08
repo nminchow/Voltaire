@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Voltaire.Controllers.Helpers;
 
 namespace Voltaire.Controllers.Messages
 {
@@ -29,7 +30,7 @@ namespace Voltaire.Controllers.Messages
                     return;
                 }
 
-                var user = allowDmList.Where(x => FilterGuildByRole(x,currentContext.User, db)).FirstOrDefault();
+                var user = allowDmList.Where(x => FilterGuildByRole(x, currentContext.User, db)).FirstOrDefault();
 
                 if (user == null && allowDmList.Any())
                 {
@@ -43,7 +44,8 @@ namespace Voltaire.Controllers.Messages
                 }
 
                 var userChannel = await user.GetOrCreateDMChannelAsync();
-                var prefix = PrefixHelper.ComputePrefix(currentContext, user.Guild, db, "anonymous user");
+                var userGuild = FindOrCreateGuild.Perform(user.Guild, db);
+                var prefix = PrefixHelper.ComputePrefix(currentContext, userGuild, "anonymous user");
                 var messageFunction = Send.SendMessageToChannel(userChannel, replyable, currentContext.User);
                 await messageFunction(prefix, message);
                 await Send.SendSentEmote(currentContext);
@@ -68,17 +70,8 @@ namespace Voltaire.Controllers.Messages
         private static bool FilterGuildByRole(SocketGuildUser reciver, IUser sender, DataBase db)
         {
             var guild = db.Guilds.FirstOrDefault(x => x.DiscordId == reciver.Guild.Id.ToString());
-            if (guild == null || guild.AllowedRole == null)
-            {
-                return true;
-            }
-            var role = reciver.Guild.Roles.FirstOrDefault(x => x.Id.ToString() == guild.AllowedRole);
-            if (role == null)
-            {
-                return false;
-            }
 
-            return role.Members.Contains(sender);
+            return UserHasRole.Perform(reciver.Guild, sender, guild);
         }
     }
 }
