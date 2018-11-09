@@ -15,7 +15,7 @@ namespace Voltaire.Controllers.Settings
             var guild = FindOrCreateGuild.Perform(context.Guild, db);
             guild.AllowedRole = role.Id.ToString();
             db.SaveChanges();
-            await context.Channel.SendMessageAsync(text: $"{role.Name} is now the only roll that can use Voltaire on this server");
+            await context.Channel.SendMessageAsync(text: $"{role.Name} is now the only role that can use Voltaire on this server");
         }
     }
 }
