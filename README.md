@@ -12,6 +12,29 @@
 
 Pull requests are welcome!
 
+#### Development setup
+
+To get running locally:
+1. Create a [discord bot user](https://discordapp.com/developers/applications/)
+2. Set up a sql database
+3. Create a appsettings.json file within the project's "Voltaire" directory (see example below)
+4. Run migrations
+5. Be excellent to eachother
+
+```json
+// appsettings.json
+{
+  "discordAppToken": "F5OCongcjYOMXmEgrTmGDFy1Te5CUZy5ignm2DLoUUwJ1QsbfqEeOpyWBhe",
+  // the emoji the bot will use when a message is sent
+  "sent_emoji": "<:message_sent:491776018970050570>",
+  // a 256 bit key used to generate response codes and usernames
+  "encryptionKey": "PSVJQRk9QTEpNVU1DWUZCRVFGV1VVT0ZOV1RRU1NaWQ="
+  "ConnectionStrings": {
+    "sql": "Server=(localdb)\\mssqllocaldb;Database=Artifact;Trusted_Connection=True;"
+  }
+}
+```
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
