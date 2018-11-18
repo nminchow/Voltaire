@@ -30,7 +30,7 @@ To get running locally:
   // a 256 bit key used to generate response codes and usernames
   "encryptionKey": "PSVJQRk9QTEpNVU1DWUZCRVFGV1VVT0ZOV1RRU1NaWQ=",
   "ConnectionStrings": {
-    "sql": "Server=(localdb)\\mssqllocaldb;Database=Artifact;Trusted_Connection=True;"
+    "sql": "Server=(localdb)\\mssqllocaldb;Database=Voltaire;Trusted_Connection=True;"
   }
 }
 ```
