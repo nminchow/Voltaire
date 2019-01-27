@@ -16,6 +16,8 @@ namespace Voltaire.Controllers.Messages
         {
             // convert special discord tag to regular ID format
             userName = userName.StartsWith("<@!") && userName.EndsWith('>') ? userName.Substring(3, userName.Length - 4) : userName;
+            userName = userName.StartsWith("<@") && userName.EndsWith('>') ? userName.Substring(2, userName.Length - 3) : userName;
+
             userName = userName.StartsWith('@') ? userName.Substring(1) : userName;
             try
             {
