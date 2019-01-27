@@ -14,13 +14,24 @@ namespace Voltaire.Controllers.Messages
     {
         public static async Task PerformAsync(SocketCommandContext currentContext, string userName, string message, bool replyable, DataBase db)
         {
+            // convert special discord tag to regular ID format
+            userName = userName.StartsWith("<@!") && userName.EndsWith('>') ? userName.Substring(3, userName.Length - 4) : userName;
             userName = userName.StartsWith('@') ? userName.Substring(1) : userName;
             try
             {
                 var guildList = Send.GuildList(currentContext);
                 List<SocketGuildUser> allUsersList = ToUserList(guildList);
 
-                var userList = allUsersList.Where(x => x.Username != null && (x.Username.ToLower() == userName.ToLower() || x.Id.ToString() == userName) && !x.IsBot);
+                var userList = allUsersList.Where(x => x.Username != null &&
+                    (
+                        // simple username
+                        x.Username.ToLower() == userName.ToLower() || 
+                        // id
+                        x.Id.ToString() == userName || 
+                        // username with discriminator
+                        $"{x.Username}#{x.Discriminator}".ToLower() == userName.ToLower()
+                    )
+                    && !x.IsBot);
 
                 var allowDmList = userList.Where(x => FilterGuildByDirectMessageSetting(x, db));
 
