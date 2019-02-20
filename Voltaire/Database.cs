@@ -11,6 +11,7 @@ namespace Voltaire
     public class DataBase : DbContext
     {
         public DbSet<Models.Guild> Guilds { get; set; }
+        public DbSet<Models.BannedIdentifier> BannedIdentifiers { get; set; }
 
         private string _connection;
 

@@ -30,6 +30,7 @@ namespace Voltaire.Controllers.Messages
 
             var channel = await user.GetOrCreateDMChannelAsync();
             await channel.SendMessageAsync($"{prefix} replied: {message}");
+            await Send.SendSentEmote(context);
         }
     }
 }

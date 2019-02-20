@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20190220041503_BannedUsers.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CodenameGenerator" Version="1.2.43" />
     <PackageReference Include="Discord.Net" Version="1.0.2" />
     <PackageReference Include="DiscordBotsList.Api" Version="1.1.0" />
@@ -20,6 +24,10 @@
     <None Include="appsettings.json" CopyToPublishDirectory="Always">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="Preconditions\" />
   </ItemGroup>
   
 </Project>

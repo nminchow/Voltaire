@@ -57,5 +57,13 @@ namespace Voltaire.Modules
         {
             await Controllers.Settings.GenerateGuildUserIdentifierSeed.PerformAsync(Context, _database);
         }
+
+        [Command("ban", RunMode = RunMode.Async)]
+        [Summary("Ban a given identifer seed")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        public async Task Ban(string identifier)
+        {
+            await Controllers.Settings.BanIdentifier.PerformAsync(Context, identifier, _database);
+        }
     }
 }

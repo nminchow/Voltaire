@@ -21,16 +21,40 @@ namespace Voltaire.Controllers.Messages
             {
                 return defaultValue;
             }
-            var seed = guild.UserIdentifierSeed;
-            return Generate(context, seed);
+            return Generate(context, GetIdentifierInteger(context, guild));
         }
 
-        public static string Generate(SocketCommandContext context, int seed)
+        public static bool UserBlocked(SocketCommandContext context, Guild guild)
         {
+            var identifier = IdentifierString(GetIdentifierInteger(context, guild));
+            return guild.BannedIdentifiers.Any(x => x.Identifier == identifier);
+        }
+
+        private static string IdentifierString(int identifier)
+        {
+            return identifier.ToString().Substring(0, 4);
+        }
+
+        private static string Generate(SocketCommandContext context, int identifierInt)
+        {
+            //Console.WriteLine($"{resultString} {integer} {offset}");
+
+            var generator = new Generator(seed: identifierInt)
+            {
+                Casing = Casing.PascalCase,
+                Parts = new WordBank[] { WordBank.Titles, WordBank.Nouns }
+            };
+            return $"{generator.Generate()} - {IdentifierString(identifierInt)}";
+        }
+
+        public static int GetIdentifierInteger(SocketCommandContext context, Guild guild)
+        {
+            var seed = guild.UserIdentifierSeed;
+
             string password = LoadConfig.Instance.config["encryptionKey"];
 
             //var offset = (ulong)(new Random().Next(0, 10000));
-            
+
             var id = (context.User.Id + (ulong)seed).ToString();
 
             var bytes = GetHash(id, password);
@@ -38,15 +62,7 @@ namespace Voltaire.Controllers.Messages
             var resultString = BitConverter.ToString(bytes);
 
             var integer = BitConverter.ToInt32(bytes, bytes.Length - 4);
-
-            //Console.WriteLine($"{resultString} {integer} {offset}");
-
-            var generator = new Generator(seed: integer)
-            {
-                Casing = Casing.PascalCase,
-                Parts = new WordBank[] { WordBank.Titles, WordBank.Nouns }
-            };
-            return generator.Generate();
+            return integer;
         }
 
         public static Byte[] GetHash(String text, String key)
