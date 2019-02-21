@@ -32,7 +32,7 @@ namespace Voltaire.Controllers.Messages
 
         private static string IdentifierString(int identifier)
         {
-            return identifier.ToString().Substring(0, 4);
+            return Math.Abs(identifier).ToString().Substring(0, 4);
         }
 
         private static string Generate(SocketCommandContext context, int identifierInt)

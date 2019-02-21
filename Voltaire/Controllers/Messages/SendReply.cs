@@ -18,17 +18,27 @@ namespace Voltaire.Controllers.Messages
             var key = LoadConfig.Instance.config["encryptionKey"];
             var candidateId = Rijndael.Decrypt(replyKey, key, KeySize.Aes256);
 
-            var user = SendDirectMessage.ToUserList(candidateGuilds).Where(x => x.Id.ToString() == candidateId).FirstOrDefault();
-            if(user == null)
+            // TODO: potentially want to bake guilds into reply codes so we can ensure that the the replier isn't banned on the server where the original
+            // message was sent
+            var users = SendDirectMessage.ToUserList(candidateGuilds).Where(x => x.Id.ToString() == candidateId);
+            if(users.Count() == 0)
             {
                 await context.Channel.SendMessageAsync("Something is wrong with that reply code. It is possible the sender has left your server.");
                 return;
             }
 
-            var userGuild = FindOrCreateGuild.Perform(user.Guild, db);
-            var prefix = PrefixHelper.ComputePrefix(context, userGuild, "someone");
+            var allowedGuild = users.ToList().Select(x => FindOrCreateGuild.Perform(x.Guild, db)).FirstOrDefault(x => !PrefixHelper.UserBlocked(context, x));
 
-            var channel = await user.GetOrCreateDMChannelAsync();
+            if (allowedGuild == null)
+            {
+                await context.Channel.SendMessageAsync("It appears that you have been banned from using Voltaire on the targeted server. If you think this is an error, contact one of your admins.");
+                return;
+            }
+
+            var prefix = PrefixHelper.ComputePrefix(context, allowedGuild, "someone");
+
+            // all 'users' hera are technically the same user, so just take the first
+            var channel = await users.First().GetOrCreateDMChannelAsync();
             await channel.SendMessageAsync($"{prefix} replied: {message}");
             await Send.SendSentEmote(context);
         }

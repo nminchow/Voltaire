@@ -65,5 +65,21 @@ namespace Voltaire.Modules
         {
             await Controllers.Settings.BanIdentifier.PerformAsync(Context, identifier, _database);
         }
+
+        [Command("unban", RunMode = RunMode.Async)]
+        [Summary("Unban a given identifer seed")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        public async Task UnBan(string identifier)
+        {
+            await Controllers.Settings.UnBanIdentifier.PerformAsync(Context, identifier, _database);
+        }
+
+        [Command("list_bans", RunMode = RunMode.Async)]
+        [Summary("list current bans")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        public async Task ListBans()
+        {
+            await Controllers.Settings.ListBans.PerformAsync(Context, _database);
+        }
     }
 }

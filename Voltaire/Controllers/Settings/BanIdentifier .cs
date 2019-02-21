@@ -14,7 +14,7 @@ namespace Voltaire.Controllers.Settings
     {
         public static async Task PerformAsync(SocketCommandContext context, string identifier, DataBase db)
         {
-            if (identifier.Length != 4)
+            if (!ValidIdentifier(identifier))
             {
                 await context.Channel.SendMessageAsync("Please use the 4 digit number following the identifier to ban users.");
                 return;
@@ -31,6 +31,11 @@ namespace Voltaire.Controllers.Settings
             guild.BannedIdentifiers.Add(new BannedIdentifier { Identifier = identifier });
             db.SaveChanges();
             await context.Channel.SendMessageAsync(text: $"{identifier} is now banned");
+        }
+
+        public static bool ValidIdentifier(string identifier)
+        {
+            return identifier.Length == 4 && int.TryParse(identifier, out int n);
         }
     }
 }
