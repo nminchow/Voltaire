@@ -43,22 +43,28 @@ namespace Voltaire.Controllers.Messages
                     return;
                 }
 
-                var user = allowDmList.Where(x => FilterGuildByRole(x, currentContext.User, db)).FirstOrDefault();
+                var requiredRoleList = allowDmList.Where(x => FilterGuildByRole(x, currentContext.User, db));
 
-                if (user == null && allowDmList.Any())
+                if (!requiredRoleList.Any() && allowDmList.Any())
                 {
                     await currentContext.Channel.SendMessageAsync("user found, but you do not have the role required to DM them");
                     return;
                 }
-                else if(user == null)
+
+                var userGuild = requiredRoleList.ToList().Select(x => Tuple.Create(x, FindOrCreateGuild.Perform(x.Guild, db))).FirstOrDefault(x => !PrefixHelper.UserBlocked(currentContext, x.Item2));
+
+                if (userGuild == null && requiredRoleList.Any())
+                {
+                    await currentContext.Channel.SendMessageAsync("user found, but you have been banned from using Voltaire on your shared server");
+                }
+                else if (userGuild == null)
                 {
                     await currentContext.Channel.SendMessageAsync("user not found");
                     return;
                 }
 
-                var userChannel = await user.GetOrCreateDMChannelAsync();
-                var userGuild = FindOrCreateGuild.Perform(user.Guild, db);
-                var prefix = PrefixHelper.ComputePrefix(currentContext, userGuild, "anonymous user");
+                var userChannel = await userGuild.Item1.GetOrCreateDMChannelAsync();
+                var prefix = PrefixHelper.ComputePrefix(currentContext, userGuild.Item2, "anonymous user");
                 var messageFunction = Send.SendMessageToChannel(userChannel, replyable, currentContext.User);
                 await messageFunction(prefix, message);
                 await Send.SendSentEmote(currentContext);
