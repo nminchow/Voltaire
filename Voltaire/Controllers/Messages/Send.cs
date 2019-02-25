@@ -62,5 +62,15 @@ namespace Voltaire.Controllers.Messages
             var emote = Emote.Parse(LoadConfig.Instance.config["sent_emoji"]);
             await context.Message.AddReactionAsync(emote);
         }
+
+        public static async Task SendDeleteEmote(SocketCommandContext context)
+        {
+            if (!context.IsPrivate)
+                return; 
+            var emote = new Emoji(DeleteEmote);
+            await context.Message.AddReactionAsync(emote);
+        }
+
+        public static string DeleteEmote = "🗑";
     }
 }

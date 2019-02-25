@@ -62,6 +62,7 @@ namespace Voltaire.Controllers.Messages
                 var messageFunction = Send.SendMessageToChannel(userChannel, replyable, currentContext.User);
                 await messageFunction(prefix, message);
                 await Send.SendSentEmote(currentContext);
+                await Send.SendDeleteEmote(currentContext);
             }
             catch (Exception ex)
             {
