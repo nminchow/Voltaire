@@ -12,7 +12,7 @@ namespace Voltaire.Controllers.Messages
 {
     class SendDirectMessage
     {
-        public static async Task PerformAsync(SocketCommandContext currentContext, string userName, string message, bool replyable, DataBase db)
+        public static async Task PerformAsync(SocketCommandContext context, string userName, string message, bool replyable, DataBase db)
         {
             // convert special discord tag to regular ID format
             userName = userName.StartsWith("<@!") && userName.EndsWith('>') ? userName.Substring(3, userName.Length - 4) : userName;
@@ -21,7 +21,7 @@ namespace Voltaire.Controllers.Messages
             userName = userName.StartsWith('@') ? userName.Substring(1) : userName;
             try
             {
-                var guildList = Send.GuildList(currentContext);
+                var guildList = Send.GuildList(context);
                 List<SocketGuildUser> allUsersList = ToUserList(guildList);
 
                 var userList = allUsersList.Where(x => x.Username != null &&
@@ -39,29 +39,29 @@ namespace Voltaire.Controllers.Messages
 
                 if (!allowDmList.Any() && userList.Any())
                 {
-                    await currentContext.Channel.SendMessageAsync("user found, but channel permissions do not allow annonymous direct messaging");
+                    await Send.SendErrorWithDeleteReaction(context, "user found, but channel permissions do not allow annonymous direct messaging");
                     return;
                 }
 
-                var user = allowDmList.Where(x => FilterGuildByRole(x, currentContext.User, db)).FirstOrDefault();
+                var user = allowDmList.Where(x => FilterGuildByRole(x, context.User, db)).FirstOrDefault();
 
                 if (user == null && allowDmList.Any())
                 {
-                    await currentContext.Channel.SendMessageAsync("user found, but you do not have the role required to DM them");
+                    await Send.SendErrorWithDeleteReaction(context, "user found, but you do not have the role required to DM them");
                     return;
                 }
                 else if(user == null)
                 {
-                    await currentContext.Channel.SendMessageAsync("user not found");
+                    await Send.SendErrorWithDeleteReaction(context, "user not found");
                     return;
                 }
 
                 var userChannel = await user.GetOrCreateDMChannelAsync();
                 var userGuild = FindOrCreateGuild.Perform(user.Guild, db);
-                var prefix = PrefixHelper.ComputePrefix(currentContext, userGuild, "anonymous user");
-                var messageFunction = Send.SendMessageToChannel(userChannel, replyable, currentContext.User);
+                var prefix = PrefixHelper.ComputePrefix(context, userGuild, "anonymous user");
+                var messageFunction = Send.SendMessageToChannel(userChannel, replyable, context.User);
                 await messageFunction(prefix, message);
-                await Send.SendSentEmote(currentContext);
+                await Send.SendSentEmote(context);
             }
             catch (Exception ex)
             {

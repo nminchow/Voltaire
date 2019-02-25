@@ -21,7 +21,7 @@ namespace Voltaire.Controllers.Messages
             var user = SendDirectMessage.ToUserList(candidateGuilds).Where(x => x.Id.ToString() == candidateId).FirstOrDefault();
             if(user == null)
             {
-                await context.Channel.SendMessageAsync("Something is wrong with that reply code. It is possible the sender has left your server.");
+                await Send.SendErrorWithDeleteReaction(context, "Something is wrong with that reply code. It is possible the sender has left your server.");
                 return;
             }
 
