@@ -6,6 +6,7 @@ using Discord.WebSocket;
 using Discord.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+using Stripe;
 
 namespace Voltaire
 {
@@ -34,6 +35,8 @@ namespace Voltaire
             _commands = new CommandService();
 
             string token = configuration["discordAppToken"];
+
+            StripeConfiguration.SetApiKey(configuration["stripe_api_key"]);
 
             _services = new ServiceCollection()
                 .AddSingleton(_client)

@@ -22,6 +22,11 @@ namespace Voltaire.Controllers.Settings
 
             var guild = FindOrCreateGuild.Perform(context.Guild, db);
 
+            if(!EnsureActiveSubscription.Perform(guild,context,db))
+            {
+                return;
+            }
+
             if (guild.BannedIdentifiers.Any(x => x.Identifier == identifier))
             {
                 await context.Channel.SendMessageAsync("That identifier is already banned!");

@@ -18,5 +18,7 @@ namespace Voltaire.Models
         public bool UseUserIdentifiers { get; set; } = false;
         public int UserIdentifierSeed { get; set; } = 0;
         public virtual ICollection<BannedIdentifier> BannedIdentifiers { get; set; }
+        public string SubscriptionId { get; set; }
+
     }
 }
