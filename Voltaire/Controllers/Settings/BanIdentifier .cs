@@ -22,8 +22,9 @@ namespace Voltaire.Controllers.Settings
 
             var guild = FindOrCreateGuild.Perform(context.Guild, db);
 
-            if(!EnsureActiveSubscription.Perform(guild,context,db))
+            if(!EnsureActiveSubscription.Perform(guild,db))
             {
+                await context.Channel.SendMessageAsync("You need an active subscription to ban users. To get started, use `!volt upgrade`");
                 return;
             }
 

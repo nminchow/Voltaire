@@ -1,0 +1,31 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+using Voltaire.Controllers.Messages;
+using Discord.Commands;
+using Discord;
+using Discord.WebSocket;
+
+namespace Voltaire.Modules
+{
+    public class Subscription : ModuleBase<SocketCommandContext>
+    {
+        private DataBase _database;
+
+        public Subscription(DataBase database)
+        {
+            _database = database;
+        }
+
+        [Command("upgrade", RunMode = RunMode.Async)]
+        [Summary("Upgrade your subscription")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        public async Task Upgrade()
+        {
+            await Controllers.Subscriptions.Upgrade.PerformAsync(Context, _database);
+        }
+
+       
+    }
+}
