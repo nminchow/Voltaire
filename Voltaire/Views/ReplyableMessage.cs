@@ -31,7 +31,7 @@ namespace Voltaire.Views
                 };
             }
 
-            return new Tuple<string, Embed>("", embed);
+            return new Tuple<string, Embed>("", embed.Build());
         }
     }
 }

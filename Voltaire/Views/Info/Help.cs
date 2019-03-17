@@ -49,7 +49,7 @@ namespace Voltaire.Views.Info
             embed.AddField("!volt admin", "(server admin only - callable from server channel) Get a list of admin commands.");
             embed.AddField("!volt help", "(callable from anywhere) Display this help dialogue.");
 
-            return new Tuple<string, Embed>("", embed);
+            return new Tuple<string, Embed>("", embed.Build());
         }
 
         private static string ChannelName(SocketCommandContext context)

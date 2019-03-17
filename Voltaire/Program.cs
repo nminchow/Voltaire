@@ -57,8 +57,9 @@ namespace Voltaire
         {
             // Hook the MessageReceived Event into our Command Handler
             _client.MessageReceived += HandleCommandAsync;
+            _client.ReactionAdded += HandleReaction;
             // Discover all of the commands in this assembly and load them.
-            await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
+            await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
         }
 
         private async Task HandleCommandAsync(SocketMessage messageParam)
@@ -88,6 +89,31 @@ namespace Voltaire
             // rather an object stating if the command executed successfully)
             await SendCommandAsync(context, argPos);
         }
+
+        private async Task HandleReaction(Cacheable<IUserMessage, ulong> cache, ISocketMessageChannel channel, SocketReaction reaction)
+        {
+            if (reaction.Emote.Name != Controllers.Messages.Send.DeleteEmote)
+            {
+                return;
+            }
+
+            try
+            {
+                var message = await cache.GetOrDownloadAsync();
+                if (!message.Reactions[reaction.Emote].IsMe || message.Reactions[reaction.Emote].ReactionCount == 1)
+                {
+                    return;
+                }
+                Console.WriteLine("processed reaction!");
+                await  message.DeleteAsync();
+            }
+            catch (Exception e)
+            {
+                await channel.SendMessageAsync("Error deleting message. Does the bot have needed permission?");
+            }
+            return;
+        }
+
 
         private async Task SendCommandAsync(SocketCommandContext context, int argPos)
         {
