@@ -6,10 +6,10 @@ namespace Voltaire.Models
 {
     public class Guild
     {
-        //public Guild()
-        //{
-        //    this.BannedIdentifiers = new HashSet<BannedIdentifier>();
-        //}
+        public Guild()
+        {
+            this.BannedIdentifiers = new HashSet<BannedIdentifier>();
+        }
 
         public int ID { get; set; }
         public string DiscordId { get; set; }
