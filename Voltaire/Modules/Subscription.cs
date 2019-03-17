@@ -18,14 +18,20 @@ namespace Voltaire.Modules
             _database = database;
         }
 
-        [Command("upgrade", RunMode = RunMode.Async)]
+        [Command("pro", RunMode = RunMode.Async)]
         [Summary("Upgrade your subscription")]
         [RequireUserPermission(GuildPermission.Administrator)]
-        public async Task Upgrade()
+        public async Task Pro()
         {
-            await Controllers.Subscriptions.Upgrade.PerformAsync(Context, _database);
+            await Controllers.Subscriptions.Pro.PerformAsync(Context, _database);
         }
 
-       
+        [Command("cancel", RunMode = RunMode.Async)]
+        [Summary("Cancel your subscription")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        public async Task Cancel()
+        {
+            await Controllers.Subscriptions.Cancel.PerformAsync(Context, _database);
+        }
     }
 }

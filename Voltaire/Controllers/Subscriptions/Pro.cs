@@ -7,17 +7,27 @@ using System.Text;
 using System.Threading.Tasks;
 using Voltaire.Controllers.Helpers;
 using Voltaire.Models;
+using Stripe;
+
 
 namespace Voltaire.Controllers.Subscriptions
 {
-    class Upgrade
+    class Pro
     {
         public static async Task PerformAsync(SocketCommandContext context, DataBase db)
         {
             var guild = FindOrCreateGuild.Perform(context.Guild, db);
             if(EnsureActiveSubscription.Perform(guild, db))
             {
-                // todo info about subscription or just cancel message info
+                var service = new SubscriptionService();
+                var subscription = service.Get(guild.SubscriptionId);
+                var amount = subscription.Plan.Amount;
+                var date = subscription.CurrentPeriodEnd;
+
+                var message = $"Your current subscription will renew {date.Value.ToLongDateString()}.\n" +
+                    $"To cancel your subscription, use the `!volt cancel` command.";
+
+                await context.Channel.SendMessageAsync(text: message);
             }
             else
             {
