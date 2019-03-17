@@ -41,7 +41,7 @@ namespace Voltaire.Views.Info
 
             embed.AddField("!volt admin", "(callable from anywhere) Display this help dialogue.");
 
-            return new Tuple<string, Embed>("", embed);
+            return new Tuple<string, Embed>("", embed.Build());
         }
     }
 }
