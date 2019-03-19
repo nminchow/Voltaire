@@ -39,6 +39,12 @@ namespace Voltaire.Views.Info
             embed.AddField("!volt new_identifiers", "Generate new random identifiers for users." +
                 $"\nex: `!volt new_identifiers`");
 
+            embed.AddField("!volt ban {user id}", "Ban a user by user ID. This is the 4 digit number after their identifier when the \"user_identifiers\" setting is enabled." +
+                $"\nex: `!volt ban 4321`");
+
+            embed.AddField("!volt list_bans ", "List currently banned user IDs." +
+                $"\nex: `!volt list_bans`");
+
             embed.AddField("!volt admin", "(callable from anywhere) Display this help dialogue.");
 
             return new Tuple<string, Embed>("", embed.Build());

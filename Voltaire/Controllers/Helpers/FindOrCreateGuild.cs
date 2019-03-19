@@ -1,4 +1,5 @@
-﻿using Discord.WebSocket;
+﻿using Discord;
+using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace Voltaire.Controllers.Helpers
 {
     class FindOrCreateGuild
     {
-        public static Guild Perform(SocketGuild guild, DataBase db)
+        public static Guild Perform(IGuild guild, DataBase db)
         {
             var dbGuild = db.Guilds.Include(x => x.BannedIdentifiers).FirstOrDefault(u => u.DiscordId == guild.Id.ToString());
             if (dbGuild == null)
