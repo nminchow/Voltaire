@@ -24,7 +24,7 @@ namespace Voltaire.Controllers.Settings
 
             if(!EnsureActiveSubscription.Perform(guild,db))
             {
-                await context.Channel.SendMessageAsync("You need an active subscription to ban users. To get started, use `!volt pro`");
+                await context.Channel.SendMessageAsync("You need an active Voltaire Pro subscription to ban users. To get started, use `!volt pro`");
                 return;
             }
 

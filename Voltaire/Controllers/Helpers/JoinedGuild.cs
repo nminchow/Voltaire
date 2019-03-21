@@ -20,7 +20,6 @@ namespace Voltaire.Controllers.Helpers
                 IConfiguration configuration = LoadConfig.Instance.config;
 
                 FindOrCreateGuild.Perform(guild, db);
-                db.SaveChanges();
 
                 var view = Views.Info.JoinedGuild.Response();
                 await guild.TextChannels.First().SendMessageAsync(text: view.Item1, embed: view.Item2);

@@ -42,8 +42,11 @@ namespace Voltaire.Views.Info
             embed.AddField("!volt ban {user id}", "Ban a user by user ID. This is the 4 digit number after their identifier when the \"user_identifiers\" setting is enabled." +
                 $"\nex: `!volt ban 4321`");
 
-            embed.AddField("!volt list_bans ", "List currently banned user IDs." +
+            embed.AddField("!volt list_bans", "List currently banned user IDs." +
                 $"\nex: `!volt list_bans`");
+
+            embed.AddField("!volt admin_role \"{role name}\"", "Set a role which can use admin commands and ban users on this server. (True server admins can always use commands as well)" +
+                $"\nex: `!volt admin_role \"mods of truth\"`");
 
             embed.AddField("!volt admin", "(callable from anywhere) Display this help dialogue.");
 

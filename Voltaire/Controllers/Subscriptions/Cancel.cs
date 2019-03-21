@@ -29,7 +29,7 @@ namespace Voltaire.Controllers.Subscriptions
             }
             else
             {
-                await context.Channel.SendMessageAsync(text: "You do not currently have an active subscription. To create one, use the" +
+                await context.Channel.SendMessageAsync(text: "You do not currently have an active Voltaire Pro subscription. To create one, use the" +
                     " `!volt pro` command.");
             }
         }

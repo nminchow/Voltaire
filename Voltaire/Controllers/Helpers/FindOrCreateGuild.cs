@@ -18,6 +18,7 @@ namespace Voltaire.Controllers.Helpers
             {
                 dbGuild = new Guild { DiscordId = guild.Id.ToString() };
                 db.Guilds.Add(dbGuild);
+                db.SaveChanges();
             }
             return dbGuild;
         }
