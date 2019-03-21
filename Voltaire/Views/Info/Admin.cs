@@ -36,7 +36,7 @@ namespace Voltaire.Views.Info
             embed.AddField("!volt user_identifiers {true|false}", "Enable or disable the use of a unique (yet annonymous) identifier for users when they send messages." +
                 $"\nex: `!volt user_identifiers false`");
 
-            embed.AddField("!volt new_identifiers", "Generate new random identifiers for users." +
+            embed.AddField("!volt new_identifiers", "Generate new random identifiers for users. (Note: This will also reset your banned users.)" +
                 $"\nex: `!volt new_identifiers`");
 
             embed.AddField("!volt ban {user id}", "Ban a user by user ID. This is the 4 digit number after their identifier when the \"user_identifiers\" setting is enabled." +
