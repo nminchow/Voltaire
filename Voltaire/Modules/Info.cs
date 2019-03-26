@@ -24,5 +24,12 @@ namespace Voltaire.Modules
             var view = Views.Info.Admin.Response(Context);
             await Context.Channel.SendMessageAsync(view.Item1, embed: view.Item2);
         }
+
+        [Command("link", RunMode = RunMode.Async)]
+        [Summary("display invite link")]
+        public async Task InviteLink()
+        {
+            await Context.Channel.SendMessageAsync("<https://discordapp.com/oauth2/authorize?client_id=425833927517798420&scope=bot>");
+        }
     }
 }
