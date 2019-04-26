@@ -35,6 +35,7 @@ namespace Voltaire.Controllers.Messages
             {
                 return async (username, message) =>
                 {
+                    message = CheckForMentions(channel, message);
                     if (string.IsNullOrEmpty(username))
                     {
                         await channel.SendMessageAsync(message);
@@ -50,6 +51,22 @@ namespace Voltaire.Controllers.Messages
                 var view = Views.ReplyableMessage.Response(username, message, replyHash.ToString());
                 await channel.SendMessageAsync(view.Item1, embed: view.Item2);
             };
+        }
+
+        private static string CheckForMentions(IMessageChannel channel, string message)
+        {
+            var words = message.Split().Where( x => x.StartsWith("@"));
+            if (!words.Any())
+                return message;
+
+            var users = AsyncEnumerableExtensions.Flatten(channel.GetUsersAsync());
+
+            users.Select(x => $"@{x.Username}").Intersect(words.ToAsyncEnumerable()).ForEach(async x => {
+                var user = await users.First(y => y.Username == x.Substring(1));
+                message = message.Replace(x, user.Mention);
+            });
+
+            return message;
         }
 
         public static IEnumerable<SocketGuild> GuildList(SocketCommandContext currentContext)
