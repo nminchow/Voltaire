@@ -19,7 +19,7 @@ namespace Voltaire.Views
                 Color = new Color(111, 111, 111),
                 Footer = new EmbedFooterBuilder
                 {
-                    Text = $"send_reply {reply}"
+                    Text = $"send_reply+r {reply}"
                 }
             };
 

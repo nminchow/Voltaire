@@ -29,9 +29,9 @@ namespace Voltaire.Controllers.Messages
             }
         }
 
-        public static Func<string, string, Task> SendMessageToChannel(IMessageChannel channel, bool reply, SocketUser user)
+        public static Func<string, string, Task> SendMessageToChannel(IMessageChannel channel, bool replyable, SocketUser user)
         {
-            if (!reply)
+            if (!replyable)
             {
                 return async (username, message) =>
                 {

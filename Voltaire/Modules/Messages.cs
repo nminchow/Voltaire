@@ -84,7 +84,19 @@ namespace Voltaire.Modules
         [Command("send_reply", RunMode = RunMode.Async)]
         public async Task SendReply(string key, [Remainder] string message)
         {
-            await Controllers.Messages.SendReply.PerformAsync(Context, key, message, _database);
+            await Controllers.Messages.SendReply.PerformAsync(Context, key, message, false,_database);
+        }
+
+        [Command("send_reply+r", RunMode = RunMode.Async)]
+        public async Task SendReplyRepliableError(string key)
+        {
+            await Context.Channel.SendMessageAsync("Please specify a message, ex: `send_reply+r iMIb62udZ7R/KCfhn634+AHvrrQ Don't make a girl a promise you know you can't keep.`");
+        }
+
+        [Command("send_reply+r", RunMode = RunMode.Async)]
+        public async Task SendReplyRepliable(string key, [Remainder] string message)
+        {
+            await Controllers.Messages.SendReply.PerformAsync(Context, key, message, true, _database);
         }
     }
 }

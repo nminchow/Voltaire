@@ -11,7 +11,7 @@ namespace Voltaire.Controllers.Messages
 {
     class SendReply
     {
-        public static async Task PerformAsync(SocketCommandContext context, string replyKey, string message, DataBase db)
+        public static async Task PerformAsync(SocketCommandContext context, string replyKey, string message, bool replyable, DataBase db)
         {
             var candidateGuilds = Send.GuildList(context);
 
@@ -35,11 +35,14 @@ namespace Voltaire.Controllers.Messages
                 return;
             }
 
-            var prefix = PrefixHelper.ComputePrefix(context, allowedGuild, "someone");
+            var prefix = $"{PrefixHelper.ComputePrefix(context, allowedGuild, "someone")} replied";
 
             // all 'users' hera are technically the same user, so just take the first
             var channel = await users.First().GetOrCreateDMChannelAsync();
-            await channel.SendMessageAsync($"{prefix} replied: {message}");
+            var messageFunction = Send.SendMessageToChannel(channel, replyable, context.User);
+            await messageFunction(prefix, message);
+            await Send.SendSentEmote(context);
+
             await Send.SendSentEmote(context);
         }
     }
