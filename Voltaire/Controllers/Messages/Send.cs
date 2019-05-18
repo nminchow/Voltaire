@@ -55,13 +55,14 @@ namespace Voltaire.Controllers.Messages
 
         private static string CheckForMentions(IMessageChannel channel, string message)
         {
-            var words = message.Split().Where( x => x.StartsWith("@"));
+            var words = message.Split().Where(x => x.StartsWith("@"));
             if (!words.Any())
                 return message;
 
             var users = AsyncEnumerableExtensions.Flatten(channel.GetUsersAsync());
 
-            users.Select(x => $"@{x.Username}").Intersect(words.ToAsyncEnumerable()).ForEach(async x => {
+            users.Select(x => $"@{x.Username}").Intersect(words.ToAsyncEnumerable()).ForEach(async x =>
+            {
                 var user = await users.First(y => y.Username == x.Substring(1));
                 message = message.Replace(x, user.Mention);
             });

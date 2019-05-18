@@ -73,7 +73,7 @@ namespace Voltaire.Controllers.Messages
             {
                 Console.WriteLine(ex.ToString());
             }
-            
+            return;
         }
 
         public static List<SocketGuildUser> ToUserList(IEnumerable<SocketGuild> guildList)

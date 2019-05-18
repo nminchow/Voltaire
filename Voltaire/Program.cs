@@ -119,7 +119,7 @@ namespace Voltaire
         {
             var result = await _commands.ExecuteAsync(context, argPos, _services);
             if (!result.IsSuccess)
-                await context.Channel.SendMessageAsync(result.ErrorReason);
+                await Controllers.Messages.Send.SendErrorWithDeleteReaction(context, result.ErrorReason);
         }
 
         private Task Log(LogMessage msg)
