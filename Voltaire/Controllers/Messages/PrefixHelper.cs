@@ -39,12 +39,12 @@ namespace Voltaire.Controllers.Messages
         {
             //Console.WriteLine($"{resultString} {integer} {offset}");
 
-            var generator = new Generator(seed: identifierInt)
-            {
-                Casing = Casing.PascalCase,
-                Parts = new WordBank[] { WordBank.Titles, WordBank.Nouns }
-            };
-            return $"{generator.Generate()} - {IdentifierString(identifierInt)}";
+            //var generator = new Generator(seed: identifierInt)
+            //{
+            //    Casing = Casing.PascalCase,
+            //    Parts = new WordBank[] { WordBank.Titles, WordBank.Nouns }
+            //};
+            return $"User#{IdentifierString(identifierInt)}";
         }
 
         public static int GetIdentifierInteger(SocketCommandContext context, Guild guild)
