@@ -13,7 +13,7 @@ namespace Voltaire
     class Program
     {
         private CommandService _commands;
-        private DiscordSocketClient _client;
+        private DiscordShardedClient _client;
         private IServiceProvider _services;
 
         public static void Main(string[] args)
@@ -25,7 +25,7 @@ namespace Voltaire
             IConfiguration configuration = LoadConfig.Instance.config;
             var db = new DataBase(configuration.GetConnectionString("sql"));
 
-            _client = new DiscordSocketClient();
+            _client = new DiscordShardedClient();
             _client.Log += Log;
             _client.JoinedGuild += Controllers.Helpers.JoinedGuild.Joined(db, configuration["discordBotListToken"]);
             // disable joined message for now
@@ -67,7 +67,8 @@ namespace Voltaire
             // Don't process the command if it was a System Message
             var message = messageParam as SocketUserMessage;
             if (message == null) return;
-            var context = new SocketCommandContext(_client, message);
+            //var context = new SocketCommandContext(_client, message);
+            var context = new ShardedCommandContext(_client, message);
 
             // Create a number to track where the prefix ends and the command begins
             var prefix = $"!volt ";
