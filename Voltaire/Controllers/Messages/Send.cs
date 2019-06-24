@@ -72,7 +72,7 @@ namespace Voltaire.Controllers.Messages
 
         public static IEnumerable<SocketGuild> GuildList(ShardedCommandContext currentContext)
         {
-            return currentContext.User.MutualGuilds;
+            return currentContext.Client.Guilds.Where(x => x.Users.Any(u => u.Id == currentContext.User.Id));
         }
 
         public static async Task SendSentEmote(ShardedCommandContext context)
