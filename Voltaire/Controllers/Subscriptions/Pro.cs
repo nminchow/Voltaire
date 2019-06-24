@@ -14,7 +14,7 @@ namespace Voltaire.Controllers.Subscriptions
 {
     class Pro
     {
-        public static async Task PerformAsync(SocketCommandContext context, DataBase db)
+        public static async Task PerformAsync(ShardedCommandContext context, DataBase db)
         {
             var guild = FindOrCreateGuild.Perform(context.Guild, db);
             if(EnsureActiveSubscription.Perform(guild, db))

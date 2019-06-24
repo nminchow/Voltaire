@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Voltaire.Modules
 {
-    public class Info : ModuleBase<SocketCommandContext>
+    public class Info : ModuleBase<ShardedCommandContext>
     {
         [Command("help", RunMode = RunMode.Async)]
         [Summary("get command overview")]

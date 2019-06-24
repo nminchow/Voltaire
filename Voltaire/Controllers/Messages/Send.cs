@@ -12,7 +12,7 @@ namespace Voltaire.Controllers.Messages
 {
     class Send
     {
-        public static async Task PerformAsync(SocketCommandContext context, string channelName, string message, bool reply, DataBase db)
+        public static async Task PerformAsync(ShardedCommandContext context, string channelName, string message, bool reply, DataBase db)
         {
             var candidateGuilds = GuildList(context);
             switch (candidateGuilds.Count())
@@ -70,18 +70,18 @@ namespace Voltaire.Controllers.Messages
             return message;
         }
 
-        public static IEnumerable<SocketGuild> GuildList(SocketCommandContext currentContext)
+        public static IEnumerable<SocketGuild> GuildList(ShardedCommandContext currentContext)
         {
             return currentContext.User.MutualGuilds;
         }
 
-        public static async Task SendSentEmote(SocketCommandContext context)
+        public static async Task SendSentEmote(ShardedCommandContext context)
         {
             var emote = Emote.Parse(LoadConfig.Instance.config["sent_emoji"]);
             await context.Message.AddReactionAsync(emote);
         }
 
-        public static async Task SendErrorWithDeleteReaction(SocketCommandContext context, string errorMessage)
+        public static async Task SendErrorWithDeleteReaction(ShardedCommandContext context, string errorMessage)
         {
             var message = await context.Channel.SendMessageAsync(errorMessage);
             var emote = new Emoji(DeleteEmote);

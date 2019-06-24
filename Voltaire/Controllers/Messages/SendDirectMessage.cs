@@ -12,7 +12,7 @@ namespace Voltaire.Controllers.Messages
 {
     class SendDirectMessage
     {
-        public static async Task PerformAsync(SocketCommandContext context, string userName, string message, bool replyable, DataBase db)
+        public static async Task PerformAsync(ShardedCommandContext context, string userName, string message, bool replyable, DataBase db)
         {
             // convert special discord tag to regular ID format
             userName = userName.StartsWith("<@!") && userName.EndsWith('>') ? userName.Substring(3, userName.Length - 4) : userName;

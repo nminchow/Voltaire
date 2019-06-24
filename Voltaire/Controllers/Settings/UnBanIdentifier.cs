@@ -12,7 +12,7 @@ namespace Voltaire.Controllers.Settings
 {
     class UnBanIdentifier
     {
-        public static async Task PerformAsync(SocketCommandContext context, string identifier, DataBase db)
+        public static async Task PerformAsync(ShardedCommandContext context, string identifier, DataBase db)
         {
             if (!BanIdentifier.ValidIdentifier(identifier))
             {

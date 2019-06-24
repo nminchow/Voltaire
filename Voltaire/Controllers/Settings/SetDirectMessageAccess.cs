@@ -9,7 +9,7 @@ namespace Voltaire.Controllers.Settings
 {
     class SetDirectMessageAccess
     {
-        public static async Task PerformAsync(SocketCommandContext context, Boolean setting, DataBase db)
+        public static async Task PerformAsync(ShardedCommandContext context, Boolean setting, DataBase db)
         {
             var guild = FindOrCreateGuild.Perform(context.Guild, db);
             guild.AllowDirectMessage = setting;

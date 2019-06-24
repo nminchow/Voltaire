@@ -10,7 +10,7 @@ namespace Voltaire.Controllers.Settings
 {
     class ClearAllowedRole
     {
-        public static async Task PerformAsync(SocketCommandContext context, DataBase db)
+        public static async Task PerformAsync(ShardedCommandContext context, DataBase db)
         {
             var guild = FindOrCreateGuild.Perform(context.Guild, db);
             guild.AllowedRole = null;

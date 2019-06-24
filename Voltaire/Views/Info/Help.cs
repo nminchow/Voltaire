@@ -11,7 +11,7 @@ namespace Voltaire.Views.Info
     public static class Help
     {
 
-        public static Tuple<string, Embed> Response(SocketCommandContext context)
+        public static Tuple<string, Embed> Response(ShardedCommandContext context)
         {
 
             var embed = new EmbedBuilder
@@ -53,12 +53,12 @@ namespace Voltaire.Views.Info
             return new Tuple<string, Embed>("", embed.Build());
         }
 
-        private static string ChannelName(SocketCommandContext context)
+        private static string ChannelName(ShardedCommandContext context)
         {
             return context == null || context.IsPrivate ? "some-channel" : context.Channel.Name;
         }
 
-        private static string GuildName(SocketCommandContext context)
+        private static string GuildName(ShardedCommandContext context)
         {
             return  context.IsPrivate ? "l33t g4merz" : context.Guild.Name;
         }

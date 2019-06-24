@@ -12,7 +12,7 @@ namespace Voltaire.Controllers.Settings
 {
     class BanIdentifier
     {
-        public static async Task PerformAsync(SocketCommandContext context, string identifier, DataBase db)
+        public static async Task PerformAsync(ShardedCommandContext context, string identifier, DataBase db)
         {
             if (!ValidIdentifier(identifier))
             {

@@ -10,7 +10,7 @@ namespace Voltaire.Controllers.Settings
 {
     class SetAdminRole
     {
-        public static async Task PerformAsync(SocketCommandContext context, SocketRole role, DataBase db)
+        public static async Task PerformAsync(ShardedCommandContext context, SocketRole role, DataBase db)
         {
             var guild = FindOrCreateGuild.Perform(context.Guild, db);
 

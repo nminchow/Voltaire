@@ -10,7 +10,7 @@ namespace Voltaire.Controllers.Messages
 {
     class SendToGuild
     {
-        public static async Task PerformAsync(SocketCommandContext context, string guildName, string channelName, string message, bool replyable, DataBase db)
+        public static async Task PerformAsync(ShardedCommandContext context, string guildName, string channelName, string message, bool replyable, DataBase db)
         {
             var unfilteredList = Send.GuildList(context);
             var candidateGuilds = unfilteredList.Where(x => x.Name.ToLower().Contains(guildName.ToLower()));
@@ -36,7 +36,7 @@ namespace Voltaire.Controllers.Messages
             }
         }
 
-        public static async Task LookupAndSendAsync(SocketGuild guild, SocketCommandContext context, string channelName, string message, bool replyable, DataBase db)
+        public static async Task LookupAndSendAsync(SocketGuild guild, ShardedCommandContext context, string channelName, string message, bool replyable, DataBase db)
         {
             var dbGuild = FindOrCreateGuild.Perform(guild, db);
             if (!UserHasRole.Perform(guild, context.User, dbGuild))

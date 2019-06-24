@@ -67,7 +67,7 @@ namespace Voltaire
             // Don't process the command if it was a System Message
             var message = messageParam as SocketUserMessage;
             if (message == null) return;
-            //var context = new SocketCommandContext(_client, message);
+            //var context = new ShardedCommandContext(_client, message);
             var context = new ShardedCommandContext(_client, message);
 
             // Create a number to track where the prefix ends and the command begins
@@ -116,7 +116,7 @@ namespace Voltaire
         }
 
 
-        private async Task SendCommandAsync(SocketCommandContext context, int argPos)
+        private async Task SendCommandAsync(ShardedCommandContext context, int argPos)
         {
             var result = await _commands.ExecuteAsync(context, argPos, _services);
             if (!result.IsSuccess)

@@ -10,7 +10,7 @@ using Voltaire.Controllers.Messages;
 
 namespace Voltaire.Modules
 {
-    public class Messages : ModuleBase<SocketCommandContext>
+    public class Messages : ModuleBase<ShardedCommandContext>
     {
 
         private DataBase _database;

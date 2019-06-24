@@ -11,7 +11,7 @@ namespace Voltaire.Controllers.Messages
 {
     class SendReply
     {
-        public static async Task PerformAsync(SocketCommandContext context, string replyKey, string message, bool replyable, DataBase db)
+        public static async Task PerformAsync(ShardedCommandContext context, string replyKey, string message, bool replyable, DataBase db)
         {
             var candidateGuilds = Send.GuildList(context);
 

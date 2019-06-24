@@ -9,7 +9,7 @@ using Discord.WebSocket;
 
 namespace Voltaire.Modules
 {
-    public class Admin : ModuleBase<SocketCommandContext>
+    public class Admin : ModuleBase<ShardedCommandContext>
     {
         private DataBase _database;
 

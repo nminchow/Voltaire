@@ -15,7 +15,7 @@ namespace Voltaire.Controllers.Messages
     class PrefixHelper
     {
 
-        public static string ComputePrefix(SocketCommandContext context, Guild guild, string defaultValue = "")
+        public static string ComputePrefix(ShardedCommandContext context, Guild guild, string defaultValue = "")
         {
             if (!guild.UseUserIdentifiers)
             {
@@ -24,7 +24,7 @@ namespace Voltaire.Controllers.Messages
             return Generate(context, GetIdentifierInteger(context, guild));
         }
 
-        public static bool UserBlocked(SocketCommandContext context, Guild guild)
+        public static bool UserBlocked(ShardedCommandContext context, Guild guild)
         {
             var identifier = IdentifierString(GetIdentifierInteger(context, guild));
             return guild.BannedIdentifiers.Any(x => x.Identifier == identifier);
@@ -35,7 +35,7 @@ namespace Voltaire.Controllers.Messages
             return Math.Abs(identifier).ToString().Substring(0, 4);
         }
 
-        private static string Generate(SocketCommandContext context, int identifierInt)
+        private static string Generate(ShardedCommandContext context, int identifierInt)
         {
             //Console.WriteLine($"{resultString} {integer} {offset}");
 
@@ -47,7 +47,7 @@ namespace Voltaire.Controllers.Messages
             return $"User#{IdentifierString(identifierInt)}";
         }
 
-        public static int GetIdentifierInteger(SocketCommandContext context, Guild guild)
+        public static int GetIdentifierInteger(ShardedCommandContext context, Guild guild)
         {
             var seed = guild.UserIdentifierSeed;
 
