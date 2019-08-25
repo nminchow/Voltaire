@@ -39,7 +39,7 @@ namespace Voltaire.Controllers.Messages
 
             // all 'users' hera are technically the same user, so just take the first
             var channel = await users.First().GetOrCreateDMChannelAsync();
-            var messageFunction = Send.SendMessageToChannel(channel, replyable, context.User);
+            var messageFunction = Send.SendMessageToChannel(channel, replyable, context);
             await messageFunction(prefix, message);
             await Send.SendSentEmote(context);
 

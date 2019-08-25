@@ -29,7 +29,7 @@ namespace Voltaire.Controllers.Messages
             }
         }
 
-        public static Func<string, string, Task> SendMessageToChannel(IMessageChannel channel, bool replyable, SocketUser user)
+        public static Func<string, string, Task> SendMessageToChannel(IMessageChannel channel, bool replyable, ShardedCommandContext context)
         {
             if (!replyable)
             {
@@ -38,19 +38,38 @@ namespace Voltaire.Controllers.Messages
                     message = CheckForMentions(channel, message);
                     if (string.IsNullOrEmpty(username))
                     {
-                        await channel.SendMessageAsync(message);
+                        await SendMessageAndCatchError(() => { return channel.SendMessageAsync(message); }, context);
                         return;
                     }
-                    await channel.SendMessageAsync($"**{username}**: {message}");
+                    await SendMessageAndCatchError(() => { return channel.SendMessageAsync($"**{username}**: {message}"); }, context);
                 };
             }
             return async (username, message) =>
             {
                 var key = LoadConfig.Instance.config["encryptionKey"];
-                var replyHash = Rijndael.Encrypt(user.Id.ToString(), key, KeySize.Aes256);
+                var replyHash = Rijndael.Encrypt(context.User.Id.ToString(), key, KeySize.Aes256);
                 var view = Views.ReplyableMessage.Response(username, message, replyHash.ToString());
-                await channel.SendMessageAsync(view.Item1, embed: view.Item2);
+                await SendMessageAndCatchError(() => { return channel.SendMessageAsync(view.Item1, embed: view.Item2); }, context);
             };
+        }
+
+        public static async Task SendMessageAndCatchError(Func<Task> send, ShardedCommandContext context)
+        {
+            try
+            {
+                await send();
+            }
+            catch (Discord.Net.HttpException e)
+            {
+                if (e.DiscordCode == 50013)
+                {
+                    await context.Channel.SendMessageAsync("Voltaire doesn't have the " +
+                        "permissions required to send this message. Ensure Voltaire can access the channel you are tyring to send to, and that it has " +
+                        " \"Embed Links\" and \"Use External Emojis\" permission.");
+                }
+                // throw to stop execution
+                throw e;
+            }
         }
 
         private static string CheckForMentions(IMessageChannel channel, string message)

@@ -65,7 +65,7 @@ namespace Voltaire.Controllers.Messages
 
                 var userChannel = await userGuild.Item1.GetOrCreateDMChannelAsync();
                 var prefix = PrefixHelper.ComputePrefix(context, userGuild.Item2, "anonymous user");
-                var messageFunction = Send.SendMessageToChannel(userChannel, replyable, context.User);
+                var messageFunction = Send.SendMessageToChannel(userChannel, replyable, context);
                 await messageFunction(prefix, message);
                 await Send.SendSentEmote(context);
             }
