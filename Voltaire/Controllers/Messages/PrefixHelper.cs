@@ -21,13 +21,18 @@ namespace Voltaire.Controllers.Messages
             {
                 return defaultValue;
             }
-            return Generate(context, GetIdentifierInteger(context, guild));
+            return Generate(context, GetIdentifierInteger(context.User.Id, guild));
         }
 
-        public static bool UserBlocked(ShardedCommandContext context, Guild guild)
+        public static bool UserBlocked(ulong userId, Guild guild)
         {
-            var identifier = IdentifierString(GetIdentifierInteger(context, guild));
+            var identifier = IdentifierString(GetIdentifierInteger(userId, guild));
             return guild.BannedIdentifiers.Any(x => x.Identifier == identifier);
+        }
+
+        public static string GetIdentifierString(ulong userId, Guild guild)
+        {
+            return IdentifierString(GetIdentifierInteger(userId, guild));
         }
 
         private static string IdentifierString(int identifier)
@@ -47,7 +52,7 @@ namespace Voltaire.Controllers.Messages
             return $"User#{IdentifierString(identifierInt)}";
         }
 
-        public static int GetIdentifierInteger(ShardedCommandContext context, Guild guild)
+        public static int GetIdentifierInteger(ulong userId, Guild guild)
         {
             var seed = guild.UserIdentifierSeed;
 
@@ -55,7 +60,7 @@ namespace Voltaire.Controllers.Messages
 
             //var offset = (ulong)(new Random().Next(0, 10000));
 
-            var id = (context.User.Id + (ulong)seed).ToString();
+            var id = (userId + (ulong)seed).ToString();
 
             var bytes = GetHash(id, password);
 

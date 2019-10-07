@@ -51,7 +51,7 @@ namespace Voltaire.Controllers.Messages
                     return;
                 }
 
-                var userGuild = requiredRoleList.ToList().Select(x => Tuple.Create(x, FindOrCreateGuild.Perform(x.Guild, db))).FirstOrDefault(x => !PrefixHelper.UserBlocked(context, x.Item2));
+                var userGuild = requiredRoleList.ToList().Select(x => Tuple.Create(x, FindOrCreateGuild.Perform(x.Guild, db))).FirstOrDefault(x => !PrefixHelper.UserBlocked(context.User.Id, x.Item2));
 
                 if (userGuild == null && requiredRoleList.Any())
                 {

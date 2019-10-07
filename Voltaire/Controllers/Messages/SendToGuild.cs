@@ -52,7 +52,7 @@ namespace Voltaire.Controllers.Messages
                 return;
             }
 
-            if (PrefixHelper.UserBlocked(context, dbGuild))
+            if (PrefixHelper.UserBlocked(context.User.Id, dbGuild))
             {
                 await context.Channel.SendMessageAsync("It appears that you have been banned from using Voltaire on the targeted server. If you think this is an error, contact one of your admins.");
                 return;

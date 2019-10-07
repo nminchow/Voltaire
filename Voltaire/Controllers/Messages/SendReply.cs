@@ -27,7 +27,7 @@ namespace Voltaire.Controllers.Messages
                 return;
             }
 
-            var allowedGuild = users.ToList().Select(x => FindOrCreateGuild.Perform(x.Guild, db)).FirstOrDefault(x => !PrefixHelper.UserBlocked(context, x));
+            var allowedGuild = users.ToList().Select(x => FindOrCreateGuild.Perform(x.Guild, db)).FirstOrDefault(x => !PrefixHelper.UserBlocked(context.User.Id, x));
 
             if (allowedGuild == null)
             {
