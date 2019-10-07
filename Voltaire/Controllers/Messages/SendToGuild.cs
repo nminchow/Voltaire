@@ -58,6 +58,12 @@ namespace Voltaire.Controllers.Messages
                 return;
             }
 
+            if(!IncrementAndCheckMessageLimit.Perform(dbGuild, db))
+            {
+                await Send.SendErrorWithDeleteReaction(context, "This server has reached its limit of 50 messages for the month. To lift this limit, ask an admin or moderator to upgrade your server to Voltaire Pro.");
+                return;
+            }
+
             var prefix = PrefixHelper.ComputePrefix(context, dbGuild);
             var channel = candidateChannels.OrderBy(x => x.Name.Length).First();
             var messageFunction = Send.SendMessageToChannel(channel, replyable, context);

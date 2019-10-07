@@ -20,6 +20,8 @@ namespace Voltaire.Models
         public int UserIdentifierSeed { get; set; } = 0;
         public virtual ICollection<BannedIdentifier> BannedIdentifiers { get; set; }
         public string SubscriptionId { get; set; }
+        public int MessagesSentThisMonth { get; set; } = 0;
+        public DateTime TrackingMonth { get; set; } = DateTime.Now;
 
     }
 }
