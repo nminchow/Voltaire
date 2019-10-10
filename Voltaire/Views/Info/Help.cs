@@ -47,7 +47,7 @@ namespace Voltaire.Views.Info
             //    "a code at the bottom which can be used to reply." +
             //    $"\nex: `send_reply iMIb62udZ7R/KCfhn634+AHvrrQ Don't make a girl a promise you know you can't keep.`");
             embed.AddField("!volt link", "Display the [bot's invite link](https://discordapp.com/oauth2/authorize?client_id=425833927517798420&scope=bot).");
-            embed.AddField("!volt admin", "(server admin only - callable from server channel) Get a list of admin commands.");
+            embed.AddField("!volt admin", "(server admin only - callable from server channel) Get a list of admin commands, including details on Voltaire Pro.");
             embed.AddField("!volt help", "(callable from anywhere) Display this help dialogue.");
 
             return new Tuple<string, Embed>("", embed.Build());

@@ -39,6 +39,9 @@ namespace Voltaire.Views.Info
             embed.AddField("!volt new_identifiers", "Generate new random identifiers for users. (Note: Banned users will still be banned.)" +
                 $"\nex: `!volt new_identifiers`");
 
+            embed.AddField("!volt pro", "Upgrade and monitor your Pro subscription." +
+                $"\nex: `!volt admin`");
+
             embed.AddField("!volt ban {user id}", "Ban a user by user ID. This is the 4 digit number after their identifier when the \"user_identifiers\" setting is enabled." +
                 $"\nex: `!volt ban 4321`");
 
