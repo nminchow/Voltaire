@@ -42,10 +42,10 @@ namespace Voltaire.Views.Info
             embed.AddField("!volt pro", "Upgrade and monitor your Pro subscription." +
                 $"\nex: `!volt pro`");
 
-            embed.AddField("!volt ban {user id}", "Ban a user by user ID. This is the 4 digit number after their identifier when the \"user_identifiers\" setting is enabled." +
+            embed.AddField("!volt ban {user id}", "Blacklists a user from the bot by user ID. This is the 4 digit number after their identifier when the \"user_identifiers\" setting is enabled." +
                 $"\nex: `!volt ban 4321`");
 
-            embed.AddField("!volt list_bans", "List currently banned user IDs." +
+            embed.AddField("!volt list_bans", "List currently blacklisted user IDs." +
                 $"\nex: `!volt list_bans`");
 
             embed.AddField("!volt admin_role \"{role name}\"", "Set a role which can use admin commands and ban users on this server. (True server admins can always use commands as well)" +
