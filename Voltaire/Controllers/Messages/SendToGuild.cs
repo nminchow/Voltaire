@@ -13,7 +13,7 @@ namespace Voltaire.Controllers.Messages
         public static async Task PerformAsync(ShardedCommandContext context, string guildName, string channelName, string message, bool replyable, DataBase db)
         {
             var unfilteredList = Send.GuildList(context);
-            var candidateGuilds = unfilteredList.Where(x => x.Name.ToLower().Contains(guildName.ToLower()));
+            var candidateGuilds = unfilteredList.Where(x => x.Id.ToString() == guildName || x.Name.ToLower().Contains(guildName.ToLower()));
 
             switch (candidateGuilds.Count())
             {
@@ -25,7 +25,7 @@ namespace Voltaire.Controllers.Messages
                     break;
                 default:
                     // check for exact match
-                    var exactNameMatch = candidateGuilds.First(x => x.Name.ToLower() == guildName.ToLower());
+                    var exactNameMatch = candidateGuilds.First(x => x.Id.ToString() == guildName || x.Name.ToLower() == guildName.ToLower());
                     if (exactNameMatch != null)
                     {
                         await LookupAndSendAsync(exactNameMatch, context, channelName, message, replyable, db);
