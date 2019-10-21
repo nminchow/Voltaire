@@ -61,13 +61,19 @@ namespace Voltaire.Controllers.Messages
             }
             catch (Discord.Net.HttpException e)
             {
-                if (e.DiscordCode == 50013)
+                switch (e.DiscordCode)
                 {
-                    await context.Channel.SendMessageAsync("Voltaire doesn't have the " +
+                    case 50007:
+                        await context.Channel.SendMessageAsync("Voltaire has been blocked by this user.");
+                        break;
+                    case 50013:
+                    case 50001:
+                        await context.Channel.SendMessageAsync("Voltaire doesn't have the " +
                         "permissions required to send this message. Ensure Voltaire can access the channel you are tyring to send to, and that it has " +
                         " \"Embed Links\" and \"Use External Emojis\" permission.");
+                        break;
                 }
-                // throw to stop execution
+
                 throw e;
             }
         }
