@@ -24,7 +24,8 @@ namespace Voltaire.Controllers.Messages
                     await SendToGuild.LookupAndSendAsync(candidateGuilds.First(), context, channelName, message, reply, db);
                     break;
                 default:
-                    await SendErrorWithDeleteReaction(context, "It looks like you belong to multiple servers where Voltaire is installed. Please specify your server using the following command: `send_server (server_name) (channel_name) (message)` ex: `send_server \"l33t g4amerz\" some-channel you guys suck`");
+                    var view = Views.Info.MultipleGuildSendResponse.Response(context, candidateGuilds, message);
+                    await SendErrorWithDeleteReaction(context, view.Item1, view.Item2);
                     break;
             }
         }
@@ -106,9 +107,9 @@ namespace Voltaire.Controllers.Messages
             await context.Message.AddReactionAsync(emote);
         }
 
-        public static async Task SendErrorWithDeleteReaction(ShardedCommandContext context, string errorMessage)
+        public static async Task SendErrorWithDeleteReaction(ShardedCommandContext context, string errorMessage, Embed embed = null)
         {
-            var message = await context.Channel.SendMessageAsync(errorMessage);
+            var message = await context.Channel.SendMessageAsync(errorMessage, embed: embed);
             var emote = new Emoji(DeleteEmote);
             await message.AddReactionAsync(emote);
         }
