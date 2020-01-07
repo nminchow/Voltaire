@@ -93,6 +93,17 @@ namespace Voltaire.Controllers.Messages
                 message = message.Replace(x, user.Mention);
             });
 
+            if (channel is SocketTextChannel)
+            {
+                var castChannel = (SocketTextChannel)channel;
+                var roles = castChannel.Guild.Roles;
+                roles.Select(x => $"@{x.Name}").Intersect(words).ToList().ForEach(x =>
+                {
+                    var role = roles.First(y => y.Name == x.Substring(1));
+                    message = message.Replace(x, role.Mention);
+                });
+            }
+
             return message;
         }
 
