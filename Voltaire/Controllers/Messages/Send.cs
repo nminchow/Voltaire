@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using Discord.Rest;
 using Discord.WebSocket;
 using Rijndael256;
 using System;
@@ -30,7 +31,7 @@ namespace Voltaire.Controllers.Messages
             }
         }
 
-        public static Func<string, string, Task> SendMessageToChannel(IMessageChannel channel, bool replyable, ShardedCommandContext context)
+        public static Func<string, string, Task<IUserMessage>> SendMessageToChannel(IMessageChannel channel, bool replyable, ShardedCommandContext context)
         {
             if (!replyable)
             {
@@ -39,10 +40,10 @@ namespace Voltaire.Controllers.Messages
                     message = CheckForMentions(channel, message);
                     if (string.IsNullOrEmpty(username))
                     {
-                        await SendMessageAndCatchError(() => { return channel.SendMessageAsync(message); }, context);
-                        return;
+                        return await SendMessageAndCatchError(() => { return channel.SendMessageAsync(message); }, context);
+                        
                     }
-                    await SendMessageAndCatchError(() => { return channel.SendMessageAsync($"**{username}**: {message}"); }, context);
+                    return await SendMessageAndCatchError(() => { return channel.SendMessageAsync($"**{username}**: {message}"); }, context);
                 };
             }
             return async (username, message) =>
@@ -50,15 +51,15 @@ namespace Voltaire.Controllers.Messages
                 var key = LoadConfig.Instance.config["encryptionKey"];
                 var replyHash = Rijndael.Encrypt(context.User.Id.ToString(), key, KeySize.Aes256);
                 var view = Views.ReplyableMessage.Response(username, message, replyHash.ToString());
-                await SendMessageAndCatchError(() => { return channel.SendMessageAsync(view.Item1, embed: view.Item2); }, context);
+                return await SendMessageAndCatchError(() => { return channel.SendMessageAsync(view.Item1, embed: view.Item2); }, context);
             };
         }
 
-        public static async Task SendMessageAndCatchError(Func<Task> send, ShardedCommandContext context)
+        public static async Task<IUserMessage> SendMessageAndCatchError(Func<Task<IUserMessage>> send, ShardedCommandContext context)
         {
             try
             {
-                await send();
+                return await send();
             }
             catch (Discord.Net.HttpException e)
             {
@@ -121,6 +122,11 @@ namespace Voltaire.Controllers.Messages
         public static async Task SendErrorWithDeleteReaction(ShardedCommandContext context, string errorMessage, Embed embed = null)
         {
             var message = await context.Channel.SendMessageAsync(errorMessage, embed: embed);
+            await AddReactionToMessage(message);
+        }
+
+        public static async Task AddReactionToMessage(IUserMessage message)
+        {
             var emote = new Emoji(DeleteEmote);
             await message.AddReactionAsync(emote);
         }

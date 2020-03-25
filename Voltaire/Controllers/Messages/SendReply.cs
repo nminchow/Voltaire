@@ -37,12 +37,11 @@ namespace Voltaire.Controllers.Messages
 
             var prefix = $"{PrefixHelper.ComputePrefix(context, allowedGuild, "someone")} replied";
 
-            // all 'users' hera are technically the same user, so just take the first
+            // all 'users' here are technically the same user, so just take the first
             var channel = await users.First().GetOrCreateDMChannelAsync();
             var messageFunction = Send.SendMessageToChannel(channel, replyable, context);
-            await messageFunction(prefix, message);
-            await Send.SendSentEmote(context);
-
+            var sentMessage = await messageFunction(prefix, message);
+            await Send.AddReactionToMessage(sentMessage);
             await Send.SendSentEmote(context);
         }
     }
