@@ -27,7 +27,7 @@ namespace Voltaire.Views.Info
             };
 
             guilds.Select(x => {
-                embed.AddField(x.Name, $"ex: `!volt send_guild \"{x.Name}\" {x.Channels.FirstOrDefault().Name} {message}`");
+                embed.AddField(x.Name, $"ex: `!volt send_server \"{x.Name}\" {x.Channels.FirstOrDefault().Name} {message}`");
                 return true;
             }).ToList();
 
