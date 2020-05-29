@@ -37,7 +37,7 @@ namespace Voltaire.Controllers.Messages
 
         private static string IdentifierString(int identifier)
         {
-            return Math.Abs(identifier).ToString().Substring(0, 4);
+            return Math.Abs(identifier).ToString("0000").Substring(0, 4);
         }
 
         private static string Generate(ShardedCommandContext context, int identifierInt)
