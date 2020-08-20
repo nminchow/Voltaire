@@ -71,7 +71,7 @@ namespace Voltaire.Controllers.Messages
                     case 50013:
                     case 50001:
                         await context.Channel.SendMessageAsync("Voltaire doesn't have the " +
-                        "permissions required to send this message. Ensure Voltaire can access the channel you are tyring to send to, and that it has " +
+                        "permissions required to send this message. Ensure Voltaire can access the channel you are trying to send to, and that it has " +
                         " \"Embed Links\" and \"Use External Emojis\" permission.");
                         break;
                 }
