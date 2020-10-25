@@ -71,7 +71,7 @@ namespace Voltaire.Controllers.Messages
                 switch (e.DiscordCode)
                 {
                     case 50007:
-                        await context.Channel.SendMessageAsync("Voltaire has been blocked by this user.");
+                        await context.Channel.SendMessageAsync("Voltaire has been blocked by this user, or they have DMs dsiabled.");
                         break;
                     case 50013:
                     case 50001:
