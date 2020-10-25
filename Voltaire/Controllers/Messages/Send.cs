@@ -99,6 +99,12 @@ namespace Voltaire.Controllers.Messages
                 message = message.Replace(x, user.Mention);
             });
 
+            users.Select(x => $"@{x.Username}#{x.Discriminator}").Intersect(words.ToAsyncEnumerable()).ForEach(async x =>
+            {
+                var user = await users.First(y => $"@{y.Username}#{y.Discriminator}" == x);
+                message = message.Replace(x, user.Mention);
+            });
+
             if (channel is SocketTextChannel)
             {
                 var castChannel = (SocketTextChannel)channel;
