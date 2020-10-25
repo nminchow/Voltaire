@@ -31,5 +31,12 @@ namespace Voltaire.Modules
         {
             await Context.Channel.SendMessageAsync("<https://discordapp.com/oauth2/authorize?client_id=425833927517798420&scope=bot>");
         }
+
+        [Command("faq", RunMode = RunMode.Async)]
+        [Summary("display faq link")]
+        public async Task Faq()
+        {
+            await Context.Channel.SendMessageAsync("View the FAQ here: https://discordapp.com/channels/426894892262752256/581280324340940820/612849796025155585");
+        }
     }
 }
