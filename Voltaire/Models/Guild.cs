@@ -17,6 +17,7 @@ namespace Voltaire.Models
         public string AdminRole { get; set; }
         public bool AllowDirectMessage { get; set; } = true;
         public bool UseUserIdentifiers { get; set; } = false;
+        public bool UseEmbed { get; set; } = false;
         public int UserIdentifierSeed { get; set; } = 0;
         public virtual ICollection<BannedIdentifier> BannedIdentifiers { get; set; }
         public string SubscriptionId { get; set; }

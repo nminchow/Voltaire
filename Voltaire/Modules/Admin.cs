@@ -34,6 +34,14 @@ namespace Voltaire.Modules
             await Controllers.Settings.SetUseUserIdentifiers.PerformAsync(Context, allow, _database);
         }
 
+        [Command("embeds", RunMode = RunMode.Async)]
+        [Summary("Make All Messages Sent Via the Bot Appear as Embeds")]
+        [Preconditions.Administrator]
+        public async Task Embeds(Boolean allow)
+        {
+            await Controllers.Settings.SetEmbeds.PerformAsync(Context, allow, _database);
+        }
+
         [Command("permitted_role", RunMode = RunMode.Async)]
         [Summary("Set the Role Allowed to Use Voltaire")]
         [Preconditions.Administrator]
