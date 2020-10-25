@@ -29,6 +29,9 @@ namespace Voltaire.Views.Info
             embed.AddField("!volt allow_dm {true|false}", "Allow or disallow users to send direct messages to other members of the server." +
                 $"\nex: `!volt allow_dm false`");
 
+            embed.AddField("!volt embeds {true|false}", "Make all messages sent via the bot appear as embeds on this server." +
+                $"\nex: `!volt embeds true`");
+
             embed.AddField("!volt permitted_role \"{role name}\"", "Only allow users with the supplied role to send server messages and direct messages on the server." +
                 "Note that all users can still send replies. To clear, set the permitted role to @everyone." +
                 $"\nex: `!volt permitted_role \"speakers of truth\"`");

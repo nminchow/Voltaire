@@ -31,17 +31,22 @@ namespace Voltaire.Controllers.Messages
             }
         }
 
-        public static Func<string, string, Task<IUserMessage>> SendMessageToChannel(IMessageChannel channel, bool replyable, ShardedCommandContext context)
+        public static Func<string, string, Task<IUserMessage>> SendMessageToChannel(IMessageChannel channel, bool replyable, ShardedCommandContext context, bool forceEmbed = false)
         {
             if (!replyable)
             {
                 return async (username, message) =>
                 {
                     message = CheckForMentions(channel, message);
+                    if (forceEmbed)
+                    {
+                        var view = Views.Message.Response(username, message, null);
+                        return await SendMessageAndCatchError(() => { return channel.SendMessageAsync(view.Item1, embed: view.Item2); }, context);
+                    }
+
                     if (string.IsNullOrEmpty(username))
                     {
                         return await SendMessageAndCatchError(() => { return channel.SendMessageAsync(message); }, context);
-                        
                     }
                     return await SendMessageAndCatchError(() => { return channel.SendMessageAsync($"**{username}**: {message}"); }, context);
                 };
@@ -50,7 +55,7 @@ namespace Voltaire.Controllers.Messages
             {
                 var key = LoadConfig.Instance.config["encryptionKey"];
                 var replyHash = Rijndael.Encrypt(context.User.Id.ToString(), key, KeySize.Aes256);
-                var view = Views.ReplyableMessage.Response(username, message, replyHash.ToString());
+                var view = Views.Message.Response(username, message, replyHash.ToString());
                 return await SendMessageAndCatchError(() => { return channel.SendMessageAsync(view.Item1, embed: view.Item2); }, context);
             };
         }
