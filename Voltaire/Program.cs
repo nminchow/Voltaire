@@ -7,6 +7,7 @@ using Discord.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Stripe;
+using System.Linq;
 
 namespace Voltaire
 {
@@ -25,7 +26,19 @@ namespace Voltaire
             IConfiguration configuration = LoadConfig.Instance.config;
             var db = new DataBase(configuration.GetConnectionString("sql"));
 
-            _client = new DiscordShardedClient();
+            var config = new DiscordSocketConfig {
+                LogLevel = LogSeverity.Debug,
+                AlwaysDownloadUsers = true,
+                //GatewayIntents = GatewayIntents.GuildMembers |
+                //    GatewayIntents.Guilds |
+                //    GatewayIntents.GuildEmojis |
+                //    GatewayIntents.GuildMessages |
+                //    GatewayIntents.GuildMessageReactions |
+                //    GatewayIntents.DirectMessages |
+                //    GatewayIntents.DirectMessageReactions
+            };
+
+            _client = new DiscordShardedClient(config);
             _client.Log += Log;
             _client.JoinedGuild += Controllers.Helpers.JoinedGuild.Joined(db, configuration["discordBotListToken"]);
             // disable joined message for now
@@ -51,8 +64,29 @@ namespace Voltaire
 
             await _client.StartAsync();
 
+            var tcs = new TaskCompletionSource<int>();
+            _client.ShardReady += (arg) =>
+            {
+                Console.WriteLine("shard ready");
+                _ = Task.Run(async () =>
+                {
+                    await Task.Delay(5000);
+                    Console.WriteLine("loading guilds....");
+                    await Task.WhenAll(_client.Guilds.Select(g => g.DownloadUsersAsync()));
+                    // can't do this, I assume because it tries to query multiple guilds at a time under the hood
+                    //await _client.DownloadUsersAsync(_client.Guilds);
+                    Console.WriteLine($"users: {string.Join('|', _client.Guilds.Select(x => string.Join(',', x.Users.Select(y => y.Id))))}");
+                    tcs.SetResult(_client.Guilds.Sum(g => g.Users.Count));
+                    Console.WriteLine("done loading guilds");
+                });
+                return Task.CompletedTask;
+            };
+            var userCount = await tcs.Task;
+
+            Console.WriteLine($"Loaded {userCount} users");
 
             await Task.Delay(-1);
+
         }
 
         public async Task InstallCommandsAsync()

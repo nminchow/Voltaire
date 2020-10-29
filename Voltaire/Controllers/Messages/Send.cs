@@ -93,7 +93,7 @@ namespace Voltaire.Controllers.Messages
 
             var users = AsyncEnumerableExtensions.Flatten(channel.GetUsersAsync());
 
-            users.Select(x => $"@{x.Username}").Intersect(words.ToAsyncEnumerable()).ForEach(async x =>
+            users.Select(x => $"@{x.Username}").Intersect(words.ToAsyncEnumerable()).ForEachAsync(async x =>
             {
                 var user = await users.First(y => y.Username == x.Substring(1));
                 message = message.Replace(x, user.Mention);
@@ -115,7 +115,15 @@ namespace Voltaire.Controllers.Messages
 
         public static IEnumerable<SocketGuild> GuildList(ShardedCommandContext currentContext)
         {
-            return currentContext.Client.Guilds.Where(x => x.Users.Any(u => u.Id == currentContext.User.Id));
+            //await Task.WhenAll(currentContext.Client.Guilds.Select(x => x.DownloadUsersAsync()));
+            //Console.WriteLine($"raw: {currentContext.Client.Guilds.Count}");
+            Console.WriteLine($"users: {string.Join('|', currentContext.Client.Guilds.Select(x => string.Join(',', x.Users.Select(y => y.Id))))}");
+            var guilds = currentContext.Client.Guilds.Where(x => x.Users.Any(u => u.Id == currentContext.User.Id));
+            //var guilds = currentContext.User.MutualGuilds;
+            //Console.WriteLine($"guilds: {guilds.Count()}");
+            //Console.WriteLine($"users: {string.Join(',', guilds.Select(x => x.Users.Count).ToList())}");
+            //Console.WriteLine($"names: {string.Join(',', guilds.Select(x => x.Name).ToList())}");
+            return guilds;
         }
 
         public static async Task SendSentEmote(ShardedCommandContext context)
