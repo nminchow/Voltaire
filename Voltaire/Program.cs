@@ -29,13 +29,13 @@ namespace Voltaire
             var config = new DiscordSocketConfig {
                 LogLevel = LogSeverity.Debug,
                 AlwaysDownloadUsers = true,
-                //GatewayIntents = GatewayIntents.GuildMembers |
-                //    GatewayIntents.Guilds |
-                //    GatewayIntents.GuildEmojis |
-                //    GatewayIntents.GuildMessages |
-                //    GatewayIntents.GuildMessageReactions |
-                //    GatewayIntents.DirectMessages |
-                //    GatewayIntents.DirectMessageReactions
+                GatewayIntents = GatewayIntents.GuildMembers |
+                   GatewayIntents.Guilds |
+                   GatewayIntents.GuildEmojis |
+                   GatewayIntents.GuildMessages |
+                   GatewayIntents.GuildMessageReactions |
+                   GatewayIntents.DirectMessages |
+                   GatewayIntents.DirectMessageReactions
             };
 
             _client = new DiscordShardedClient(config);
@@ -64,26 +64,6 @@ namespace Voltaire
 
             await _client.StartAsync();
 
-            var tcs = new TaskCompletionSource<int>();
-            _client.ShardReady += (arg) =>
-            {
-                Console.WriteLine("shard ready");
-                _ = Task.Run(async () =>
-                {
-                    await Task.Delay(5000);
-                    Console.WriteLine("loading guilds....");
-                    await Task.WhenAll(_client.Guilds.Select(g => g.DownloadUsersAsync()));
-                    // can't do this, I assume because it tries to query multiple guilds at a time under the hood
-                    //await _client.DownloadUsersAsync(_client.Guilds);
-                    Console.WriteLine($"users: {string.Join('|', _client.Guilds.Select(x => string.Join(',', x.Users.Select(y => y.Id))))}");
-                    tcs.SetResult(_client.Guilds.Sum(g => g.Users.Count));
-                    Console.WriteLine("done loading guilds");
-                });
-                return Task.CompletedTask;
-            };
-            var userCount = await tcs.Task;
-
-            Console.WriteLine($"Loaded {userCount} users");
 
             await Task.Delay(-1);
 
@@ -122,7 +102,7 @@ namespace Voltaire
             if (!(message.HasStringPrefix(prefix, ref argPos) || message.HasMentionPrefix(_client.CurrentUser, ref argPos))) return;
             // quick logging
             Console.WriteLine("processed message!");
-            // Execute the command. (result does not indicate a return value, 
+            // Execute the command. (result does not indicate a return value,
             // rather an object stating if the command executed successfully)
             await SendCommandAsync(context, argPos);
         }

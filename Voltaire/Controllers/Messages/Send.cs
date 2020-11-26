@@ -95,7 +95,7 @@ namespace Voltaire.Controllers.Messages
 
             users.Select(x => $"@{x.Username}").Intersect(words.ToAsyncEnumerable()).ForEachAsync(async x =>
             {
-                var user = await users.First(y => y.Username == x.Substring(1));
+                var user = await users.FirstAsync(y => y.Username == x.Substring(1));
                 message = message.Replace(x, user.Mention);
             });
 
@@ -115,14 +115,7 @@ namespace Voltaire.Controllers.Messages
 
         public static IEnumerable<SocketGuild> GuildList(ShardedCommandContext currentContext)
         {
-            //await Task.WhenAll(currentContext.Client.Guilds.Select(x => x.DownloadUsersAsync()));
-            //Console.WriteLine($"raw: {currentContext.Client.Guilds.Count}");
-            Console.WriteLine($"users: {string.Join('|', currentContext.Client.Guilds.Select(x => string.Join(',', x.Users.Select(y => y.Id))))}");
             var guilds = currentContext.Client.Guilds.Where(x => x.Users.Any(u => u.Id == currentContext.User.Id));
-            //var guilds = currentContext.User.MutualGuilds;
-            //Console.WriteLine($"guilds: {guilds.Count()}");
-            //Console.WriteLine($"users: {string.Join(',', guilds.Select(x => x.Users.Count).ToList())}");
-            //Console.WriteLine($"names: {string.Join(',', guilds.Select(x => x.Name).ToList())}");
             return guilds;
         }
 
