@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using Voltaire.Controllers.Messages;
 using Discord.Commands;
 using Discord;
 using Discord.WebSocket;

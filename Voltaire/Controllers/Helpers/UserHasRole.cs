@@ -1,9 +1,6 @@
 ﻿using Discord;
 using Discord.WebSocket;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Voltaire.Models;
 
 namespace Voltaire.Controllers.Helpers

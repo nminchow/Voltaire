@@ -4,7 +4,6 @@ using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Voltaire.Controllers.Helpers;
 
@@ -27,9 +26,9 @@ namespace Voltaire.Controllers.Messages
                 var userList = allUsersList.Where(x => x.Username != null &&
                     (
                         // simple username
-                        x.Username.ToLower() == userName.ToLower() || 
+                        x.Username.ToLower() == userName.ToLower() ||
                         // id
-                        x.Id.ToString() == userName || 
+                        x.Id.ToString() == userName ||
                         // username with discriminator
                         $"{x.Username}#{x.Discriminator}".ToLower() == userName.ToLower()
                     )

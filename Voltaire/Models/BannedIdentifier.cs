@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Voltaire.Models
+﻿namespace Voltaire.Models
 {
     public class BannedIdentifier
     {
