@@ -7,6 +7,7 @@ using Discord.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Stripe;
+using System.Linq;
 
 namespace Voltaire
 {
@@ -25,7 +26,19 @@ namespace Voltaire
             IConfiguration configuration = LoadConfig.Instance.config;
             var db = new DataBase(configuration.GetConnectionString("sql"));
 
-            _client = new DiscordShardedClient();
+            var config = new DiscordSocketConfig {
+                LogLevel = LogSeverity.Debug,
+                AlwaysDownloadUsers = true,
+                GatewayIntents = GatewayIntents.GuildMembers |
+                   GatewayIntents.Guilds |
+                   GatewayIntents.GuildEmojis |
+                   GatewayIntents.GuildMessages |
+                   GatewayIntents.GuildMessageReactions |
+                   GatewayIntents.DirectMessages |
+                   GatewayIntents.DirectMessageReactions
+            };
+
+            _client = new DiscordShardedClient(config);
             _client.Log += Log;
             _client.JoinedGuild += Controllers.Helpers.JoinedGuild.Joined(db, configuration["discordBotListToken"]);
             // disable joined message for now
@@ -53,6 +66,7 @@ namespace Voltaire
 
 
             await Task.Delay(-1);
+
         }
 
         public async Task InstallCommandsAsync()
@@ -88,7 +102,7 @@ namespace Voltaire
             if (!(message.HasStringPrefix(prefix, ref argPos) || message.HasMentionPrefix(_client.CurrentUser, ref argPos))) return;
             // quick logging
             Console.WriteLine("processed message!");
-            // Execute the command. (result does not indicate a return value, 
+            // Execute the command. (result does not indicate a return value,
             // rather an object stating if the command executed successfully)
             await SendCommandAsync(context, argPos);
         }
