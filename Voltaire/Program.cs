@@ -27,7 +27,7 @@ namespace Voltaire
             var db = new DataBase(configuration.GetConnectionString("sql"));
 
             var config = new DiscordSocketConfig {
-                LogLevel = LogSeverity.Debug,
+                // LogLevel = LogSeverity.Debug,
                 AlwaysDownloadUsers = true,
                 GatewayIntents = GatewayIntents.GuildMembers |
                    GatewayIntents.Guilds |
