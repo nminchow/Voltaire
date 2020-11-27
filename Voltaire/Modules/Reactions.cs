@@ -18,12 +18,5 @@ namespace Voltaire.Modules
         {
             await Controllers.Reactions.React.PerformAsync(Context, messageId, emoji, _database);
         }
-
-        [Command("list_emotes", RunMode = RunMode.Async)]
-        [Summary("list custom emoji codes")]
-        public async Task List()
-        {
-            await Controllers.Subscriptions.Cancel.PerformAsync(Context, _database);
-        }
     }
 }

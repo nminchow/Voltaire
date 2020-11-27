@@ -12,7 +12,14 @@ namespace Voltaire.Controllers.Reactions
         {
             var guildList = Send.GuildList(context);
 
-            var task = await Task.WhenAll(guildList.SelectMany(x => x.TextChannels).Select(async x => await x.GetMessageAsync(messageId)));
+            var task = await Task.WhenAll(guildList.SelectMany(x => x.TextChannels).Select(async x => {
+                try {
+                    var message = await x.GetMessageAsync(messageId);
+                    return message;
+                } catch {
+                    return null;
+                }
+            }));
 
             var r = task.Where(x => x != null);
 
@@ -37,7 +44,7 @@ namespace Voltaire.Controllers.Reactions
                 await r.First().AddReactionAsync(emote);
                 await Send.SendSentEmote(context);
             } else {
-                await context.Channel.SendMessageAsync("Emote not found. To get a list of emotes, use the `list_emote` command");
+                await context.Channel.SendMessageAsync("Emoji not found. To send a custom emote, use the emote's name.");
             }
             return;
         }

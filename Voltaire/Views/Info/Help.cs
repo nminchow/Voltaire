@@ -46,7 +46,7 @@ namespace Voltaire.Views.Info
             embed.AddField("react {message ID} {emote/emoji}",
                 "Send a reaction to a message. [Enable dev settings to get message IDs](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID). " +
                 "The `emote/emoji` param can be either a unicode emoji, or the name of a custom emote." +
-                $"\nex: `send {context.Message.Id} 📜` or `send {context.Message.Id} your_custom_emote`");
+                $"\nex: `react {context.Message.Id} 📜` or `react {context.Message.Id} your_custom_emote`");
             //embed.AddField("send_reply {reply code} {message}", "To reply to a message, it will need to have been originally sent with the +r suffix. The message will include" +
             //    "a code at the bottom which can be used to reply." +
             //    $"\nex: `send_reply iMIb62udZ7R/KCfhn634+AHvrrQ Don't make a girl a promise you know you can't keep.`");
