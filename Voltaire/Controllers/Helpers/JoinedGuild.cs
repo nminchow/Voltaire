@@ -21,9 +21,14 @@ namespace Voltaire.Controllers.Helpers
                 var view = Views.Info.JoinedGuild.Response();
                 await guild.TextChannels.First().SendMessageAsync(text: view.Item1, embed: view.Item2);
 
-                AuthDiscordBotListApi DblApi = new AuthDiscordBotListApi(425833927517798420, token);
-                var me = await DblApi.GetMeAsync();
-                await me.UpdateStatsAsync(db.Guilds.Count());
+                Task.Run(async () => {
+                    Console.WriteLine("downlaoding");
+                    await guild.DownloadUsersAsync();
+                    Console.WriteLine("downloaded");
+                });
+                // AuthDiscordBotListApi DblApi = new AuthDiscordBotListApi(425833927517798420, token);
+                // var me = await DblApi.GetMeAsync();
+                // await me.UpdateStatsAsync(db.Guilds.Count());
             };
 
             return convert;
