@@ -1,5 +1,4 @@
 ﻿using Discord.WebSocket;
-using DiscordBotsList.Api;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
@@ -10,7 +9,17 @@ namespace Voltaire.Controllers.Helpers
 {
     public static class JoinedGuild
     {
-        public static Func<SocketGuild, Task> Joined(DataBase db, string token)
+
+        public static void Refresh(SocketGuild guild)
+        {
+            Task.Run(async () => {
+                Console.WriteLine("downloading user list");
+                await guild.DownloadUsersAsync();
+                Console.WriteLine("user list downloaded");
+            });
+        }
+
+        public static Func<SocketGuild, Task> Joined(DataBase db)
         {
             Func<SocketGuild, Task> convert = async delegate (SocketGuild guild)
             {
@@ -21,11 +30,7 @@ namespace Voltaire.Controllers.Helpers
                 var view = Views.Info.JoinedGuild.Response();
                 await guild.TextChannels.First().SendMessageAsync(text: view.Item1, embed: view.Item2);
 
-                Task.Run(async () => {
-                    Console.WriteLine("downlaoding");
-                    await guild.DownloadUsersAsync();
-                    Console.WriteLine("downloaded");
-                });
+                Refresh(guild);
                 // AuthDiscordBotListApi DblApi = new AuthDiscordBotListApi(425833927517798420, token);
                 // var me = await DblApi.GetMeAsync();
                 // await me.UpdateStatsAsync(db.Guilds.Count());

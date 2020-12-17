@@ -1,5 +1,6 @@
 ﻿using Discord.Commands;
 using System.Threading.Tasks;
+using System;
 
 namespace Voltaire.Modules
 {
@@ -18,6 +19,7 @@ namespace Voltaire.Modules
         public async Task AdminInfo()
         {
             var view = Views.Info.Admin.Response(Context);
+            Console.WriteLine("got view");
             await Context.Channel.SendMessageAsync(view.Item1, embed: view.Item2);
         }
 

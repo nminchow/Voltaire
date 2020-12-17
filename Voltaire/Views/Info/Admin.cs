@@ -29,7 +29,7 @@ namespace Voltaire.Views.Info
             embed.AddField("!volt allow_dm {true|false}", "Allow or disallow users to send direct messages to other members of the server." +
                 $"\nex: `!volt allow_dm false`");
 
-            embed.AddField("!volt embeds {true|false}", "Make all messages sent via the bot appear as embeds on this server." +
+            embed.AddField("!volt embeds {true|false}", "Make all messages sent via the bot appear as embeds     on this server." +
                 $"\nex: `!volt embeds true`");
 
             embed.AddField("!volt permitted_role \"{role name}\"", "Only allow users with the supplied role to send server messages and direct messages on the server." +
@@ -48,11 +48,17 @@ namespace Voltaire.Views.Info
             embed.AddField("!volt ban {user id}", "Blacklists a user from the bot by user ID. This is the 4 digit number after their identifier when the \"user_identifiers\" setting is enabled." +
                 $"\nex: `!volt ban 4321`");
 
-            embed.AddField("!volt list_bans", "List currently blacklisted user IDs." +
+            embed.AddField("!volt list_bans", "List currently banned user IDs." +
                 $"\nex: `!volt list_bans`");
+
+            embed.AddField("!volt clear_bans", "Clear the currently banned user list." +
+                $"\nex: `!volt clear_bans`");
 
             embed.AddField("!volt admin_role \"{role name}\"", "Set a role which can use admin commands and ban users on this server. (True server admins can always use commands as well)" +
                 $"\nex: `!volt admin_role \"mods of truth\"`");
+
+            embed.AddField("!volt refresh ", "Refresh the user list for this server. This command isn't regularly necessary, but may be helpful when the bot first joins your server." +
+                $"\nex: `!volt refresh`");
 
             embed.AddField("!volt admin", "(callable from anywhere) Display this help dialogue.");
 

@@ -87,6 +87,14 @@ namespace Voltaire.Modules
             await Controllers.Settings.ListBans.PerformAsync(Context, _database);
         }
 
+        [Command("clear_bans", RunMode = RunMode.Async)]
+        [Summary("list current bans")]
+        [Preconditions.Administrator]
+        public async Task ClearBans()
+        {
+            await Controllers.Settings.ClearBans.PerformAsync(Context, _database);
+        }
+
         // Require true admin
         [Command("admin_role", RunMode = RunMode.Async)]
         [Summary("Set the Role Allowed to Configure Voltaire and Ban Users")]
@@ -94,6 +102,14 @@ namespace Voltaire.Modules
         public async Task AdminRole(SocketRole role)
         {
             await Controllers.Settings.SetAdminRole.PerformAsync(Context, role, _database);
+        }
+
+        // no precondition
+        [Command("refresh", RunMode = RunMode.Async)]
+        [Summary("Refresh the bot's user cache for this server")]
+        public async Task Refresh()
+        {
+            await Controllers.Settings.Refresh.PerformAsync(Context, _database);
         }
     }
 }

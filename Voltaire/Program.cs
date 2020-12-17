@@ -40,7 +40,7 @@ namespace Voltaire
 
             _client = new DiscordShardedClient(config);
             _client.Log += Log;
-            _client.JoinedGuild += Controllers.Helpers.JoinedGuild.Joined(db, configuration["discordBotListToken"]);
+            _client.JoinedGuild += Controllers.Helpers.JoinedGuild.Joined(db);
             // disable joined message for now
             //_client.UserJoined += Controllers.Helpers.UserJoined.SendJoinedMessage;
 
