@@ -58,7 +58,7 @@ namespace Voltaire.Controllers.Messages
 
             if(!IncrementAndCheckMessageLimit.Perform(dbGuild, db))
             {
-                await Send.SendErrorWithDeleteReaction(context, "This server has reached its limit of 50 messages for the month. To lift this limit, ask an admin or moderator to upgrade your server to Voltaire Pro. (This can be done via the `!volt admin` command.)");
+                await Send.SendErrorWithDeleteReaction(context, "This server has reached its limit of 50 messages for the month. To lift this limit, ask an admin or moderator to upgrade your server to Voltaire Pro. (This can be done via the `!volt pro` command.)");
                 return;
             }
 

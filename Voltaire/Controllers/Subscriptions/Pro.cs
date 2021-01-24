@@ -27,7 +27,12 @@ namespace Voltaire.Controllers.Subscriptions
             {
                 var size = context.Guild.MemberCount <= 200 ? "s" : "l";
                 var url = $"https://nminchow.github.io/VoltaireWeb/upgrade?serverId={context.Guild.Id.ToString()}&type={size}";
-                await context.Channel.SendMessageAsync(text: $"Use this URL to upgrade to Volatire Pro: {url}");
+                var view = Views.Info.Pro.Response(url, guild, db);
+                try {
+                    await context.Channel.SendMessageAsync(view.Item1, embed: view.Item2);
+                } catch (Discord.Net.HttpException e) {
+                    await context.Channel.SendMessageAsync(text: $"Use this URL to upgrade to Volatire Pro: {url}");
+                }
             }
         }
     }
