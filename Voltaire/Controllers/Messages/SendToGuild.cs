@@ -46,7 +46,7 @@ namespace Voltaire.Controllers.Messages
             var candidateChannels = guild.TextChannels.Where(x => x.Name.ToLower().Contains(channelName.ToLower()) || x.Id.ToString() == channelName);
             if (!candidateChannels.Any())
             {
-                await Send.SendErrorWithDeleteReaction(context, "The channel you specified couldn't be found. Please specify your channel using the following command: `send (channel_name) (message)` ex: `send some-channel you guys suck`");
+                await Send.SendErrorWithDeleteReaction(context, "The channel you specified couldn't be found. Please specify your desired channel before your message: `send (channel_name) (message)` ex: `send some-channel Nothing is true, everything is permitted.`");
                 return;
             }
 
