@@ -51,7 +51,7 @@ namespace Voltaire.Controllers.Messages
                         { //TODO SendFileAsync DONE
                             return attachmentIndex < 0 ?
                                 channel.SendMessageAsync(view.Item1, embed: view.Item2) :
-                                channel.SendFileAsync(file, context.Message.Attachments.ElementAt(attachmentIndex).Filename, attachmentIndex == 0 ? view.Item1 : "", embed: view.Item2);
+                                channel.SendFileAsync(file, context.Message.Attachments.ElementAt(attachmentIndex).Filename, view.Item1, embed: attachmentIndex == 0 ? view.Item2 : null);
                         }, context);
                     }
 
@@ -83,7 +83,7 @@ namespace Voltaire.Controllers.Messages
                 { //TODO SendFileAsync DONE
                     return attachmentIndex < 0 ?
                         channel.SendMessageAsync(view.Item1, embed: view.Item2) :
-                    channel.SendFileAsync(file, context.Message.Attachments.ElementAt(attachmentIndex).Filename, attachmentIndex == 0 ? view.Item1 : "", embed: view.Item2);
+                    channel.SendFileAsync(file, context.Message.Attachments.ElementAt(attachmentIndex).Filename, view.Item1, embed: attachmentIndex == 0 ? view.Item2 : null);
                 }, context);
             };
         }
