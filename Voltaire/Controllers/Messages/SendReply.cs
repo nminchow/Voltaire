@@ -18,7 +18,7 @@ namespace Voltaire.Controllers.Messages
             // TODO: potentially want to bake guilds into reply codes so we can ensure that the the replier isn't banned on the server where the original
             // message was sent
             var users = SendDirectMessage.ToUserList(candidateGuilds).Where(x => x.Id.ToString() == candidateId);
-            if(users.Count() == 0)
+            if (users.Count() == 0)
             {
                 await Send.SendErrorWithDeleteReaction(context, "Something is wrong with that reply code. It is possible the sender has left your server.");
                 return;
@@ -36,9 +36,21 @@ namespace Voltaire.Controllers.Messages
 
             // all 'users' here are technically the same user, so just take the first
             var channel = await users.First().GetOrCreateDMChannelAsync();
-            var messageFunction = Send.SendMessageToChannel(channel, replyable, context);
-            var sentMessage = await messageFunction(prefix, message);
-            await Send.AddReactionToMessage(sentMessage);
+            if (context.Message.Attachments.Any())
+            {
+                for (int attachmentIndex = 0; attachmentIndex < context.Message.Attachments.Count; attachmentIndex++)
+                {
+                    var messageFunction = Send.SendMessageToChannel(channel, replyable, context, false, attachmentIndex);
+                    var sentMessage = await messageFunction(prefix, message);
+                    await Send.AddReactionToMessage(sentMessage);
+                }
+            }
+            else
+            {
+                var messageFunction = Send.SendMessageToChannel(channel, replyable, context);
+                var sentMessage = await messageFunction(prefix, message);
+                await Send.AddReactionToMessage(sentMessage);
+            }
             await Send.SendSentEmote(context);
         }
     }

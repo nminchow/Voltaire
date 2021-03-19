@@ -64,9 +64,21 @@ namespace Voltaire.Controllers.Messages
 
                 var userChannel = await userGuild.Item1.GetOrCreateDMChannelAsync();
                 var prefix = PrefixHelper.ComputePrefix(context, userGuild.Item2, "anonymous user");
-                var messageFunction = Send.SendMessageToChannel(userChannel, replyable, context);
-                var sentMessage = await messageFunction(prefix, message);
-                await Send.AddReactionToMessage(sentMessage);
+                if (context.Message.Attachments.Any())
+                {
+                    for (int attachmentIndex = 0; attachmentIndex < context.Message.Attachments.Count; attachmentIndex++)
+                    {
+                        var messageFunction = Send.SendMessageToChannel(userChannel, replyable, context, false, attachmentIndex);
+                        var sentMessage = await messageFunction(prefix, message);
+                        await Send.AddReactionToMessage(sentMessage);
+                    }
+                }
+                else
+                {
+                    var messageFunction = Send.SendMessageToChannel(userChannel, replyable, context);
+                    var sentMessage = await messageFunction(prefix, message);
+                    await Send.AddReactionToMessage(sentMessage);
+                }
                 await Send.SendSentEmote(context);
             }
             catch (Exception ex)
