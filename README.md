@@ -2,7 +2,7 @@
 
 **Voltaire** is a discord bot that allows you to send messages anonymously. It supports sending messages to server channels as well as sending DMs to members of the server it has been added to. Voltaire has several admin settings (which can be viewed with `!volt admin`) to allow admins to best fit the bot to their use case. When Voltaire is added to your server, type `!volt help` to get a list of commands.
 
-[Add Voltaire to Your Server](https://discordapp.com/oauth2/authorize?client_id=425833927517798420&scope=bot)
+[Add Voltaire to Your Server](https://discordapp.com/oauth2/authorize?client_id=425833927517798420&permissions=2147998784&scope=bot%20applications.commands)
 
 [Official Voltaire Discord](https://discord.gg/xyzMyJH)
 
