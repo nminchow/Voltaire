@@ -5,7 +5,9 @@ using Discord.WebSocket;
 using Rijndael256;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,6 +15,8 @@ namespace Voltaire.Controllers.Messages
 {
     class Send
     {
+        private static HttpClient client = new HttpClient();
+
         public static async Task PerformAsync(ShardedCommandContext context, string channelName, string message, bool reply, DataBase db)
         {
             var candidateGuilds = GuildList(context);
@@ -31,32 +35,56 @@ namespace Voltaire.Controllers.Messages
             }
         }
 
-        public static Func<string, string, Task<IUserMessage>> SendMessageToChannel(IMessageChannel channel, bool replyable, ShardedCommandContext context, bool forceEmbed = false)
+        public static Func<string, string, Task<IUserMessage>> SendMessageToChannel(IMessageChannel channel, bool replyable, ShardedCommandContext context, bool forceEmbed = false, int attachmentIndex = -1)
         {
             if (!replyable)
             {
                 return async (username, message) =>
                 {
+                    Stream file = attachmentIndex < 0 ? null : await client.GetStreamAsync(context.Message.Attachments.ElementAt(attachmentIndex).Url);
+
                     message = CheckForMentions(channel, message);
                     if (forceEmbed)
                     {
                         var view = Views.Message.Response(username, message, null);
-                        return await SendMessageAndCatchError(() => { return channel.SendMessageAsync(view.Item1, embed: view.Item2); }, context);
+                        return await SendMessageAndCatchError(() =>
+                        { //TODO SendFileAsync DONE
+                            return attachmentIndex < 0 ?
+                                channel.SendMessageAsync(view.Item1, embed: view.Item2) :
+                                channel.SendFileAsync(file, context.Message.Attachments.ElementAt(attachmentIndex).Filename, view.Item1, embed: attachmentIndex == 0 ? view.Item2 : null);
+                        }, context);
                     }
 
                     if (string.IsNullOrEmpty(username))
                     {
-                        return await SendMessageAndCatchError(() => { return channel.SendMessageAsync(message); }, context);
+                        return await SendMessageAndCatchError(() =>
+                        { //TODO SendFileAsync DONE
+                            return attachmentIndex < 0 ?
+                                channel.SendMessageAsync(message) :
+                                channel.SendFileAsync(file, context.Message.Attachments.ElementAt(attachmentIndex).Filename, attachmentIndex == 0 ? message : "");
+                        }, context);
                     }
-                    return await SendMessageAndCatchError(() => { return channel.SendMessageAsync($"**{username}**: {message}"); }, context);
+                    return await SendMessageAndCatchError(() =>
+                    { //TODO SendFileAsync DONE
+                        return attachmentIndex < 0 ?
+                            channel.SendMessageAsync($"**{username}**: {message}") :
+                        channel.SendFileAsync(file, context.Message.Attachments.ElementAt(attachmentIndex).Filename, attachmentIndex == 0 ? $"**{username}**: {message}" : "");
+                    }, context);
                 };
             }
             return async (username, message) =>
             {
+                Stream file = attachmentIndex < 0 ? null : await client.GetStreamAsync(context.Message.Attachments.ElementAt(attachmentIndex).Url);
+
                 var key = LoadConfig.Instance.config["encryptionKey"];
                 var replyHash = Rijndael.Encrypt(context.User.Id.ToString(), key, KeySize.Aes256);
                 var view = Views.Message.Response(username, message, replyHash.ToString());
-                return await SendMessageAndCatchError(() => { return channel.SendMessageAsync(view.Item1, embed: view.Item2); }, context);
+                return await SendMessageAndCatchError(() =>
+                { //TODO SendFileAsync DONE
+                    return attachmentIndex < 0 ?
+                        channel.SendMessageAsync(view.Item1, embed: view.Item2) :
+                    channel.SendFileAsync(file, context.Message.Attachments.ElementAt(attachmentIndex).Filename, view.Item1, embed: attachmentIndex == 0 ? view.Item2 : null);
+                }, context);
             };
         }
 

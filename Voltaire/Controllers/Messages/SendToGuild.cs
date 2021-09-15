@@ -56,7 +56,7 @@ namespace Voltaire.Controllers.Messages
                 return;
             }
 
-            if(!IncrementAndCheckMessageLimit.Perform(dbGuild, db))
+            if (!IncrementAndCheckMessageLimit.Perform(dbGuild, db))
             {
                 await Send.SendErrorWithDeleteReaction(context, "This server has reached its limit of 50 messages for the month. To lift this limit, ask an admin or moderator to upgrade your server to Voltaire Pro. (This can be done via the `!volt pro` command.)");
                 return;
@@ -64,8 +64,19 @@ namespace Voltaire.Controllers.Messages
 
             var prefix = PrefixHelper.ComputePrefix(context, dbGuild);
             var channel = candidateChannels.OrderBy(x => x.Name.Length).First();
-            var messageFunction = Send.SendMessageToChannel(channel, replyable, context, dbGuild.UseEmbed);
-            await messageFunction(prefix, message);
+            if (context.Message.Attachments.Any())
+            {
+                for (int attachmentIndex = 0; attachmentIndex < context.Message.Attachments.Count; attachmentIndex++)
+                {
+                    var messageFunction = Send.SendMessageToChannel(channel, replyable, context, dbGuild.UseEmbed, attachmentIndex);
+                    await messageFunction(prefix, message);
+                }
+            }
+            else
+            {
+                var messageFunction = Send.SendMessageToChannel(channel, replyable, context, dbGuild.UseEmbed);
+                await messageFunction(prefix, message);
+            }
             await Send.SendSentEmote(context);
             return;
         }
