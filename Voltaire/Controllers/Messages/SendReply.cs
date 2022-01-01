@@ -35,7 +35,7 @@ namespace Voltaire.Controllers.Messages
             var prefix = $"{PrefixHelper.ComputePrefix(context, allowedGuild, "someone")} replied";
 
             // all 'users' here are technically the same user, so just take the first
-            var channel = await users.First().GetOrCreateDMChannelAsync();
+            var channel = await users.First().CreateDMChannelAsync();
             var messageFunction = Send.SendMessageToChannel(channel, replyable, context);
             var sentMessage = await messageFunction(prefix, message);
             await Send.AddReactionToMessage(sentMessage);

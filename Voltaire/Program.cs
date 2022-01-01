@@ -4,6 +4,7 @@ using System.Reflection;
 using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
+using Discord.Interactions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Stripe;
@@ -14,6 +15,7 @@ namespace Voltaire
     class Program
     {
         private CommandService _commands;
+        private InteractionService _interactions;
         private DiscordShardedClient _client;
         private IServiceProvider _services;
 
@@ -46,6 +48,7 @@ namespace Voltaire
 
 
             _commands = new CommandService();
+            _interactions = new InteractionService(_client);
 
             string token = configuration["discordAppToken"];
 
@@ -107,7 +110,7 @@ namespace Voltaire
             await SendCommandAsync(context, argPos);
         }
 
-        private async Task HandleReaction(Cacheable<IUserMessage, ulong> cache, ISocketMessageChannel channel, SocketReaction reaction)
+        private async Task HandleReaction(Cacheable<IUserMessage, ulong> cache, Cacheable<IMessageChannel, ulong> channelCache, SocketReaction reaction)
         {
             if (reaction.Emote.Name != Controllers.Messages.Send.DeleteEmote)
             {
@@ -126,7 +129,7 @@ namespace Voltaire
             }
             catch (Exception e)
             {
-                await channel.SendMessageAsync("Error deleting message. Does the bot have needed permission?");
+                await channelCache.Value.SendMessageAsync("Error deleting message. Does the bot have needed permission?");
             }
             return;
         }

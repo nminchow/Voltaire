@@ -70,11 +70,11 @@ namespace Voltaire.Controllers.Messages
             {
                 switch (e.DiscordCode)
                 {
-                    case 50007:
+                    case DiscordErrorCode.CannotSendMessageToUser:
                         await context.Channel.SendMessageAsync("Voltaire has been blocked by this user, or they have DMs dsiabled.");
                         break;
-                    case 50013:
-                    case 50001:
+                    case DiscordErrorCode.InsufficientPermissions:
+                    case DiscordErrorCode.MissingPermissions:
                         await context.Channel.SendMessageAsync("Voltaire doesn't have the " +
                         "permissions required to send this message. Ensure Voltaire can access the channel you are trying to send to, and that it has " +
                         " \"Embed Links\" and \"Use External Emojis\" permission.");
