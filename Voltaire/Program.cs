@@ -19,6 +19,8 @@ namespace Voltaire
         private DiscordShardedClient _client;
         private IServiceProvider _services;
 
+        private System.Collections.Generic.IEnumerable<Discord.Interactions.ModuleInfo> _interactionModules;
+
         public static void Main(string[] args)
             => new Program().MainAsync().GetAwaiter().GetResult();
 
@@ -77,8 +79,18 @@ namespace Voltaire
             // Hook the MessageReceived Event into our Command Handler
             _client.MessageReceived += HandleCommandAsync;
             _client.ReactionAdded += HandleReaction;
+            _client.ShardReady += RegisterCommands;
             // Discover all of the commands in this assembly and load them.
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
+            _interactionModules = await _interactions.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
+
+            _client.InteractionCreated += HandleInteraction;
+        }
+
+        private async Task RegisterCommands(DiscordSocketClient client)
+        {
+            if (client.ShardId != 0) return;
+            await _interactions.AddModulesGloballyAsync(true, _interactionModules.ToArray());
         }
 
         private async Task HandleCommandAsync(SocketMessage messageParam)
@@ -108,6 +120,25 @@ namespace Voltaire
             // Execute the command. (result does not indicate a return value,
             // rather an object stating if the command executed successfully)
             await SendCommandAsync(context, argPos);
+        }
+
+        private async Task HandleInteraction (SocketInteraction arg)
+        {
+            try
+            {
+                // Create an execution context that matches the generic type parameter of your InteractionModuleBase<T> modules
+                var ctx = new ShardedInteractionContext(_client, arg);
+                await _interactions.ExecuteCommandAsync(ctx, _services);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+
+                // If a Slash Command execution fails it is most likely that the original interaction acknowledgement will persist. It is a good idea to delete the original
+                // response, or at least let the user know that something went wrong during the command execution.
+                if(arg.Type == InteractionType.ApplicationCommand)
+                    await arg.GetOriginalResponseAsync().ContinueWith(async (msg) => await msg.Result.DeleteAsync());
+            }
         }
 
         private async Task HandleReaction(Cacheable<IUserMessage, ulong> cache, Cacheable<IMessageChannel, ulong> channelCache, SocketReaction reaction)
