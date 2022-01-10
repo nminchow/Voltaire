@@ -11,7 +11,7 @@ namespace Voltaire.Controllers.Messages
 {
     class SendDirectMessage
     {
-        public static async Task PerformAsync(ShardedCommandContext context, string userName, string message, bool replyable, DataBase db)
+        public static async Task PerformAsync(UnifiedContext context, string userName, string message, bool replyable, DataBase db)
         {
             // convert special discord tag to regular ID format
             userName = userName.StartsWith("<@!") && userName.EndsWith('>') ? userName.Substring(3, userName.Length - 4) : userName;
@@ -67,7 +67,7 @@ namespace Voltaire.Controllers.Messages
                 var messageFunction = Send.SendMessageToChannel(userChannel, replyable, context);
                 var sentMessage = await messageFunction(prefix, message);
                 await Send.AddReactionToMessage(sentMessage);
-                await Send.SendSentEmote(context);
+                await Send.SendSentEmoteIfCommand(context);
             }
             catch (Exception ex)
             {

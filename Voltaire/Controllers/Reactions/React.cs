@@ -8,7 +8,7 @@ namespace Voltaire.Controllers.Reactions
 {
     class React
     {
-        public static async Task PerformAsync(ShardedCommandContext context, ulong messageId, string emoji, DataBase db)
+        public static async Task PerformAsync(UnifiedContext context, ulong messageId, string emoji, DataBase db)
         {
             var guildList = Send.GuildList(context);
 
@@ -32,7 +32,7 @@ namespace Voltaire.Controllers.Reactions
             try {
                 var d = new Discord.Emoji(emoji);
                 await r.First().AddReactionAsync(d);
-                await Send.SendSentEmote(context);
+                await Send.SendSentEmoteIfCommand(context);
                 return;
             } catch (Discord.Net.HttpException) {}
 
@@ -42,7 +42,7 @@ namespace Voltaire.Controllers.Reactions
 
             if (emote != null) {
                 await r.First().AddReactionAsync(emote);
-                await Send.SendSentEmote(context);
+                await Send.SendSentEmoteIfCommand(context);
             } else {
                 await context.Channel.SendMessageAsync("Emoji not found. To send a custom emote, use the emote's name.");
             }

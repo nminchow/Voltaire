@@ -1,4 +1,5 @@
-﻿using Discord.Commands;
+﻿using System;
+using Discord.Commands;
 using Discord.WebSocket;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace Voltaire.Controllers.Messages
 {
     class SendToGuild
     {
-        public static async Task PerformAsync(ShardedCommandContext context, string guildName, string channelName, string message, bool replyable, DataBase db)
+        public static async Task PerformAsync(UnifiedContext context, string guildName, string channelName, string message, bool replyable, DataBase db)
         {
             var unfilteredList = Send.GuildList(context);
             var candidateGuilds = unfilteredList.Where(x => x.Id.ToString() == guildName || x.Name.ToLower().Contains(guildName.ToLower()));
@@ -34,9 +35,11 @@ namespace Voltaire.Controllers.Messages
             }
         }
 
-        public static async Task LookupAndSendAsync(SocketGuild guild, ShardedCommandContext context, string channelName, string message, bool replyable, DataBase db)
+        public static async Task LookupAndSendAsync(SocketGuild guild, UnifiedContext context, string channelName, string message, bool replyable, DataBase db)
         {
             var dbGuild = FindOrCreateGuild.Perform(guild, db);
+            Console.WriteLine(dbGuild.ID);
+            Console.WriteLine(dbGuild.DiscordId);
             if (!UserHasRole.Perform(guild, context.User, dbGuild))
             {
                 await Send.SendErrorWithDeleteReaction(context, "You do not have the role required to send messages to this server.");
@@ -66,7 +69,9 @@ namespace Voltaire.Controllers.Messages
             var channel = candidateChannels.OrderBy(x => x.Name.Length).First();
             var messageFunction = Send.SendMessageToChannel(channel, replyable, context, dbGuild.UseEmbed);
             await messageFunction(prefix, message);
-            await Send.SendSentEmote(context);
+            if (context is CommandBasedContext commandContext) {
+                await Send.SendSentEmoteIfCommand(commandContext);
+            }
             return;
         }
     }

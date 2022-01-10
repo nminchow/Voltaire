@@ -59,6 +59,7 @@ namespace Voltaire
             _services = new ServiceCollection()
                 .AddSingleton(_client)
                 .AddSingleton(_commands)
+                .AddSingleton(_interactions)
                 .AddSingleton(db)
                 .BuildServiceProvider();
 
@@ -170,7 +171,7 @@ namespace Voltaire
         {
             var result = await _commands.ExecuteAsync(context, argPos, _services);
             if (!result.IsSuccess)
-                await Controllers.Messages.Send.SendErrorWithDeleteReaction(context, result.ErrorReason);
+                await Controllers.Messages.Send.SendErrorWithDeleteReaction(new CommandBasedContext(context), result.ErrorReason);
         }
 
         private Task Log(LogMessage msg)

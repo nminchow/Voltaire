@@ -13,7 +13,7 @@ namespace Voltaire.Controllers.Messages
 {
     class Send
     {
-        public static async Task PerformAsync(ShardedCommandContext context, string channelName, string message, bool reply, DataBase db)
+        public static async Task PerformAsync(UnifiedContext context, string channelName, string message, bool reply, DataBase db)
         {
             var candidateGuilds = GuildList(context);
             switch (candidateGuilds.Count())
@@ -25,13 +25,13 @@ namespace Voltaire.Controllers.Messages
                     await SendToGuild.LookupAndSendAsync(candidateGuilds.First(), context, channelName, message, reply, db);
                     break;
                 default:
-                    var view = Views.Info.MultipleGuildSendResponse.Response(context, candidateGuilds, message);
+                    var view = Views.Info.MultipleGuildSendResponse.Response(candidateGuilds, message);
                     await SendErrorWithDeleteReaction(context, view.Item1, view.Item2);
                     break;
             }
         }
 
-        public static Func<string, string, Task<IUserMessage>> SendMessageToChannel(IMessageChannel channel, bool replyable, ShardedCommandContext context, bool forceEmbed = false)
+        public static Func<string, string, Task<IUserMessage>> SendMessageToChannel(IMessageChannel channel, bool replyable, UnifiedContext context, bool forceEmbed = false)
         {
             if (!replyable)
             {
@@ -60,7 +60,7 @@ namespace Voltaire.Controllers.Messages
             };
         }
 
-        public static async Task<IUserMessage> SendMessageAndCatchError(Func<Task<IUserMessage>> send, ShardedCommandContext context)
+        public static async Task<IUserMessage> SendMessageAndCatchError(Func<Task<IUserMessage>> send, UnifiedContext context)
         {
             try
             {
@@ -119,19 +119,21 @@ namespace Voltaire.Controllers.Messages
             return message;
         }
 
-        public static IEnumerable<SocketGuild> GuildList(ShardedCommandContext currentContext)
+        public static IEnumerable<SocketGuild> GuildList(UnifiedContext currentContext)
         {
             var guilds = currentContext.Client.Guilds.Where(x => x.Users.Any(u => u.Id == currentContext.User.Id));
             return guilds;
         }
 
-        public static async Task SendSentEmote(ShardedCommandContext context)
+        public static async Task SendSentEmoteIfCommand(UnifiedContext context)
         {
-            var emote = Emote.Parse(LoadConfig.Instance.config["sent_emoji"]);
-            await context.Message.AddReactionAsync(emote);
+            if (context is CommandBasedContext commandContext) {
+                var emote = Emote.Parse(LoadConfig.Instance.config["sent_emoji"]);
+                await commandContext.Message.AddReactionAsync(emote);
+            }
         }
 
-        public static async Task SendErrorWithDeleteReaction(ShardedCommandContext context, string errorMessage, Embed embed = null)
+        public static async Task SendErrorWithDeleteReaction(UnifiedContext context, string errorMessage, Embed embed = null)
         {
             var message = await context.Channel.SendMessageAsync(errorMessage, embed: embed);
             await AddReactionToMessage(message);

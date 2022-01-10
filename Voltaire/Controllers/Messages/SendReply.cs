@@ -8,7 +8,7 @@ namespace Voltaire.Controllers.Messages
 {
     class SendReply
     {
-        public static async Task PerformAsync(ShardedCommandContext context, string replyKey, string message, bool replyable, DataBase db)
+        public static async Task PerformAsync(UnifiedContext context, string replyKey, string message, bool replyable, DataBase db)
         {
             var candidateGuilds = Send.GuildList(context);
 
@@ -39,7 +39,7 @@ namespace Voltaire.Controllers.Messages
             var messageFunction = Send.SendMessageToChannel(channel, replyable, context);
             var sentMessage = await messageFunction(prefix, message);
             await Send.AddReactionToMessage(sentMessage);
-            await Send.SendSentEmote(context);
+            await Send.SendSentEmoteIfCommand(context);
         }
     }
 }
