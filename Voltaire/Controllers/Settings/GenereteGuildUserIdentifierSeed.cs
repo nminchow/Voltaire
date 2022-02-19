@@ -1,8 +1,5 @@
-﻿using Discord.Commands;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Voltaire.Controllers.Helpers;
 using Voltaire.Controllers.Messages;
@@ -12,7 +9,7 @@ namespace Voltaire.Controllers.Settings
 {
     class GenerateGuildUserIdentifierSeed
     {
-        public static async Task PerformAsync(ShardedCommandContext context, DataBase db)
+        public static async Task PerformAsync(UnifiedContext context, DataBase db)
         {
             try
             {
@@ -34,7 +31,7 @@ namespace Voltaire.Controllers.Settings
 
                 db.SaveChanges();
 
-                await context.Channel.SendMessageAsync(text: "User identifiers have been randomized.");
+                await Send.SendMessageToContext(context, "User identifiers have been randomized.");
             }
             catch (Exception ex)
             {

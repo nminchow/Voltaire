@@ -5,30 +5,33 @@ using Voltaire.Controllers.Messages;
 
 namespace Voltaire.Modules
 {
-    public class MessageInteractions : InteractionModuleBase<ShardedInteractionContext>
+    public class MessageInteractions : InteractionsBase
     {
-        private DataBase _database;
+      public MessageInteractions(DataBase database): base(database) {}
 
-        public MessageInteractions(DataBase database)
-        {
-            _database = database;
-        }
-
-
-      [SlashCommand("echo", "Echo an input")]
-      public async Task Echo(string input)
+      [SlashCommand("send", "Send an anonymous message to the specified channel")]
+      public async Task Send(string channelName, string message)
       {
-        // await ReplyAsync("test");
-        // Context.Channel.SendMessageAsync("yo");
         try {
-          await SendToGuild.LookupAndSendAsync(Context.Guild, new InteractionBasedContext(Context), Context.Channel.Name, input, false, _database);
+          await Controllers.Messages.Send.PerformAsync(new InteractionBasedContext(Context, Responder), channelName, message, false, _database);
         }
         catch (Exception ex)
         {
           Console.WriteLine(ex);
         }
-        // TODO : figure out if we can silently acknowledge
-        await RespondAsync();
+      }
+
+      // todo: handle this command in DMs
+      [SlashCommand("volt", "Send an anonymous message to the current channel")]
+      public async Task Volt(string message)
+      {
+        try {
+          await SendToGuild.LookupAndSendAsync(Context.Guild, new InteractionBasedContext(Context, Responder), Context.Channel.Name, message, false, _database);
+        }
+        catch (Exception ex)
+        {
+          Console.WriteLine(ex);
+        }
       }
 
     }

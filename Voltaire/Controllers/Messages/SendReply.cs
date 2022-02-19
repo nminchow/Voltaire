@@ -28,7 +28,7 @@ namespace Voltaire.Controllers.Messages
 
             if (allowedGuild == null)
             {
-                await context.Channel.SendMessageAsync("It appears that you have been banned from using Voltaire on the targeted server. If you think this is an error, contact one of your admins.");
+                await Send.SendErrorWithDeleteReaction(context, "It appears that you have been banned from using Voltaire on the targeted server. If you think this is an error, contact one of your admins.");
                 return;
             }
 

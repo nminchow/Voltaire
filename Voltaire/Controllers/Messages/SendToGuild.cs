@@ -38,8 +38,6 @@ namespace Voltaire.Controllers.Messages
         public static async Task LookupAndSendAsync(SocketGuild guild, UnifiedContext context, string channelName, string message, bool replyable, DataBase db)
         {
             var dbGuild = FindOrCreateGuild.Perform(guild, db);
-            Console.WriteLine(dbGuild.ID);
-            Console.WriteLine(dbGuild.DiscordId);
             if (!UserHasRole.Perform(guild, context.User, dbGuild))
             {
                 await Send.SendErrorWithDeleteReaction(context, "You do not have the role required to send messages to this server.");
@@ -55,7 +53,7 @@ namespace Voltaire.Controllers.Messages
 
             if (PrefixHelper.UserBlocked(context.User.Id, dbGuild))
             {
-                await context.Channel.SendMessageAsync("It appears that you have been banned from using Voltaire on the targeted server. If you think this is an error, contact one of your admins.");
+                await Send.SendErrorWithDeleteReaction(context, "It appears that you have been banned from using Voltaire on the targeted server. If you think this is an error, contact one of your admins.");
                 return;
             }
 
@@ -69,9 +67,7 @@ namespace Voltaire.Controllers.Messages
             var channel = candidateChannels.OrderBy(x => x.Name.Length).First();
             var messageFunction = Send.SendMessageToChannel(channel, replyable, context, dbGuild.UseEmbed);
             await messageFunction(prefix, message);
-            if (context is CommandBasedContext commandContext) {
-                await Send.SendSentEmoteIfCommand(commandContext);
-            }
+            await Send.SendSentEmoteIfCommand(context);
             return;
         }
     }

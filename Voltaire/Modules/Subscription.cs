@@ -18,7 +18,7 @@ namespace Voltaire.Modules
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task Pro()
         {
-            await Controllers.Subscriptions.Pro.PerformAsync(Context, _database);
+            await Controllers.Subscriptions.Pro.PerformAsync(new CommandBasedContext(Context), _database);
         }
 
         [Command("cancel", RunMode = RunMode.Async)]
@@ -26,7 +26,7 @@ namespace Voltaire.Modules
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task Cancel()
         {
-            await Controllers.Subscriptions.Cancel.PerformAsync(Context, _database);
+            await Controllers.Subscriptions.Cancel.PerformAsync(new CommandBasedContext(Context), _database);
         }
     }
 }

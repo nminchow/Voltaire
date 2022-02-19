@@ -20,7 +20,7 @@ namespace Voltaire.Modules
         [Preconditions.Administrator]
         public async Task AllowDm(Boolean allow)
         {
-            await Controllers.Settings.SetDirectMessageAccess.PerformAsync(Context, allow, _database);
+            await Controllers.Settings.SetDirectMessageAccess.PerformAsync(new CommandBasedContext(Context), allow, _database);
         }
 
         [Command("user_identifiers", RunMode = RunMode.Async)]
@@ -28,7 +28,7 @@ namespace Voltaire.Modules
         [Preconditions.Administrator]
         public async Task UserIdentifiers(Boolean allow)
         {
-            await Controllers.Settings.SetUseUserIdentifiers.PerformAsync(Context, allow, _database);
+            await Controllers.Settings.SetUseUserIdentifiers.PerformAsync(new CommandBasedContext(Context), allow, _database);
         }
 
         [Command("embeds", RunMode = RunMode.Async)]
@@ -36,7 +36,7 @@ namespace Voltaire.Modules
         [Preconditions.Administrator]
         public async Task Embeds(Boolean allow)
         {
-            await Controllers.Settings.SetEmbeds.PerformAsync(Context, allow, _database);
+            await Controllers.Settings.SetEmbeds.PerformAsync(new CommandBasedContext(Context), allow, _database);
         }
 
         [Command("permitted_role", RunMode = RunMode.Async)]
@@ -44,7 +44,7 @@ namespace Voltaire.Modules
         [Preconditions.Administrator]
         public async Task PermittedRole(SocketRole role)
         {
-            await Controllers.Settings.SetAllowedRole.PerformAsync(Context, role, _database);
+            await Controllers.Settings.SetAllowedRole.PerformAsync(new CommandBasedContext(Context), role, _database);
         }
 
         [Command("permitted_role all", RunMode = RunMode.Async)]
@@ -52,7 +52,7 @@ namespace Voltaire.Modules
         [Preconditions.Administrator]
         public async Task PermittedRoleClear()
         {
-            await Controllers.Settings.ClearAllowedRole.PerformAsync(Context, _database);
+            await Controllers.Settings.ClearAllowedRole.PerformAsync(new CommandBasedContext(Context), _database);
         }
 
         [Command("new_identifiers", RunMode = RunMode.Async)]
@@ -60,7 +60,7 @@ namespace Voltaire.Modules
         [Preconditions.Administrator]
         public async Task NewIdentifiers()
         {
-            await Controllers.Settings.GenerateGuildUserIdentifierSeed.PerformAsync(Context, _database);
+            await Controllers.Settings.GenerateGuildUserIdentifierSeed.PerformAsync(new CommandBasedContext(Context), _database);
         }
 
         [Command("ban", RunMode = RunMode.Async)]
@@ -68,7 +68,7 @@ namespace Voltaire.Modules
         [Preconditions.Administrator]
         public async Task Ban(string identifier)
         {
-            await Controllers.Settings.BanIdentifier.PerformAsync(Context, identifier, _database);
+            await Controllers.Settings.BanIdentifier.PerformAsync(new CommandBasedContext(Context), identifier, _database);
         }
 
         [Command("unban", RunMode = RunMode.Async)]
@@ -76,7 +76,7 @@ namespace Voltaire.Modules
         [Preconditions.Administrator]
         public async Task UnBan(string identifier)
         {
-            await Controllers.Settings.UnBanIdentifier.PerformAsync(Context, identifier, _database);
+            await Controllers.Settings.UnBanIdentifier.PerformAsync(new CommandBasedContext(Context), identifier, _database);
         }
 
         [Command("list_bans", RunMode = RunMode.Async)]
@@ -84,7 +84,7 @@ namespace Voltaire.Modules
         [Preconditions.Administrator]
         public async Task ListBans()
         {
-            await Controllers.Settings.ListBans.PerformAsync(Context, _database);
+            await Controllers.Settings.ListBans.PerformAsync(new CommandBasedContext(Context), _database);
         }
 
         [Command("clear_bans", RunMode = RunMode.Async)]
@@ -92,7 +92,7 @@ namespace Voltaire.Modules
         [Preconditions.Administrator]
         public async Task ClearBans()
         {
-            await Controllers.Settings.ClearBans.PerformAsync(Context, _database);
+            await Controllers.Settings.ClearBans.PerformAsync(new CommandBasedContext(Context), _database);
         }
 
         // Require true admin
@@ -101,7 +101,7 @@ namespace Voltaire.Modules
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task AdminRole(SocketRole role)
         {
-            await Controllers.Settings.SetAdminRole.PerformAsync(Context, role, _database);
+            await Controllers.Settings.SetAdminRole.PerformAsync(new CommandBasedContext(Context), role, _database);
         }
 
         // no precondition
@@ -109,7 +109,7 @@ namespace Voltaire.Modules
         [Summary("Refresh the bot's user cache for this server")]
         public async Task Refresh()
         {
-            await Controllers.Settings.Refresh.PerformAsync(Context, _database);
+            await Controllers.Settings.Refresh.PerformAsync(new CommandBasedContext(Context), _database);
         }
     }
 }

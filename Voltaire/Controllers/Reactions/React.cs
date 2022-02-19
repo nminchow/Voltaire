@@ -24,7 +24,7 @@ namespace Voltaire.Controllers.Reactions
             var r = task.Where(x => x != null);
 
             if (r.Count() == 0) {
-                await context.Channel.SendMessageAsync("message not found");
+                await Send.SendErrorWithDeleteReaction(context, "message not found");
                 return;
             }
 
@@ -44,7 +44,7 @@ namespace Voltaire.Controllers.Reactions
                 await r.First().AddReactionAsync(emote);
                 await Send.SendSentEmoteIfCommand(context);
             } else {
-                await context.Channel.SendMessageAsync("Emoji not found. To send a custom emote, use the emote's name.");
+                await Send.SendErrorWithDeleteReaction(context, "Emoji not found. To send a custom emote, use the emote's name.");
             }
             return;
         }

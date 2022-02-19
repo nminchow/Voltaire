@@ -45,18 +45,6 @@ namespace Voltaire.Modules
             await SendToGuild.PerformAsync(new CommandBasedContext(Context), guildName, channelName, message, true, _database);
         }
 
-        [Command("send_guild", RunMode = RunMode.Async)]
-        public async Task SendGuild(string guildName, string channelName, [Remainder] string message)
-        {
-            await Context.Channel.SendMessageAsync($"This command has been changed to `send_server`\n\n ex: `send_server \"{guildName}\" {channelName} {message}`");
-        }
-
-        [Command("send_guild+r", RunMode = RunMode.Async)]
-        public async Task SendGuildRepliable(string guildName, string channelName, [Remainder] string message)
-        {
-            await Context.Channel.SendMessageAsync($"This command has been changed to `send_server+r`\n\n ex: `send_server+r \"{guildName}\" {channelName} {message}`");
-        }
-
         [Command("send_dm", RunMode = RunMode.Async)]
         public async Task SendDirectMessage(string userName, [Remainder] string message)
         {

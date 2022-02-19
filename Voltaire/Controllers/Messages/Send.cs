@@ -71,11 +71,11 @@ namespace Voltaire.Controllers.Messages
                 switch (e.DiscordCode)
                 {
                     case DiscordErrorCode.CannotSendMessageToUser:
-                        await context.Channel.SendMessageAsync("Voltaire has been blocked by this user, or they have DMs dsiabled.");
+                        await SendMessageToContext(context, "Voltaire has been blocked by this user, or they have DMs dsiabled.");
                         break;
                     case DiscordErrorCode.InsufficientPermissions:
                     case DiscordErrorCode.MissingPermissions:
-                        await context.Channel.SendMessageAsync("Voltaire doesn't have the " +
+                        await SendMessageToContext(context, "Voltaire doesn't have the " +
                         "permissions required to send this message. Ensure Voltaire can access the channel you are trying to send to, and that it has " +
                         " \"Embed Links\" and \"Use External Emojis\" permission.");
                         break;
@@ -125,18 +125,33 @@ namespace Voltaire.Controllers.Messages
             return guilds;
         }
 
+        public static async Task SendMessageToContext(UnifiedContext context, string message, Embed embed = null)
+        {
+            if (context is CommandBasedContext commandContext) {
+                await commandContext.Channel.SendMessageAsync(message, embed: embed);
+            } else if ( context is InteractionBasedContext interactionContext) {
+                await interactionContext.Responder(message, embed);
+            }
+        }
+
         public static async Task SendSentEmoteIfCommand(UnifiedContext context)
         {
             if (context is CommandBasedContext commandContext) {
                 var emote = Emote.Parse(LoadConfig.Instance.config["sent_emoji"]);
                 await commandContext.Message.AddReactionAsync(emote);
+            } else if ( context is InteractionBasedContext interactionContext) {
+                await interactionContext.Responder("Sent!", null);
             }
         }
 
         public static async Task SendErrorWithDeleteReaction(UnifiedContext context, string errorMessage, Embed embed = null)
         {
-            var message = await context.Channel.SendMessageAsync(errorMessage, embed: embed);
-            await AddReactionToMessage(message);
+            if (context is CommandBasedContext commandContext) {
+                var message = await commandContext.Channel.SendMessageAsync(errorMessage, embed: embed);
+                await AddReactionToMessage(message);
+            } else if ( context is InteractionBasedContext interactionContext) {
+                await interactionContext.Responder(errorMessage, embed);
+            }
         }
 
         public static async Task AddReactionToMessage(IUserMessage message)
