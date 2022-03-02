@@ -91,6 +91,14 @@ namespace Voltaire
         private async Task RegisterCommands(DiscordSocketClient client)
         {
             if (client.ShardId != 0) return;
+            if (LoadConfig.Instance.config["dev_server"] != null) {
+                await _interactions.AddModulesToGuildAsync(
+                    client.Guilds.First(x => x.Id.ToString() == LoadConfig.Instance.config["dev_server"]),
+                    true,
+                    _interactionModules.ToArray()
+                );
+                return;
+            }
             await _interactions.AddModulesGloballyAsync(true, _interactionModules.ToArray());
         }
 

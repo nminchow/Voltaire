@@ -1,12 +1,9 @@
 ﻿using Discord;
-using Discord.Commands;
-using Discord.Rest;
 using Discord.WebSocket;
 using Rijndael256;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Voltaire.Controllers.Messages

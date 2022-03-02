@@ -1,5 +1,6 @@
 using System;
 using Discord.Interactions;
+using Discord.WebSocket;
 using System.Threading.Tasks;
 using Voltaire.Controllers.Messages;
 
@@ -9,11 +10,12 @@ namespace Voltaire.Modules
     {
       public MessageInteractions(DataBase database): base(database) {}
 
-      [SlashCommand("send", "Send an anonymous message to the specified channel")]
-      public async Task Send(string channelName, string message)
+      [SlashCommand("send", "Send an anonymous message to the specified channel in the current server.")]
+      public async Task Send(SocketChannel channel, string message, bool repliable = false)
       {
         try {
-          await Controllers.Messages.Send.PerformAsync(new InteractionBasedContext(Context, Responder), channelName, message, false, _database);
+          await Controllers.Messages.SendToGuild.LookupAndSendAsync(Context.Guild, new InteractionBasedContext(Context, Responder), channel.Id.ToString(), message, repliable, _database);
+          // await Controllers.Messages.Send.PerformAsync(new InteractionBasedContext(Context, Responder), channel.Id.ToString(), message, false, _database);
         }
         catch (Exception ex)
         {
@@ -23,15 +25,27 @@ namespace Voltaire.Modules
 
       // todo: handle this command in DMs
       [SlashCommand("volt", "Send an anonymous message to the current channel")]
-      public async Task Volt(string message)
+      public async Task Volt(string message, bool repliable = false)
       {
         try {
-          await SendToGuild.LookupAndSendAsync(Context.Guild, new InteractionBasedContext(Context, Responder), Context.Channel.Name, message, false, _database);
+          await SendToGuild.LookupAndSendAsync(Context.Guild, new InteractionBasedContext(Context, Responder), Context.Channel.Name, message, repliable, _database);
         }
         catch (Exception ex)
         {
           Console.WriteLine(ex);
         }
+      }
+
+      [SlashCommand("send_dm", "Send an anonymous message to the specified user")]
+      public async Task SendDirectMessage(SocketUser user, string message, bool repliable = false)
+      {
+        await Controllers.Messages.SendDirectMessage.PerformAsync(new InteractionBasedContext(Context, Responder), user.Id.ToString(), message, repliable, _database);
+      }
+
+      [SlashCommand("send_reply", "Reply to an anonymous message with a reply code")]
+      public async Task SendReply([Summary("reply-code", "The code on the message you'd like to reply to")] string reply_code, string message, bool repliable = false)
+      {
+        await Controllers.Messages.SendReply.PerformAsync(new InteractionBasedContext(Context, Responder), reply_code, message, repliable, _database);
       }
 
     }

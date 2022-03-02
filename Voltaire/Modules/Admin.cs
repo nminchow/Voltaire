@@ -16,7 +16,7 @@ namespace Voltaire.Modules
         }
 
         [Command("allow_dm", RunMode = RunMode.Async)]
-        [Summary("Allow Direct Messages To Be Sent Annonymously Through This Server")]
+        [Summary("Allow Direct Messages To Be Sent Anonymously Through This Server")]
         [Preconditions.Administrator]
         public async Task AllowDm(Boolean allow)
         {
@@ -24,7 +24,7 @@ namespace Voltaire.Modules
         }
 
         [Command("user_identifiers", RunMode = RunMode.Async)]
-        [Summary("Use a Unique (Yet Annonymous) Identifier For Users When Sending Messages")]
+        [Summary("Use a Unique (Yet Anonymous) Identifier For Users When Sending Messages")]
         [Preconditions.Administrator]
         public async Task UserIdentifiers(Boolean allow)
         {
