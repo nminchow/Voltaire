@@ -84,7 +84,7 @@ namespace Voltaire
             // Discover all of the commands in this assembly and load them.
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
             _interactionModules = await _interactions.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
-
+            _interactions.SlashCommandExecuted += SlashCommandExecuted;
             _client.InteractionCreated += HandleInteraction;
         }
 
@@ -100,6 +100,33 @@ namespace Voltaire
                 return;
             }
             await _interactions.AddModulesGloballyAsync(true, _interactionModules.ToArray());
+        }
+
+        async Task SlashCommandExecuted(SlashCommandInfo arg1, Discord.IInteractionContext arg2, Discord.Interactions.IResult arg3)
+        {
+            if (!arg3.IsSuccess)
+            {
+                switch (arg3.Error)
+                {
+                    case InteractionCommandError.UnmetPrecondition:
+                        await arg2.Interaction.RespondAsync($"Unmet Precondition: {arg3.ErrorReason}", ephemeral: true);
+                        break;
+                    case InteractionCommandError.UnknownCommand:
+                        await arg2.Interaction.RespondAsync("Unknown command", ephemeral: true);
+                        break;
+                    case InteractionCommandError.BadArgs:
+                        await arg2.Interaction.RespondAsync("Invalid number or arguments", ephemeral: true);
+                        break;
+                    case InteractionCommandError.Exception:
+                        await arg2.Interaction.RespondAsync("Command exception:{arg3.ErrorReason}", ephemeral: true);
+                        break;
+                    case InteractionCommandError.Unsuccessful:
+                        await arg2.Interaction.RespondAsync("Command could not be executed", ephemeral: true);
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
         private async Task HandleCommandAsync(SocketMessage messageParam)
