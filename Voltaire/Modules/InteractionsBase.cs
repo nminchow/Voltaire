@@ -8,6 +8,7 @@ namespace Voltaire.Modules
     {
         protected DataBase _database;
         protected Func<string, Discord.Embed, Task> Responder;
+        protected Func<string, Discord.Embed, Task> PublicResponder;
 
         public InteractionsBase(DataBase database)
         {
@@ -18,6 +19,14 @@ namespace Voltaire.Modules
                     return RespondAsync(response, new[] { embed }, ephemeral: true);
                 }
                 return RespondAsync(response, ephemeral: true);
+            };
+
+            PublicResponder = (response, embed) =>
+            {
+                if (embed != null)  {
+                    return RespondAsync(response, new[] { embed }, ephemeral: false);
+                }
+                return RespondAsync(response, ephemeral: false);
             };
         }
     }
