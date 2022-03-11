@@ -13,7 +13,7 @@ namespace Voltaire.Modules
         {
             public AdminGroup(DataBase database): base(database) {}
 
-            [SlashCommand("settings", "Configure Voltair's general settings")]
+            [SlashCommand("settings", "configure Voltaire's general settings")]
             [Preconditions.AdministratorInteraction]
             public async Task Settings(
                 [Summary("allow-DM", "allow users to anonymously message one another via the bot")] Boolean? allowDM = null,
@@ -25,7 +25,6 @@ namespace Voltaire.Modules
                 Func<string, Discord.Embed, Task> SilentResponder = (response, embed) => { return Task.CompletedTask; };
                 var context = new InteractionBasedContext(Context, SilentResponder);
                 if (allowDM is Boolean allowDMvalue) {
-                    Console.WriteLine("updated DM");
                     await Controllers.Settings.SetDirectMessageAccess.PerformAsync(context, allowDMvalue, _database);
                 }
                 if (identifiers is Boolean identifiersValue) {
@@ -83,11 +82,21 @@ namespace Voltaire.Modules
                 await Controllers.Settings.Refresh.PerformAsync(new InteractionBasedContext(Context, Responder), _database);
             }
 
-            [SlashCommand("role", "Set the Role Allowed to Configure Voltaire and Ban Users")]
+            [SlashCommand("role", "set the Role Allowed to Configure Voltaire and Ban Users")]
             [RequireUserPermission(GuildPermission.Administrator)]
             public async Task AdminRole(SocketRole role)
             {
                 await Controllers.Settings.SetAdminRole.PerformAsync(new InteractionBasedContext(Context, Responder), role, _database);
+            }
+
+            [SlashCommand("help", "get admin command overview")]
+            [RequireUserPermission(GuildPermission.Administrator)]
+            public async Task Help(
+                [Summary("private", "show the help dialogue privately")] Boolean? ephemeral = null
+            )
+            {
+                var view = Views.Info.SlashAdmin.Response(new InteractionBasedContext(Context, Responder));
+                await RespondAsync(view.Item1, embed: view.Item2, ephemeral: ephemeral == true);
             }
 
         }

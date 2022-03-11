@@ -17,7 +17,7 @@ namespace Voltaire.Modules
             await Controllers.Subscriptions.Pro.PerformAsync(new InteractionBasedContext(Context, PublicResponder), _database);
         }
 
-        [SlashCommand("pro_cancel", "cancel your voltaire pro subscription")]
+        [SlashCommand("pro-cancel", "cancel your voltaire pro subscription")]
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task Cancel()
         {

@@ -10,7 +10,7 @@ namespace Voltaire.Modules
     {
       public MessageInteractions(DataBase database): base(database) {}
 
-      [SlashCommand("send", "Send an anonymous message to the specified channel in the current server.")]
+      [SlashCommand("send", "send an anonymous message to the specified channel in the current server")]
       public async Task Send(SocketChannel channel, string message, bool repliable = false)
       {
         try {
@@ -24,7 +24,7 @@ namespace Voltaire.Modules
       }
 
       // todo: handle this command in DMs
-      [SlashCommand("volt", "Send an anonymous message to the current channel")]
+      [SlashCommand("volt", "send an anonymous message to the current channel")]
       public async Task Volt(string message, bool repliable = false)
       {
         try {
@@ -36,14 +36,14 @@ namespace Voltaire.Modules
         }
       }
 
-      [SlashCommand("send_dm", "Send an anonymous message to the specified user")]
+      [SlashCommand("send-dm", "send an anonymous message to the specified user")]
       public async Task SendDirectMessage(SocketUser user, string message, bool repliable = false)
       {
         await Controllers.Messages.SendDirectMessage.PerformAsync(new InteractionBasedContext(Context, Responder), user.Id.ToString(), message, repliable, _database);
       }
 
-      [SlashCommand("send_reply", "Reply to an anonymous message with a reply code")]
-      public async Task SendReply([Summary("reply-code", "The code on the message you'd like to reply to")] string reply_code, string message, bool repliable = false)
+      [SlashCommand("send-reply", "reply to an anonymous message with a reply code")]
+      public async Task SendReply([Summary("reply-code", "the code on the message you'd like to reply to")] string reply_code, string message, bool repliable = false)
       {
         await Controllers.Messages.SendReply.PerformAsync(new InteractionBasedContext(Context, Responder), reply_code, message, repliable, _database);
       }
