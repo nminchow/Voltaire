@@ -19,7 +19,7 @@ namespace Voltaire.Controllers.Subscriptions
                 var date = subscription.CurrentPeriodEnd;
 
                 var message = $"Your current subscription will renew {date.Value.ToLongDateString()}.\n" +
-                    $"To cancel your subscription, use the `!volt cancel` command.";
+                    $"To cancel your subscription, use the `/pro-cancel` command.";
 
                 await Send.SendMessageToContext(context, message);
             }
