@@ -38,7 +38,7 @@ namespace Voltaire.Views.Info
                 "Send a reaction to a message. [Enable dev settings to get message IDs](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID). " +
                 "The `emote/emoji` param can be either a unicode emoji, or the name of a custom emote.");
 
-            embed.AddField("/volt-link", "Display the [bot's invite link](https://discordapp.com/oauth2/authorize?client_id=425833927517798420&scope=bot).");
+            embed.AddField("/volt-link", "Display the [bot's invite link](https://discordapp.com/oauth2/authorize?client_id=425833927517798420&permissions=2147998784&scope=bot%20applications.commands).");
             embed.AddField("/volt-faq", "Display the [FAQ link](https://discordapp.com/channels/426894892262752256/581280324340940820/612849796025155585).");
             embed.AddField("/volt-admin help", "Get a list of admin commands, including details on Voltaire Pro.");
             embed.AddField("/volt-help", "(callable from anywhere) Display this help dialogue.");
