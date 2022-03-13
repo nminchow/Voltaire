@@ -12,7 +12,10 @@ namespace Voltaire.Preconditions
     {
         public async override Task<PreconditionResult> CheckRequirementsAsync(IInteractionContext context, Discord.Interactions.ICommandInfo commandInfo, IServiceProvider services)
         {
-            Console.WriteLine("in precondition check!");
+            if (context.Guild == null) {
+                return PreconditionResult.FromError("This command can only be executed from within server channels.");
+            }
+
             // possible to pass the context in?
             var db = services.GetService<DataBase>();
             var guild = FindOrCreateGuild.Perform(context.Guild, db);

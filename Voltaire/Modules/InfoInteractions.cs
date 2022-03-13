@@ -12,7 +12,6 @@ namespace Voltaire.Modules
 
 
         [SlashCommand("volt-help", "get an overview of Voltaire's commands and functionality")]
-        [RequireUserPermission(GuildPermission.Administrator)]
         public async Task VoltHelp(
             [Summary("private", "show the help dialogue privately")] Boolean? ephemeral = null
         )
@@ -22,14 +21,12 @@ namespace Voltaire.Modules
         }
 
         [SlashCommand("volt-faq", "display the bot's faq link")]
-        [RequireUserPermission(GuildPermission.Administrator)]
         public async Task Faq()
         {
             await RespondAsync("View the FAQ here: https://discordapp.com/channels/426894892262752256/581280324340940820/612849796025155585");
         }
 
         [SlashCommand("volt-link", "display the bot's invite link")]
-        [RequireUserPermission(GuildPermission.Administrator)]
         public async Task Link()
         {
             await RespondAsync("<https://discordapp.com/oauth2/authorize?client_id=425833927517798420&scope=bot>");

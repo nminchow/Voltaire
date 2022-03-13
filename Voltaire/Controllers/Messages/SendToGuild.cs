@@ -1,7 +1,6 @@
-﻿using System;
-using Discord.Commands;
+﻿using System.Linq;
 using Discord.WebSocket;
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Voltaire.Controllers.Helpers;
 
@@ -35,6 +34,19 @@ namespace Voltaire.Controllers.Messages
             }
         }
 
+        public static async Task SendToChannelById(ulong channelId, UnifiedContext context, string message, bool replyable, DataBase db)
+        {
+            var unfilteredList = ToChannelList(Send.GuildList(context));
+            var target = unfilteredList.FirstOrDefault(x => x.Id == channelId);
+            await LookupAndSendAsync(target.Guild, context, channelId.ToString(), message, replyable, db);
+            return;
+        }
+
+        public static List<SocketGuildChannel> ToChannelList(IEnumerable<SocketGuild> guildList)
+        {
+            return guildList.Aggregate(new List<SocketGuildChannel>(), (acc, item) => acc.Concat(item.Channels).ToList());
+        }
+
         public static async Task LookupAndSendAsync(SocketGuild guild, UnifiedContext context, string channelName, string message, bool replyable, DataBase db)
         {
             var dbGuild = FindOrCreateGuild.Perform(guild, db);
@@ -59,7 +71,7 @@ namespace Voltaire.Controllers.Messages
 
             if(!IncrementAndCheckMessageLimit.Perform(dbGuild, db))
             {
-                await Send.SendErrorWithDeleteReaction(context, "This server has reached its limit of 50 messages for the month. To lift this limit, ask an admin or moderator to upgrade your server to Voltaire Pro. (This can be done via the `!volt pro` command.)");
+                await Send.SendErrorWithDeleteReaction(context, "This server has reached its limit of 50 messages for the month. To lift this limit, ask an admin or moderator to upgrade your server to Voltaire Pro. (This can be done via the `/pro` command.)");
                 return;
             }
 

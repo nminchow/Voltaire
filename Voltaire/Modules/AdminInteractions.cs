@@ -82,7 +82,7 @@ namespace Voltaire.Modules
                 await Controllers.Settings.Refresh.PerformAsync(new InteractionBasedContext(Context, Responder), _database);
             }
 
-            [SlashCommand("role", "set the Role Allowed to Configure Voltaire and Ban Users")]
+            [SlashCommand("role", "set the admin role Allowed to Configure Voltaire and Ban Users")]
             [RequireUserPermission(GuildPermission.Administrator)]
             public async Task AdminRole(SocketRole role)
             {
@@ -90,7 +90,6 @@ namespace Voltaire.Modules
             }
 
             [SlashCommand("help", "get admin command overview")]
-            [RequireUserPermission(GuildPermission.Administrator)]
             public async Task Help(
                 [Summary("private", "show the help dialogue privately")] Boolean? ephemeral = null
             )

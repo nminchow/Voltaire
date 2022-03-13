@@ -26,7 +26,7 @@ namespace Voltaire.Views
         }
 
         private static EmbedBuilder BuildEmbed(string message, string replyHash)
-        {   
+        {
             if(string.IsNullOrEmpty(replyHash))
             {
                 return new EmbedBuilder
@@ -37,11 +37,11 @@ namespace Voltaire.Views
             }
             return new EmbedBuilder
             {
-                Description = message + "\n\n `Reply With:`",
+                Description = message + "\n\n `Reply by supplying this code to the '/send-reply' command:`",
                 Color = new Color(111, 111, 111),
                 Footer = new EmbedFooterBuilder
                 {
-                    Text = $"send_reply+r {replyHash}"
+                    Text = replyHash
                 }
             };
         }

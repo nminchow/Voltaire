@@ -13,9 +13,9 @@ namespace Voltaire.Modules
       [SlashCommand("send", "send an anonymous message to the specified channel in the current server")]
       public async Task Send(SocketChannel channel, string message, bool repliable = false)
       {
+        // this is broken in DMs because of this: https://github.com/discord/discord-api-docs/issues/2820
         try {
-          await Controllers.Messages.SendToGuild.LookupAndSendAsync(Context.Guild, new InteractionBasedContext(Context, Responder), channel.Id.ToString(), message, repliable, _database);
-          // await Controllers.Messages.Send.PerformAsync(new InteractionBasedContext(Context, Responder), channel.Id.ToString(), message, false, _database);
+          await Controllers.Messages.SendToGuild.SendToChannelById(channel.Id, new InteractionBasedContext(Context, Responder), message, repliable, _database);
         }
         catch (Exception ex)
         {
