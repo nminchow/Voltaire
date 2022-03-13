@@ -23,10 +23,15 @@ namespace Voltaire.Modules
         }
       }
 
-      // todo: handle this command in DMs
       [SlashCommand("volt", "send an anonymous message to the current channel")]
       public async Task Volt(string message, bool repliable = false)
       {
+        if (Context.Guild == null) {
+          var function = Controllers.Messages.Send.SendMessageToChannel(Context.Channel, repliable == true, new InteractionBasedContext(Context, Responder), false);
+          await function("", message);
+          await RespondAsync("Sent!", ephemeral: true);
+          return;
+        }
         try {
           await SendToGuild.LookupAndSendAsync(Context.Guild, new InteractionBasedContext(Context, Responder), Context.Channel.Name, message, repliable, _database);
         }
