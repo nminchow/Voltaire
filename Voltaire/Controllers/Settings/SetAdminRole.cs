@@ -14,7 +14,7 @@ namespace Voltaire.Controllers.Settings
 
             if (!EnsureActiveSubscription.Perform(guild, db))
             {
-                await Send.SendMessageToContext(context, "You need an active Voltaire Pro subscription to set an admin role. To get started, use `!volt pro`");
+                await Send.SendMessageToContext(context, "You need an active Voltaire Pro subscription to set an admin role. To get started, use `/pro`");
                 return;
             }
 

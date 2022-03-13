@@ -20,7 +20,7 @@ namespace Voltaire.Controllers.Settings
 
             if(!EnsureActiveSubscription.Perform(guild,db))
             {
-                await Send.SendErrorWithDeleteReaction(context,"You need an active Voltaire Pro subscription to ban users. To get started, use `!volt pro`");
+                await Send.SendErrorWithDeleteReaction(context,"You need an active Voltaire Pro subscription to ban users. To get started, use `/pro`");
                 return;
             }
 

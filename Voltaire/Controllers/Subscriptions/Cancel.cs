@@ -19,12 +19,12 @@ namespace Voltaire.Controllers.Subscriptions
                 };
                 service.Cancel(guild.SubscriptionId, options);
 
-                await Send.SendMessageToContext(context, "Your subscription has been canceled. Use `!volt pro` to re-upgrade at any time!");
+                await Send.SendMessageToContext(context, "Your subscription has been canceled. Use `/pro` to re-upgrade at any time!");
             }
             else
             {
                 await Send.SendMessageToContext(context, "You do not currently have an active Voltaire Pro subscription. To create one, use the" +
-                    " `!volt pro` command.");
+                    " `/pro` command.");
             }
         }
     }
