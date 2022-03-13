@@ -25,12 +25,13 @@ namespace Voltaire.Controllers.Helpers
             {
                 IConfiguration configuration = LoadConfig.Instance.config;
 
+                Refresh(guild);
+
                 FindOrCreateGuild.Perform(guild, db);
 
                 var view = Views.Info.JoinedGuild.Response();
                 await guild.TextChannels.First().SendMessageAsync(text: view.Item1, embed: view.Item2);
 
-                Refresh(guild);
                 // AuthDiscordBotListApi DblApi = new AuthDiscordBotListApi(425833927517798420, token);
                 // var me = await DblApi.GetMeAsync();
                 // await me.UpdateStatsAsync(db.Guilds.Count());
