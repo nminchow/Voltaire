@@ -1,18 +1,19 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Voltaire.Models;
 
 namespace Voltaire.Controllers.Helpers
 {
     class IncrementAndCheckMessageLimit
     {
-        public static bool Perform(Guild guild, DataBase db)
+        public static async Task<bool> Perform(Guild guild, DataBase db)
         {
             // see if we need to reset the counter
             CheckMonth(guild);
 
             // increment counter by one
             guild.MessagesSentThisMonth += 1;
-            db.SaveChanges();
+            await db.SaveChangesAsync();
 
             return guild.MessagesSentThisMonth <= 50 || EnsureActiveSubscription.Perform(guild, db);
         }

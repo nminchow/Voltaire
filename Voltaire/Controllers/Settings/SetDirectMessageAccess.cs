@@ -9,9 +9,9 @@ namespace Voltaire.Controllers.Settings
     {
         public static async Task PerformAsync(UnifiedContext context, Boolean setting, DataBase db)
         {
-            var guild = FindOrCreateGuild.Perform(context.Guild, db);
+            var guild = await FindOrCreateGuild.Perform(context.Guild, db);
             guild.AllowDirectMessage = setting;
-            db.SaveChanges();
+            await db.SaveChangesAsync();
             await Send.SendMessageToContext(context, $"'Allow DM' set to {setting}");
         }
     }

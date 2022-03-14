@@ -27,7 +27,7 @@ namespace Voltaire.Controllers.Helpers
 
                 Refresh(guild);
 
-                FindOrCreateGuild.Perform(guild, db);
+                await FindOrCreateGuild.Perform(guild, db);
 
                 var view = Views.Info.JoinedGuild.Response();
                 await guild.TextChannels.First().SendMessageAsync(text: view.Item1, embed: view.Item2);

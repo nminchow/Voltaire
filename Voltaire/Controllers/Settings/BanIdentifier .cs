@@ -16,7 +16,7 @@ namespace Voltaire.Controllers.Settings
                 return;
             }
 
-            var guild = FindOrCreateGuild.Perform(context.Guild, db);
+            var guild = await FindOrCreateGuild.Perform(context.Guild, db);
 
             if(!EnsureActiveSubscription.Perform(guild,db))
             {
@@ -31,7 +31,7 @@ namespace Voltaire.Controllers.Settings
             }
 
             guild.BannedIdentifiers.Add(new BannedIdentifier { Identifier = identifier });
-            db.SaveChanges();
+            await db.SaveChangesAsync();
             await Send.SendMessageToContext(context, $"{identifier} is now banned");
         }
 

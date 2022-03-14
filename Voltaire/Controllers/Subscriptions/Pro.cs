@@ -10,7 +10,7 @@ namespace Voltaire.Controllers.Subscriptions
     {
         public static async Task PerformAsync(UnifiedContext context, DataBase db)
         {
-            var guild = FindOrCreateGuild.Perform(context.Guild, db);
+            var guild = await FindOrCreateGuild.Perform(context.Guild, db);
             if(EnsureActiveSubscription.Perform(guild, db))
             {
                 var service = new SubscriptionService();

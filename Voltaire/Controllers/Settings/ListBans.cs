@@ -10,7 +10,7 @@ namespace Voltaire.Controllers.Settings
     {
         public static async Task PerformAsync(UnifiedContext context, DataBase db)
         {
-            var guild = FindOrCreateGuild.Perform(context.Guild, db);
+            var guild = await FindOrCreateGuild.Perform(context.Guild, db);
 
             var bannedIdentifiers = guild.BannedIdentifiers.Select(x => x.Identifier).ToArray();
 

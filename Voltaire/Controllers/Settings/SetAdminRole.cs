@@ -10,7 +10,7 @@ namespace Voltaire.Controllers.Settings
     {
         public static async Task PerformAsync(UnifiedContext context, SocketRole role, DataBase db)
         {
-            var guild = FindOrCreateGuild.Perform(context.Guild, db);
+            var guild = await FindOrCreateGuild.Perform(context.Guild, db);
 
             if (!EnsureActiveSubscription.Perform(guild, db))
             {
@@ -19,7 +19,7 @@ namespace Voltaire.Controllers.Settings
             }
 
             guild.AdminRole = role.Id.ToString();
-            db.SaveChanges();
+            await db.SaveChangesAsync();
             await Send.SendMessageToContext(context, $"{role.Name} can now configure Voltaire and ban users on this server.");
         }
     }

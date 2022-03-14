@@ -49,7 +49,7 @@ namespace Voltaire.Controllers.Messages
 
         public static async Task LookupAndSendAsync(SocketGuild guild, UnifiedContext context, string channelName, string message, bool replyable, DataBase db)
         {
-            var dbGuild = FindOrCreateGuild.Perform(guild, db);
+            var dbGuild = await FindOrCreateGuild.Perform(guild, db);
             if (!UserHasRole.Perform(guild, context.User, dbGuild))
             {
                 await Send.SendErrorWithDeleteReaction(context, "You do not have the role required to send messages to this server.");
@@ -69,7 +69,7 @@ namespace Voltaire.Controllers.Messages
                 return;
             }
 
-            if(!IncrementAndCheckMessageLimit.Perform(dbGuild, db))
+            if(! await IncrementAndCheckMessageLimit.Perform(dbGuild, db))
             {
                 await Send.SendErrorWithDeleteReaction(context, "This server has reached its limit of 50 messages for the month. To lift this limit, ask an admin or moderator to upgrade your server to Voltaire Pro. (This can be done via the `/pro` command.)");
                 return;

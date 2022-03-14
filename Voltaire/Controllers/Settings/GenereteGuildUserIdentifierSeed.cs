@@ -13,7 +13,7 @@ namespace Voltaire.Controllers.Settings
         {
             try
             {
-                var guild = FindOrCreateGuild.Perform(context.Guild, db);
+                var guild = await FindOrCreateGuild.Perform(context.Guild, db);
 
                 // toList to force enumeration before we shuffle identifier
                 var bannedUsers = context.Guild.Users.Where(x => PrefixHelper.UserBlocked(x.Id, guild)).ToList();
@@ -29,7 +29,7 @@ namespace Voltaire.Controllers.Settings
                     return true;
                 }).ToList();
 
-                db.SaveChanges();
+                await db.SaveChangesAsync();
 
                 await Send.SendMessageToContext(context, "User identifiers have been randomized.");
             }

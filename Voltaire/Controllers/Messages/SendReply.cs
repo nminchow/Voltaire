@@ -24,7 +24,7 @@ namespace Voltaire.Controllers.Messages
                 return;
             }
 
-            var allowedGuild = users.ToList().Select(x => FindOrCreateGuild.Perform(x.Guild, db)).FirstOrDefault(x => !PrefixHelper.UserBlocked(context.User.Id, x));
+            var allowedGuild = users.ToList().Select(async x => await FindOrCreateGuild.Perform(x.Guild, db)).FirstOrDefault(x => !PrefixHelper.UserBlocked(context.User.Id, x.Result));
 
             if (allowedGuild == null)
             {
@@ -32,7 +32,7 @@ namespace Voltaire.Controllers.Messages
                 return;
             }
 
-            var prefix = $"{PrefixHelper.ComputePrefix(context, allowedGuild, "someone")} replied";
+            var prefix = $"{PrefixHelper.ComputePrefix(context, allowedGuild.Result, "someone")} replied";
 
             // all 'users' here are technically the same user, so just take the first
             var channel = await users.First().CreateDMChannelAsync();

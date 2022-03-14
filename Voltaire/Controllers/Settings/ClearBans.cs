@@ -8,9 +8,9 @@ namespace Voltaire.Controllers.Settings
     {
         public static async Task PerformAsync(UnifiedContext context, DataBase db)
         {
-            var guild = FindOrCreateGuild.Perform(context.Guild, db);
+            var guild = await FindOrCreateGuild.Perform(context.Guild, db);
             db.RemoveRange(guild.BannedIdentifiers);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
             await Send.SendMessageToContext(context, "Bans cleared");
         }
     }

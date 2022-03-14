@@ -15,7 +15,7 @@ namespace Voltaire.Controllers.Settings
                 return;
             }
 
-            var guild = FindOrCreateGuild.Perform(context.Guild, db);
+            var guild = await FindOrCreateGuild.Perform(context.Guild, db);
 
             var identifiers = guild.BannedIdentifiers.Where(x => x.Identifier == identifier);
             if (identifiers.Count() == 0)
@@ -26,7 +26,7 @@ namespace Voltaire.Controllers.Settings
 
             db.BannedIdentifiers.RemoveRange(identifiers.ToList());
 
-            db.SaveChanges();
+            await db.SaveChangesAsync();
             await Send.SendMessageToContext(context, $"{identifier} is now unbanned");
         }
     }

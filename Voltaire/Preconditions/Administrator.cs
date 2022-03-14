@@ -15,7 +15,7 @@ namespace Voltaire.Preconditions
         {
             // possible to pass the context in?
             var db = services.GetService<DataBase>();
-            var guild = FindOrCreateGuild.Perform(context.Guild, db);
+            var guild = await FindOrCreateGuild.Perform(context.Guild, db);
 
             if (guild.AdminRole != null)
             {
