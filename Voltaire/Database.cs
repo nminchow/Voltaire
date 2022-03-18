@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using System.IO;
+using System;
 
 namespace Voltaire
 {
@@ -10,29 +11,20 @@ namespace Voltaire
         public DbSet<Models.Guild> Guilds { get; set; }
         public DbSet<Models.BannedIdentifier> BannedIdentifiers { get; set; }
 
-        private string _connection;
+        public DataBase(DbContextOptions<DataBase> options) : base(options) {}
 
-        public DataBase(string connection) : base()
-        {
-            _connection = connection;
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer($@"{_connection}");
-        }
     }
 
     public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<DataBase>
     {
         public DataBase CreateDbContext(string[] args)
         {
-            var builder = new ConfigurationBuilder()
-             .SetBasePath(Directory.GetCurrentDirectory())
-             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            IConfiguration configuration = LoadConfig.Instance.config;
 
-            var configuration = builder.Build();
-            return new DataBase(configuration.GetConnectionString("sql"));
+            var optionsBuilder = new DbContextOptionsBuilder<Voltaire.DataBase>();
+            optionsBuilder.UseSqlServer($@"{configuration.GetConnectionString("sql")}");
+
+            return new DataBase(optionsBuilder.Options);
         }
     }
 

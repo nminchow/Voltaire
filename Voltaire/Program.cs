@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Stripe;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Voltaire
 {
@@ -28,7 +30,9 @@ namespace Voltaire
         {
 
             IConfiguration configuration = LoadConfig.Instance.config;
-            var db = new DataBase(configuration.GetConnectionString("sql"));
+            var optionsBuilder = new DbContextOptionsBuilder<Voltaire.DataBase>();
+            optionsBuilder.UseSqlServer($@"{configuration.GetConnectionString("sql")}");
+            var db = new DataBase(optionsBuilder.Options);
 
             var config = new DiscordSocketConfig {
                 // LogLevel = LogSeverity.Debug,
@@ -60,7 +64,7 @@ namespace Voltaire
                 .AddSingleton(_client)
                 .AddSingleton(_commands)
                 .AddSingleton(_interactions)
-                .AddSingleton(db)
+                .AddDbContext<DataBase>(options => options.UseSqlServer($@"{configuration.GetConnectionString("sql")}"))
                 .BuildServiceProvider();
 
             await InstallCommandsAsync();
