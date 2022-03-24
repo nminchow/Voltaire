@@ -11,7 +11,11 @@ namespace Voltaire.Modules
       public MessageInteractions(DataBase database): base(database) {}
 
       [SlashCommand("send", "send an anonymous message to the specified channel in the current server")]
-      public async Task Send(SocketChannel channel, string message, bool repliable = false)
+      public async Task Send(
+        SocketChannel channel,
+        string message,
+        bool repliable = false
+      )
       {
         // this is broken in DMs because of this: https://github.com/discord/discord-api-docs/issues/2820
         try {
@@ -24,7 +28,12 @@ namespace Voltaire.Modules
       }
 
       [SlashCommand("volt", "send an anonymous message to the current channel")]
-      public async Task Volt(string message, bool repliable = false)
+      public async Task Volt(
+        string message,
+        bool repliable = false,
+        [Summary("channel", "send message to target channel")] SocketChannel channel = null,
+        [Summary("channel-name", "send message to target channel by name")] String channelName = null
+      )
       {
         if (Context.Guild == null) {
           var function = Controllers.Messages.Send.SendMessageToChannel(Context.Channel, repliable == true, new InteractionBasedContext(Context, Responder), false);
@@ -33,6 +42,14 @@ namespace Voltaire.Modules
           return;
         }
         try {
+          if (channel != null) {
+            await Controllers.Messages.SendToGuild.SendToChannelById(channel.Id, new InteractionBasedContext(Context, Responder), message, repliable, _database);
+            return;
+          }
+          if (channelName != null) {
+            await SendToGuild.LookupAndSendAsync(Context.Guild, new InteractionBasedContext(Context, Responder), channelName, message, repliable, _database);
+            return;
+          }
           await SendToGuild.LookupAndSendAsync(Context.Guild, new InteractionBasedContext(Context, Responder), Context.Channel.Name, message, repliable, _database);
         }
         catch (Exception ex)
@@ -52,7 +69,6 @@ namespace Voltaire.Modules
       {
         await Controllers.Messages.SendReply.PerformAsync(new InteractionBasedContext(Context, Responder), reply_code, message, repliable, _database);
       }
-
     }
 
 }
