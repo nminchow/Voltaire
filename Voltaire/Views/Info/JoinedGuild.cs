@@ -12,7 +12,7 @@ namespace Voltaire.Views.Info
 
         public static Tuple<string, Embed> Response()
         {
-            return new Tuple<string, Embed>("Thanks for adding Voltaire to your server! Try: `!volt help` to get rolling.", null);
+            return new Tuple<string, Embed>("Thanks for adding Voltaire to your server! Try: `/volt-help` to get rolling.", null);
         }
     }
 }

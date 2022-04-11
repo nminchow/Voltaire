@@ -1,19 +1,17 @@
-﻿using Discord.Commands;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Voltaire.Controllers.Helpers;
+using Voltaire.Controllers.Messages;
 
 namespace Voltaire.Controllers.Settings
 {
     class ClearBans
     {
-        public static async Task PerformAsync(ShardedCommandContext context, DataBase db)
+        public static async Task PerformAsync(UnifiedContext context, DataBase db)
         {
-            var guild = FindOrCreateGuild.Perform(context.Guild, db);
+            var guild = await FindOrCreateGuild.Perform(context.Guild, db);
             db.RemoveRange(guild.BannedIdentifiers);
-            db.SaveChanges();
-            await context.Channel.SendMessageAsync(text: "Bans cleared");
+            await db.SaveChangesAsync();
+            await Send.SendMessageToContext(context, "Bans cleared");
         }
     }
 }

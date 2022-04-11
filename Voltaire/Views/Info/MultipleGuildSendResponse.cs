@@ -11,7 +11,7 @@ namespace Voltaire.Views.Info
     public static class MultipleGuildSendResponse
     {
 
-        public static Tuple<string, Embed> Response(ShardedCommandContext context, IEnumerable<SocketGuild> guilds, string message)
+        public static Tuple<string, Embed> Response(IEnumerable<SocketGuild> guilds, string message)
         {
 
             var embed = new EmbedBuilder

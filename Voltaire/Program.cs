@@ -4,18 +4,24 @@ using System.Reflection;
 using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
+using Discord.Interactions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Stripe;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Voltaire
 {
     class Program
     {
         private CommandService _commands;
+        private InteractionService _interactions;
         private DiscordShardedClient _client;
         private IServiceProvider _services;
+
+        private System.Collections.Generic.IEnumerable<Discord.Interactions.ModuleInfo> _interactionModules;
 
         public static void Main(string[] args)
             => new Program().MainAsync().GetAwaiter().GetResult();
@@ -24,7 +30,9 @@ namespace Voltaire
         {
 
             IConfiguration configuration = LoadConfig.Instance.config;
-            var db = new DataBase(configuration.GetConnectionString("sql"));
+            var optionsBuilder = new DbContextOptionsBuilder<Voltaire.DataBase>();
+            optionsBuilder.UseSqlServer($@"{configuration.GetConnectionString("sql")}");
+            var db = new DataBase(optionsBuilder.Options);
 
             var config = new DiscordSocketConfig {
                 // LogLevel = LogSeverity.Debug,
@@ -46,6 +54,7 @@ namespace Voltaire
 
 
             _commands = new CommandService();
+            _interactions = new InteractionService(_client);
 
             string token = configuration["discordAppToken"];
 
@@ -54,13 +63,14 @@ namespace Voltaire
             _services = new ServiceCollection()
                 .AddSingleton(_client)
                 .AddSingleton(_commands)
-                .AddSingleton(db)
+                .AddSingleton(_interactions)
+                .AddDbContext<DataBase>(options => options.UseSqlServer($@"{configuration.GetConnectionString("sql")}"))
                 .BuildServiceProvider();
 
             await InstallCommandsAsync();
 
             await _client.LoginAsync(TokenType.Bot, token);
-            await _client.SetGameAsync("!volt help");
+            await _client.SetGameAsync("/volt-help");
 
             await _client.StartAsync();
 
@@ -74,8 +84,55 @@ namespace Voltaire
             // Hook the MessageReceived Event into our Command Handler
             _client.MessageReceived += HandleCommandAsync;
             _client.ReactionAdded += HandleReaction;
+            _client.ShardReady += RegisterCommands;
             // Discover all of the commands in this assembly and load them.
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
+            _interactionModules = await _interactions.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
+            _interactions.SlashCommandExecuted += SlashCommandExecuted;
+            _client.InteractionCreated += HandleInteraction;
+        }
+
+        private async Task RegisterCommands(DiscordSocketClient client)
+        {
+            if (client.ShardId != 0) return;
+            if (LoadConfig.Instance.config["dev_server"] != null) {
+                await _interactions.AddModulesToGuildAsync(
+                    client.Guilds.First(x => x.Id.ToString() == LoadConfig.Instance.config["dev_server"]),
+                    true,
+                    _interactionModules.ToArray()
+                );
+                return;
+            }
+            await _interactions.AddModulesGloballyAsync(true, _interactionModules.ToArray());
+        }
+
+        async Task SlashCommandExecuted(SlashCommandInfo arg1, Discord.IInteractionContext arg2, Discord.Interactions.IResult arg3)
+        {
+            if (!arg3.IsSuccess)
+            {
+                switch (arg3.Error)
+                {
+                    case InteractionCommandError.UnmetPrecondition:
+                        await arg2.Interaction.RespondAsync($"Unmet Precondition: {arg3.ErrorReason}", ephemeral: true);
+                        break;
+                    case InteractionCommandError.UnknownCommand:
+                        await arg2.Interaction.RespondAsync("Unknown command", ephemeral: true);
+                        break;
+                    case InteractionCommandError.BadArgs:
+                        await arg2.Interaction.RespondAsync("Invalid number or arguments", ephemeral: true);
+                        break;
+                    case InteractionCommandError.Exception:
+                        Console.WriteLine("Command Error:");
+                        Console.WriteLine(arg3.ErrorReason);
+                        await arg2.Interaction.RespondAsync($"Command exception: {arg3.ErrorReason}. If this message persists, please let us know in the support server (https://discord.gg/xyzMyJH) !", ephemeral: true);
+                        break;
+                    case InteractionCommandError.Unsuccessful:
+                        await arg2.Interaction.RespondAsync("Command could not be executed", ephemeral: true);
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
         private async Task HandleCommandAsync(SocketMessage messageParam)
@@ -107,7 +164,28 @@ namespace Voltaire
             await SendCommandAsync(context, argPos);
         }
 
-        private async Task HandleReaction(Cacheable<IUserMessage, ulong> cache, ISocketMessageChannel channel, SocketReaction reaction)
+        private async Task HandleInteraction (SocketInteraction arg)
+        {
+            try
+            {
+                // Create an execution context that matches the generic type parameter of your InteractionModuleBase<T> modules
+                var ctx = new ShardedInteractionContext(_client, arg);
+                await _interactions.ExecuteCommandAsync(ctx, _services);
+                Console.WriteLine("processed interaction!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Caught exception:");
+                Console.WriteLine(ex);
+
+                // If a Slash Command execution fails it is most likely that the original interaction acknowledgement will persist. It is a good idea to delete the original
+                // response, or at least let the user know that something went wrong during the command execution.
+                if(arg.Type == InteractionType.ApplicationCommand)
+                    await arg.GetOriginalResponseAsync().ContinueWith(async (msg) => await msg.Result.DeleteAsync());
+            }
+        }
+
+        private async Task HandleReaction(Cacheable<IUserMessage, ulong> cache, Cacheable<IMessageChannel, ulong> channelCache, SocketReaction reaction)
         {
             if (reaction.Emote.Name != Controllers.Messages.Send.DeleteEmote)
             {
@@ -126,7 +204,7 @@ namespace Voltaire
             }
             catch (Exception e)
             {
-                await channel.SendMessageAsync("Error deleting message. Does the bot have needed permission?");
+                await channelCache.Value.SendMessageAsync("Error deleting message. Does the bot have needed permission?");
             }
             return;
         }
@@ -136,7 +214,7 @@ namespace Voltaire
         {
             var result = await _commands.ExecuteAsync(context, argPos, _services);
             if (!result.IsSuccess)
-                await Controllers.Messages.Send.SendErrorWithDeleteReaction(context, result.ErrorReason);
+                await Controllers.Messages.Send.SendErrorWithDeleteReaction(new CommandBasedContext(context), result.ErrorReason);
         }
 
         private Task Log(LogMessage msg)

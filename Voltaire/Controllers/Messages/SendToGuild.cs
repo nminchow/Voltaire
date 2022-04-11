@@ -1,6 +1,6 @@
-﻿using Discord.Commands;
+﻿using System.Linq;
 using Discord.WebSocket;
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Voltaire.Controllers.Helpers;
 
@@ -8,7 +8,7 @@ namespace Voltaire.Controllers.Messages
 {
     class SendToGuild
     {
-        public static async Task PerformAsync(ShardedCommandContext context, string guildName, string channelName, string message, bool replyable, DataBase db)
+        public static async Task PerformAsync(UnifiedContext context, string guildName, string channelName, string message, bool replyable, DataBase db)
         {
             var unfilteredList = Send.GuildList(context);
             var candidateGuilds = unfilteredList.Where(x => x.Id.ToString() == guildName || x.Name.ToLower().Contains(guildName.ToLower()));
@@ -34,9 +34,22 @@ namespace Voltaire.Controllers.Messages
             }
         }
 
-        public static async Task LookupAndSendAsync(SocketGuild guild, ShardedCommandContext context, string channelName, string message, bool replyable, DataBase db)
+        public static async Task SendToChannelById(ulong channelId, UnifiedContext context, string message, bool replyable, DataBase db)
         {
-            var dbGuild = FindOrCreateGuild.Perform(guild, db);
+            var unfilteredList = ToChannelList(Send.GuildList(context));
+            var target = unfilteredList.FirstOrDefault(x => x.Id == channelId);
+            await LookupAndSendAsync(target.Guild, context, channelId.ToString(), message, replyable, db);
+            return;
+        }
+
+        public static List<SocketGuildChannel> ToChannelList(IEnumerable<SocketGuild> guildList)
+        {
+            return guildList.Aggregate(new List<SocketGuildChannel>(), (acc, item) => acc.Concat(item.Channels).ToList());
+        }
+
+        public static async Task LookupAndSendAsync(SocketGuild guild, UnifiedContext context, string channelName, string message, bool replyable, DataBase db)
+        {
+            var dbGuild = await FindOrCreateGuild.Perform(guild, db);
             if (!UserHasRole.Perform(guild, context.User, dbGuild))
             {
                 await Send.SendErrorWithDeleteReaction(context, "You do not have the role required to send messages to this server.");
@@ -52,13 +65,13 @@ namespace Voltaire.Controllers.Messages
 
             if (PrefixHelper.UserBlocked(context.User.Id, dbGuild))
             {
-                await context.Channel.SendMessageAsync("It appears that you have been banned from using Voltaire on the targeted server. If you think this is an error, contact one of your admins.");
+                await Send.SendErrorWithDeleteReaction(context, "It appears that you have been banned from using Voltaire on the targeted server. If you think this is an error, contact one of your admins.");
                 return;
             }
 
-            if(!IncrementAndCheckMessageLimit.Perform(dbGuild, db))
+            if(! await IncrementAndCheckMessageLimit.Perform(dbGuild, db))
             {
-                await Send.SendErrorWithDeleteReaction(context, "This server has reached its limit of 50 messages for the month. To lift this limit, ask an admin or moderator to upgrade your server to Voltaire Pro. (This can be done via the `!volt pro` command.)");
+                await Send.SendErrorWithDeleteReaction(context, "This server has reached its limit of 50 messages for the month. To lift this limit, ask an admin or moderator to upgrade your server to Voltaire Pro. (This can be done via the `/pro` command.)");
                 return;
             }
 
@@ -66,7 +79,7 @@ namespace Voltaire.Controllers.Messages
             var channel = candidateChannels.OrderBy(x => x.Name.Length).First();
             var messageFunction = Send.SendMessageToChannel(channel, replyable, context, dbGuild.UseEmbed);
             await messageFunction(prefix, message);
-            await Send.SendSentEmote(context);
+            await Send.SendSentEmoteIfCommand(context);
             return;
         }
     }

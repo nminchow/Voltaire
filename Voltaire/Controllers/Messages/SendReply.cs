@@ -8,7 +8,7 @@ namespace Voltaire.Controllers.Messages
 {
     class SendReply
     {
-        public static async Task PerformAsync(ShardedCommandContext context, string replyKey, string message, bool replyable, DataBase db)
+        public static async Task PerformAsync(UnifiedContext context, string replyKey, string message, bool replyable, DataBase db)
         {
             var candidateGuilds = Send.GuildList(context);
 
@@ -24,22 +24,22 @@ namespace Voltaire.Controllers.Messages
                 return;
             }
 
-            var allowedGuild = users.ToList().Select(x => FindOrCreateGuild.Perform(x.Guild, db)).FirstOrDefault(x => !PrefixHelper.UserBlocked(context.User.Id, x));
+            var allowedGuild = users.ToList().Select(async x => await FindOrCreateGuild.Perform(x.Guild, db)).FirstOrDefault(x => !PrefixHelper.UserBlocked(context.User.Id, x.Result));
 
             if (allowedGuild == null)
             {
-                await context.Channel.SendMessageAsync("It appears that you have been banned from using Voltaire on the targeted server. If you think this is an error, contact one of your admins.");
+                await Send.SendErrorWithDeleteReaction(context, "It appears that you have been banned from using Voltaire on the targeted server. If you think this is an error, contact one of your admins.");
                 return;
             }
 
-            var prefix = $"{PrefixHelper.ComputePrefix(context, allowedGuild, "someone")} replied";
+            var prefix = $"{PrefixHelper.ComputePrefix(context, allowedGuild.Result, "someone")} replied";
 
             // all 'users' here are technically the same user, so just take the first
-            var channel = await users.First().GetOrCreateDMChannelAsync();
+            var channel = await users.First().CreateDMChannelAsync();
             var messageFunction = Send.SendMessageToChannel(channel, replyable, context);
             var sentMessage = await messageFunction(prefix, message);
             await Send.AddReactionToMessage(sentMessage);
-            await Send.SendSentEmote(context);
+            await Send.SendSentEmoteIfCommand(context);
         }
     }
 }

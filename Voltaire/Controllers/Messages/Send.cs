@@ -1,19 +1,16 @@
 ﻿using Discord;
-using Discord.Commands;
-using Discord.Rest;
 using Discord.WebSocket;
 using Rijndael256;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Voltaire.Controllers.Messages
 {
     class Send
     {
-        public static async Task PerformAsync(ShardedCommandContext context, string channelName, string message, bool reply, DataBase db)
+        public static async Task PerformAsync(UnifiedContext context, string channelName, string message, bool reply, DataBase db)
         {
             var candidateGuilds = GuildList(context);
             switch (candidateGuilds.Count())
@@ -25,13 +22,13 @@ namespace Voltaire.Controllers.Messages
                     await SendToGuild.LookupAndSendAsync(candidateGuilds.First(), context, channelName, message, reply, db);
                     break;
                 default:
-                    var view = Views.Info.MultipleGuildSendResponse.Response(context, candidateGuilds, message);
+                    var view = Views.Info.MultipleGuildSendResponse.Response(candidateGuilds, message);
                     await SendErrorWithDeleteReaction(context, view.Item1, view.Item2);
                     break;
             }
         }
 
-        public static Func<string, string, Task<IUserMessage>> SendMessageToChannel(IMessageChannel channel, bool replyable, ShardedCommandContext context, bool forceEmbed = false)
+        public static Func<string, string, Task<IUserMessage>> SendMessageToChannel(IMessageChannel channel, bool replyable, UnifiedContext context, bool forceEmbed = false)
         {
             if (!replyable)
             {
@@ -60,7 +57,7 @@ namespace Voltaire.Controllers.Messages
             };
         }
 
-        public static async Task<IUserMessage> SendMessageAndCatchError(Func<Task<IUserMessage>> send, ShardedCommandContext context)
+        public static async Task<IUserMessage> SendMessageAndCatchError(Func<Task<IUserMessage>> send, UnifiedContext context)
         {
             try
             {
@@ -70,12 +67,12 @@ namespace Voltaire.Controllers.Messages
             {
                 switch (e.DiscordCode)
                 {
-                    case 50007:
-                        await context.Channel.SendMessageAsync("Voltaire has been blocked by this user, or they have DMs dsiabled.");
+                    case DiscordErrorCode.CannotSendMessageToUser:
+                        await SendMessageToContext(context, "Voltaire has been blocked by this user, or they have DMs dsiabled.");
                         break;
-                    case 50013:
-                    case 50001:
-                        await context.Channel.SendMessageAsync("Voltaire doesn't have the " +
+                    case DiscordErrorCode.InsufficientPermissions:
+                    case DiscordErrorCode.MissingPermissions:
+                        await SendMessageToContext(context, "Voltaire doesn't have the " +
                         "permissions required to send this message. Ensure Voltaire can access the channel you are trying to send to, and that it has " +
                         " \"Embed Links\" and \"Use External Emojis\" permission.");
                         break;
@@ -119,22 +116,39 @@ namespace Voltaire.Controllers.Messages
             return message;
         }
 
-        public static IEnumerable<SocketGuild> GuildList(ShardedCommandContext currentContext)
+        public static IEnumerable<SocketGuild> GuildList(UnifiedContext currentContext)
         {
             var guilds = currentContext.Client.Guilds.Where(x => x.Users.Any(u => u.Id == currentContext.User.Id));
             return guilds;
         }
 
-        public static async Task SendSentEmote(ShardedCommandContext context)
+        public static async Task SendMessageToContext(UnifiedContext context, string message, Embed embed = null)
         {
-            var emote = Emote.Parse(LoadConfig.Instance.config["sent_emoji"]);
-            await context.Message.AddReactionAsync(emote);
+            if (context is CommandBasedContext commandContext) {
+                await commandContext.Channel.SendMessageAsync(message, embed: embed);
+            } else if ( context is InteractionBasedContext interactionContext) {
+                await interactionContext.Responder(message, embed);
+            }
         }
 
-        public static async Task SendErrorWithDeleteReaction(ShardedCommandContext context, string errorMessage, Embed embed = null)
+        public static async Task SendSentEmoteIfCommand(UnifiedContext context)
         {
-            var message = await context.Channel.SendMessageAsync(errorMessage, embed: embed);
-            await AddReactionToMessage(message);
+            if (context is CommandBasedContext commandContext) {
+                var emote = Emote.Parse(LoadConfig.Instance.config["sent_emoji"]);
+                await commandContext.Message.AddReactionAsync(emote);
+            } else if ( context is InteractionBasedContext interactionContext) {
+                await interactionContext.Responder("Sent!", null);
+            }
+        }
+
+        public static async Task SendErrorWithDeleteReaction(UnifiedContext context, string errorMessage, Embed embed = null)
+        {
+            if (context is CommandBasedContext commandContext) {
+                var message = await commandContext.Channel.SendMessageAsync(errorMessage, embed: embed);
+                await AddReactionToMessage(message);
+            } else if ( context is InteractionBasedContext interactionContext) {
+                await interactionContext.Responder(errorMessage, embed);
+            }
         }
 
         public static async Task AddReactionToMessage(IUserMessage message)

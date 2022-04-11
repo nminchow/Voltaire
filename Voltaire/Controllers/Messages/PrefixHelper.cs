@@ -10,13 +10,13 @@ namespace Voltaire.Controllers.Messages
     class PrefixHelper
     {
 
-        public static string ComputePrefix(ShardedCommandContext context, Guild guild, string defaultValue = "")
+        public static string ComputePrefix(UnifiedContext context, Guild guild, string defaultValue = "")
         {
             if (!guild.UseUserIdentifiers)
             {
                 return defaultValue;
             }
-            return Generate(context, GetIdentifierInteger(context.User.Id, guild));
+            return Generate(GetIdentifierInteger(context.User.Id, guild));
         }
 
         public static bool UserBlocked(ulong userId, Guild guild)
@@ -35,7 +35,7 @@ namespace Voltaire.Controllers.Messages
             return Math.Abs(identifier).ToString("0000").Substring(0, 4);
         }
 
-        private static string Generate(ShardedCommandContext context, int identifierInt)
+        private static string Generate(int identifierInt)
         {
             //Console.WriteLine($"{resultString} {integer} {offset}");
 

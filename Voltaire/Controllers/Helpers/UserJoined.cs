@@ -11,7 +11,7 @@ namespace Voltaire.Controllers.Helpers
             if (user.IsBot)
                 return;
             var view = Views.Info.UserJoined.Response();
-            var channel = await user.GetOrCreateDMChannelAsync();
+            var channel = await user.CreateDMChannelAsync();
             await channel.SendMessageAsync(text: view.Item1, embed: view.Item2);
         }
     }

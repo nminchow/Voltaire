@@ -10,7 +10,7 @@ namespace Voltaire.Views.Info
     public static class Admin
     {
 
-        public static Tuple<string, Embed> Response(ShardedCommandContext context)
+        public static Tuple<string, Embed> Response(UnifiedContext context)
         {
 
             var embed = new EmbedBuilder

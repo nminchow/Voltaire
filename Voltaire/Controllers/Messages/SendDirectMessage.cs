@@ -11,7 +11,7 @@ namespace Voltaire.Controllers.Messages
 {
     class SendDirectMessage
     {
-        public static async Task PerformAsync(ShardedCommandContext context, string userName, string message, bool replyable, DataBase db)
+        public static async Task PerformAsync(UnifiedContext context, string userName, string message, bool replyable, DataBase db)
         {
             // convert special discord tag to regular ID format
             userName = userName.StartsWith("<@!") && userName.EndsWith('>') ? userName.Substring(3, userName.Length - 4) : userName;
@@ -34,7 +34,7 @@ namespace Voltaire.Controllers.Messages
                     )
                     && !x.IsBot);
 
-                var allowDmList = userList.Where(x => FilterGuildByDirectMessageSetting(x, db));
+                var allowDmList = userList.Where(x => FilterGuildByDirectMessageSetting(x, db).Result);
 
                 if (!allowDmList.Any() && userList.Any())
                 {
@@ -50,11 +50,13 @@ namespace Voltaire.Controllers.Messages
                     return;
                 }
 
-                var userGuild = requiredRoleList.ToList().Select(x => Tuple.Create(x, FindOrCreateGuild.Perform(x.Guild, db))).FirstOrDefault(x => !PrefixHelper.UserBlocked(context.User.Id, x.Item2));
+                var list = requiredRoleList.ToList().Select(async x => Tuple.Create(x, await FindOrCreateGuild.Perform(x.Guild, db)));
+
+                var userGuild = list.FirstOrDefault(x => !PrefixHelper.UserBlocked(context.User.Id, x.Result.Item2));
 
                 if (userGuild == null && requiredRoleList.Any())
                 {
-                    await context.Channel.SendMessageAsync("user found, but you have been banned from using Voltaire on your shared server");
+                    await Send.SendErrorWithDeleteReaction(context, "user found, but you have been banned from using Voltaire on your shared server");
                 }
                 else if (userGuild == null)
                 {
@@ -62,12 +64,12 @@ namespace Voltaire.Controllers.Messages
                     return;
                 }
 
-                var userChannel = await userGuild.Item1.GetOrCreateDMChannelAsync();
-                var prefix = PrefixHelper.ComputePrefix(context, userGuild.Item2, "anonymous user");
+                var userChannel = await userGuild.Result.Item1.CreateDMChannelAsync();
+                var prefix = PrefixHelper.ComputePrefix(context, userGuild.Result.Item2, "anonymous user");
                 var messageFunction = Send.SendMessageToChannel(userChannel, replyable, context);
                 var sentMessage = await messageFunction(prefix, message);
                 await Send.AddReactionToMessage(sentMessage);
-                await Send.SendSentEmote(context);
+                await Send.SendSentEmoteIfCommand(context);
             }
             catch (Exception ex)
             {
@@ -81,9 +83,9 @@ namespace Voltaire.Controllers.Messages
             return guildList.Aggregate(new List<SocketGuildUser>(), (acc, item) => acc.Concat(item.Users).ToList());
         }
 
-        private static bool FilterGuildByDirectMessageSetting(SocketGuildUser user, DataBase db)
+        private static async Task<bool> FilterGuildByDirectMessageSetting(SocketGuildUser user, DataBase db)
         {
-            return !db.Guilds.Any(x => x.DiscordId == user.Guild.Id.ToString() && !x.AllowDirectMessage);
+            return ! await db.Guilds.AnyAsync(x => x.DiscordId == user.Guild.Id.ToString() && !x.AllowDirectMessage);
         }
 
         private static bool FilterGuildByRole(SocketGuildUser reciver, IUser sender, DataBase db)

@@ -18,55 +18,43 @@ namespace Voltaire.Modules
         [Summary("error message for malformed send")]
         public async Task SendError(string _one)
         {
-            await Controllers.Messages.Send.SendErrorWithDeleteReaction(Context, "Please specify your channel name, ex: `send some-channel hello`");
+            await Controllers.Messages.Send.SendErrorWithDeleteReaction(new CommandBasedContext(Context), "Please specify your channel name, ex: `send some-channel hello`");
         }
 
         [Command("send", RunMode = RunMode.Async)]
         public async Task Send(string channelName, [Remainder] string message)
         {
-            await Controllers.Messages.Send.PerformAsync(Context, channelName, message, false, _database);
+            await Controllers.Messages.Send.PerformAsync(new CommandBasedContext(Context), channelName, message, false, _database);
         }
 
         [Command("send+r", RunMode = RunMode.Async)]
         public async Task SendRepliable(string channelName, [Remainder] string message)
         {
-            await Controllers.Messages.Send.PerformAsync(Context, channelName, message, true, _database);
+            await Controllers.Messages.Send.PerformAsync(new CommandBasedContext(Context), channelName, message, true, _database);
         }
 
         [Command("send_server", RunMode = RunMode.Async)]
         public async Task SendServer(string guildName, string channelName, [Remainder] string message)
         {
-            await SendToGuild.PerformAsync(Context, guildName, channelName, message, false, _database);
+            await SendToGuild.PerformAsync(new CommandBasedContext(Context), guildName, channelName, message, false, _database);
         }
 
         [Command("send_server+r", RunMode = RunMode.Async)]
         public async Task SendServerRepliable(string guildName, string channelName, [Remainder] string message)
         {
-            await SendToGuild.PerformAsync(Context, guildName, channelName, message, true, _database);
-        }
-
-        [Command("send_guild", RunMode = RunMode.Async)]
-        public async Task SendGuild(string guildName, string channelName, [Remainder] string message)
-        {
-            await Context.Channel.SendMessageAsync($"This command has been changed to `send_server`\n\n ex: `send_server \"{guildName}\" {channelName} {message}`");
-        }
-
-        [Command("send_guild+r", RunMode = RunMode.Async)]
-        public async Task SendGuildRepliable(string guildName, string channelName, [Remainder] string message)
-        {
-            await Context.Channel.SendMessageAsync($"This command has been changed to `send_server+r`\n\n ex: `send_server+r \"{guildName}\" {channelName} {message}`");
+            await SendToGuild.PerformAsync(new CommandBasedContext(Context), guildName, channelName, message, true, _database);
         }
 
         [Command("send_dm", RunMode = RunMode.Async)]
         public async Task SendDirectMessage(string userName, [Remainder] string message)
         {
-            await Controllers.Messages.SendDirectMessage.PerformAsync(Context, userName, message, false, _database);
+            await Controllers.Messages.SendDirectMessage.PerformAsync(new CommandBasedContext(Context), userName, message, false, _database);
         }
 
         [Command("send_dm+r", RunMode = RunMode.Async)]
         public async Task SendDirectMessageRepliable(string userName, [Remainder] string message)
         {
-            await Controllers.Messages.SendDirectMessage.PerformAsync(Context, userName, message, true, _database);
+            await Controllers.Messages.SendDirectMessage.PerformAsync(new CommandBasedContext(Context), userName, message, true, _database);
         }
 
         [Command("send_reply", RunMode = RunMode.Async)]
@@ -78,7 +66,7 @@ namespace Voltaire.Modules
         [Command("send_reply", RunMode = RunMode.Async)]
         public async Task SendReply(string key, [Remainder] string message)
         {
-            await Controllers.Messages.SendReply.PerformAsync(Context, key, message, false,_database);
+            await Controllers.Messages.SendReply.PerformAsync(new CommandBasedContext(Context), key, message, false,_database);
         }
 
         [Command("send_reply+r", RunMode = RunMode.Async)]
@@ -90,7 +78,7 @@ namespace Voltaire.Modules
         [Command("send_reply+r", RunMode = RunMode.Async)]
         public async Task SendReplyRepliable(string key, [Remainder] string message)
         {
-            await Controllers.Messages.SendReply.PerformAsync(Context, key, message, true, _database);
+            await Controllers.Messages.SendReply.PerformAsync(new CommandBasedContext(Context), key, message, true, _database);
         }
     }
 }

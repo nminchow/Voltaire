@@ -16,7 +16,7 @@ namespace Voltaire.Modules
         [Summary("add a reaction to a message")]
         public async Task React(ulong messageId, string emoji)
         {
-            await Controllers.Reactions.React.PerformAsync(Context, messageId, emoji, _database);
+            await Controllers.Reactions.React.PerformAsync(new CommandBasedContext(Context), messageId, emoji, _database);
         }
     }
 }

@@ -18,8 +18,7 @@ namespace Voltaire.Modules
         [Summary("get admin command overview")]
         public async Task AdminInfo()
         {
-            var view = Views.Info.Admin.Response(Context);
-            Console.WriteLine("got view");
+            var view = Views.Info.Admin.Response(new CommandBasedContext(Context));
             await Context.Channel.SendMessageAsync(view.Item1, embed: view.Item2);
         }
 

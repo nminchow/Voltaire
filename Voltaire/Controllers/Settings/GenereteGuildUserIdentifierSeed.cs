@@ -1,8 +1,5 @@
-﻿using Discord.Commands;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Voltaire.Controllers.Helpers;
 using Voltaire.Controllers.Messages;
@@ -12,11 +9,11 @@ namespace Voltaire.Controllers.Settings
 {
     class GenerateGuildUserIdentifierSeed
     {
-        public static async Task PerformAsync(ShardedCommandContext context, DataBase db)
+        public static async Task PerformAsync(UnifiedContext context, DataBase db)
         {
             try
             {
-                var guild = FindOrCreateGuild.Perform(context.Guild, db);
+                var guild = await FindOrCreateGuild.Perform(context.Guild, db);
 
                 // toList to force enumeration before we shuffle identifier
                 var bannedUsers = context.Guild.Users.Where(x => PrefixHelper.UserBlocked(x.Id, guild)).ToList();
@@ -32,9 +29,9 @@ namespace Voltaire.Controllers.Settings
                     return true;
                 }).ToList();
 
-                db.SaveChanges();
+                await db.SaveChangesAsync();
 
-                await context.Channel.SendMessageAsync(text: "User identifiers have been randomized.");
+                await Send.SendMessageToContext(context, "User identifiers have been randomized.");
             }
             catch (Exception ex)
             {

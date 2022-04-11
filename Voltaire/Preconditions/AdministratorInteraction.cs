@@ -1,18 +1,21 @@
-﻿using System;
-using Discord.Commands;
+using System;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
 using System.Linq;
 using Voltaire.Controllers.Helpers;
 using Discord;
+using Discord.Interactions;
 
 namespace Voltaire.Preconditions
-{
-    class Administrator : PreconditionAttribute
+{      class AdministratorInteraction : Discord.Interactions.PreconditionAttribute
     {
-        public async override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)
+        public async override Task<PreconditionResult> CheckRequirementsAsync(IInteractionContext context, Discord.Interactions.ICommandInfo commandInfo, IServiceProvider services)
         {
+            if (context.Guild == null) {
+                return PreconditionResult.FromError("This command can only be executed from within server channels.");
+            }
+
             // possible to pass the context in?
             var db = services.GetService<DataBase>();
             var guild = await FindOrCreateGuild.Perform(context.Guild, db);
@@ -29,8 +32,8 @@ namespace Voltaire.Preconditions
                     }
                 }
             }
-
-            return await new RequireUserPermissionAttribute(GuildPermission.Administrator).CheckPermissionsAsync(context, command, services);
+            Console.WriteLine("returning default");
+            return await new RequireUserPermissionAttribute(GuildPermission.Administrator).CheckRequirementsAsync(context, commandInfo, services);
         }
     }
 }
