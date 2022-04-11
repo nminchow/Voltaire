@@ -41,21 +41,15 @@ namespace Voltaire.Modules
           await RespondAsync("Sent!", ephemeral: true);
           return;
         }
-        try {
-          if (channel != null) {
-            await Controllers.Messages.SendToGuild.SendToChannelById(channel.Id, new InteractionBasedContext(Context, Responder), message, repliable, _database);
-            return;
-          }
-          if (channelName != null) {
-            await SendToGuild.LookupAndSendAsync(Context.Guild, new InteractionBasedContext(Context, Responder), channelName, message, repliable, _database);
-            return;
-          }
-          await SendToGuild.LookupAndSendAsync(Context.Guild, new InteractionBasedContext(Context, Responder), Context.Channel.Name, message, repliable, _database);
+        if (channel != null) {
+          await Controllers.Messages.SendToGuild.SendToChannelById(channel.Id, new InteractionBasedContext(Context, Responder), message, repliable, _database);
+          return;
         }
-        catch (Exception ex)
-        {
-          Console.WriteLine(ex);
+        if (channelName != null) {
+          await SendToGuild.LookupAndSendAsync(Context.Guild, new InteractionBasedContext(Context, Responder), channelName, message, repliable, _database);
+          return;
         }
+        await SendToGuild.LookupAndSendAsync(Context.Guild, new InteractionBasedContext(Context, Responder), Context.Channel.Name, message, repliable, _database);
       }
 
       [SlashCommand("send-dm", "send an anonymous message to the specified user")]

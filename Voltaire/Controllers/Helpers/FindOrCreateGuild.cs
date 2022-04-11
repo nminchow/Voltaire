@@ -11,7 +11,6 @@ namespace Voltaire.Controllers.Helpers
     {
         public static async Task<Guild> Perform(IGuild guild, DataBase db)
         {
-            Console.WriteLine("doing lookup!");
             var dbGuild = await db.Guilds.Include(x => x.BannedIdentifiers).FirstOrDefaultAsync(u => u.DiscordId == guild.Id.ToString());
             if (dbGuild == null)
             {

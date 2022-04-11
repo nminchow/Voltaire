@@ -122,7 +122,9 @@ namespace Voltaire
                         await arg2.Interaction.RespondAsync("Invalid number or arguments", ephemeral: true);
                         break;
                     case InteractionCommandError.Exception:
-                        await arg2.Interaction.RespondAsync("Command exception:{arg3.ErrorReason}", ephemeral: true);
+                        Console.WriteLine("Command Error:");
+                        Console.WriteLine(arg3.ErrorReason);
+                        await arg2.Interaction.RespondAsync($"Command exception: {arg3.ErrorReason}. If this message persists, please let us know in the support server (https://discord.gg/xyzMyJH) !", ephemeral: true);
                         break;
                     case InteractionCommandError.Unsuccessful:
                         await arg2.Interaction.RespondAsync("Command could not be executed", ephemeral: true);
@@ -169,9 +171,11 @@ namespace Voltaire
                 // Create an execution context that matches the generic type parameter of your InteractionModuleBase<T> modules
                 var ctx = new ShardedInteractionContext(_client, arg);
                 await _interactions.ExecuteCommandAsync(ctx, _services);
+                Console.WriteLine("processed interaction!");
             }
             catch (Exception ex)
             {
+                Console.WriteLine("Caught exception:");
                 Console.WriteLine(ex);
 
                 // If a Slash Command execution fails it is most likely that the original interaction acknowledgement will persist. It is a good idea to delete the original
