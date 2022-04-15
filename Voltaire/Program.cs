@@ -159,6 +159,16 @@ namespace Voltaire
             if (!(message.HasStringPrefix(prefix, ref argPos) || message.HasMentionPrefix(_client.CurrentUser, ref argPos))) return;
             // quick logging
             Console.WriteLine("processed message!");
+
+            if (!context.IsPrivate) {
+                try {
+                    var response = Views.Info.UpgradeNotification.Response();
+                    await context.User.SendMessageAsync(embed: response.Item2);
+                } catch (Discord.Net.HttpException e) {
+                    Console.WriteLine("unable to alert user of deprication");
+                }
+            }
+
             // Execute the command. (result does not indicate a return value,
             // rather an object stating if the command executed successfully)
             await SendCommandAsync(context, argPos);
