@@ -70,7 +70,7 @@ namespace Voltaire
             await InstallCommandsAsync();
 
             await _client.LoginAsync(TokenType.Bot, token);
-            await _client.SetGameAsync("/volt-help");
+            await _client.SetGameAsync("/volt-help", null, ActivityType.Watching);
 
             await _client.StartAsync();
 
