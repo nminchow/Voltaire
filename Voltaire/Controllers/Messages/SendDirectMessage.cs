@@ -34,7 +34,7 @@ namespace Voltaire.Controllers.Messages
                     )
                     && !x.IsBot);
 
-                var allowDmList = userList.Where(x => FilterGuildByDirectMessageSetting(x, db).Result);
+                var allowDmList = userList.Where(x => FilterGuildByDirectMessageSetting(x, db));
 
                 if (!allowDmList.Any() && userList.Any())
                 {
@@ -83,9 +83,9 @@ namespace Voltaire.Controllers.Messages
             return guildList.Aggregate(new List<SocketGuildUser>(), (acc, item) => acc.Concat(item.Users).ToList());
         }
 
-        private static async Task<bool> FilterGuildByDirectMessageSetting(SocketGuildUser user, DataBase db)
+        private static bool FilterGuildByDirectMessageSetting(SocketGuildUser user, DataBase db)
         {
-            return ! await db.Guilds.AnyAsync(x => x.DiscordId == user.Guild.Id.ToString() && !x.AllowDirectMessage);
+            return ! db.Guilds.Any(x => x.DiscordId == user.Guild.Id.ToString() && !x.AllowDirectMessage);
         }
 
         private static bool FilterGuildByRole(SocketGuildUser reciver, IUser sender, DataBase db)
