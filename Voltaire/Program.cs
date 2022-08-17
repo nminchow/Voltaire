@@ -96,6 +96,7 @@ namespace Voltaire
         {
             if (client.ShardId != 0) return;
             if (LoadConfig.Instance.config["dev_server"] != null) {
+                // await _interactions.AddModulesGloballyAsync(true, new Discord.Interactions.ModuleInfo[] {});
                 await _interactions.AddModulesToGuildAsync(
                     client.Guilds.First(x => x.Id.ToString() == LoadConfig.Instance.config["dev_server"]),
                     true,

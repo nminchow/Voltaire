@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Discord.Interactions;
 using Discord.WebSocket;
 using System.Threading.Tasks;
@@ -62,6 +63,18 @@ namespace Voltaire.Modules
       public async Task SendReply([Summary("reply-code", "the code on the message you'd like to reply to")] string reply_code, string message, bool repliable = false)
       {
         await Controllers.Messages.SendReply.PerformAsync(new InteractionBasedContext(Context, Responder), reply_code, message, repliable, _database);
+      }
+
+
+      [ModalInteraction("send-message:*,*")]
+      public async Task SendMessageInteractionHandler(string channelId, string repliableString, Views.Modals.MessagePrompt prompt) {
+
+          var repliable = bool.Parse(repliableString);
+
+          var channel = Context.Guild.TextChannels.Where(x => x.Id.ToString() == channelId).FirstOrDefault();
+          await RespondAsync("Message sent", ephemeral: true);
+          await SendToGuild.LookupAndSendAsync(Context.Guild, new InteractionBasedContext(Context, Responder), channelId, prompt.message, repliable, _database);
+
       }
     }
 
