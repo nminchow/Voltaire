@@ -2,6 +2,7 @@
 using Discord.Interactions;
 using Discord;
 using System.Linq;
+using Discord.WebSocket;
 
 namespace Voltaire.Modules
 {
@@ -23,6 +24,28 @@ namespace Voltaire.Modules
                 var prompt = $"Anonymous message to #{channel}";
 
                 await Context.Interaction.RespondWithModalAsync<Views.Modals.MessagePrompt>($"send-message:{channelId},{repliable}", null, modifyModal: builder => {
+                    builder.Title = prompt;
+                });
+
+            }
+
+            [ComponentInteraction("prompt-reply:*:*")]
+            public async Task PromptUserForReploy(string replyHash, string replyable) {
+
+                var originalInteraction = Context.Interaction as SocketMessageComponent;
+                var author = originalInteraction.Message.Embeds.First().Author.ToString();
+
+                if (author.EndsWith(" replied")) {
+                    author = author.Remove(author.Length - 8);
+                }
+
+                var prompt = $"Anonymous reply to {author}";
+
+                if (string.IsNullOrEmpty(author)) {
+                    prompt = "Send Anonymous Reply";
+                }
+
+                await Context.Interaction.RespondWithModalAsync<Views.Modals.MessagePrompt>($"send-reply:{replyHash}:::{replyable}", null, modifyModal: builder => {
                     builder.Title = prompt;
                 });
 

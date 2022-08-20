@@ -37,7 +37,7 @@ namespace Voltaire.Controllers.Messages
                     message = CheckForMentions(channel, message);
                     if (forceEmbed)
                     {
-                        var view = Views.Message.Response(username, message, null);
+                        var view = Views.Message.Response(username, message);
                         return await SendMessageAndCatchError(() => { return channel.SendMessageAsync(view.Item1, embed: view.Item2); }, context);
                     }
 
@@ -52,8 +52,13 @@ namespace Voltaire.Controllers.Messages
             {
                 var key = LoadConfig.Instance.config["encryptionKey"];
                 var replyHash = Rijndael.Encrypt(context.User.Id.ToString(), key, KeySize.Aes256);
-                var view = Views.Message.Response(username, message, replyHash.ToString());
-                return await SendMessageAndCatchError(() => { return channel.SendMessageAsync(view.Item1, embed: view.Item2); }, context);
+                var view = Views.Message.Response(username, message);
+                return await SendMessageAndCatchError(() => {
+                    var builder = new ComponentBuilder()
+                        .WithButton("Send DM Reply", $"prompt-reply:{replyHash}:{false}")
+                        .WithButton("Send Repliable DM", $"prompt-reply:{replyHash}:{true}");
+                    return channel.SendMessageAsync(view.Item1, embed: view.Item2, components: builder.Build());
+                }, context);
             };
         }
 
