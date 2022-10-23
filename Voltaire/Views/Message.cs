@@ -10,9 +10,9 @@ namespace Voltaire.Views
     public static class Message
     {
 
-        public static Tuple<string, Embed> Response(string username, string message, string replyHash = "")
+        public static Tuple<string, Embed> Response(string username, string message)
         {
-            EmbedBuilder embed = BuildEmbed(message, replyHash);
+            EmbedBuilder embed = BuildEmbed(message);
 
             if (!string.IsNullOrEmpty(username))
             {
@@ -25,24 +25,12 @@ namespace Voltaire.Views
             return new Tuple<string, Embed>("", embed.Build());
         }
 
-        private static EmbedBuilder BuildEmbed(string message, string replyHash)
+        private static EmbedBuilder BuildEmbed(string message)
         {
-            if(string.IsNullOrEmpty(replyHash))
-            {
-                return new EmbedBuilder
-                {
-                    Description = message,
-                    Color = new Color(111, 111, 111)
-                };
-            }
             return new EmbedBuilder
             {
-                Description = message + "\n\n `Reply by supplying this code to the '/send-reply' command:`",
-                Color = new Color(111, 111, 111),
-                Footer = new EmbedFooterBuilder
-                {
-                    Text = replyHash
-                }
+                Description = message,
+                Color = new Color(111, 111, 111)
             };
         }
     }

@@ -98,6 +98,21 @@ namespace Voltaire.Modules
                 await RespondAsync(view.Item1, embed: view.Item2, ephemeral: ephemeral == true);
             }
 
+            [SlashCommand("create-prompt", "create a prompt for users to send DMs to your target channel")]
+            [RequireUserPermission(GuildPermission.Administrator)]
+            public async Task CreatePrompt(
+                [Summary("channel", "channel where responses will be sent")] SocketChannel channel,
+                [Summary("repliable", "set whether sent messages will be repliable")] bool repliable = false,
+                [Summary("prompt", "the text you'd like users to see when responding")] string prompt = null
+            )
+            {
+                var builder = new ComponentBuilder().WithButton("Send Message", $"prompt-message:{channel.Id},{repliable}");
+
+                var embed = Views.Info.Prompt.Response(prompt, channel, Context);
+
+                await RespondAsync(components: builder.Build(), ephemeral: false, embed: embed.Item2);
+            }
+
         }
 
 
