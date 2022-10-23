@@ -136,6 +136,23 @@ namespace Voltaire
             }
         }
 
+        private async Task SendNotificaiton(ShardedCommandContext context)
+        {
+            try {
+                var response = NotificationText(context.Message.Content);
+                await context.User.SendMessageAsync(embed: response);
+            } catch (Discord.Net.HttpException e) {
+                Console.WriteLine("unable to alert user of deprication");
+            }
+        }
+
+        private Embed NotificationText(string message) {
+            if (message.StartsWith("send") || message.StartsWith("!volt send")) {
+                return Views.Info.UpgradeNotificationWithSendInfo.Response().Item2;
+            }
+            return Views.Info.UpgradeNotification.Response().Item2;
+        }
+
         private async Task HandleCommandAsync(SocketMessage messageParam)
         {
             // Don't process the command if it was a System Message
@@ -151,6 +168,9 @@ namespace Voltaire
             // short circut DMs
             if (context.IsPrivate && !context.User.IsBot && !(message.HasStringPrefix(prefix, ref argPos)))
             {
+                if (!message.Content.StartsWith('/')) {
+                    await SendNotificaiton(context);
+                }
                 await SendCommandAsync(context, 0);
                 Console.WriteLine("processed message!");
                 return;
@@ -161,17 +181,9 @@ namespace Voltaire
             // quick logging
             Console.WriteLine("processed message!");
 
-            if (!context.IsPrivate) {
-                try {
-                    var response = Views.Info.UpgradeNotification.Response();
-                    await context.User.SendMessageAsync(embed: response.Item2);
-                } catch (Discord.Net.HttpException e) {
-                    Console.WriteLine("unable to alert user of deprication");
-                }
-            }
-
             // Execute the command. (result does not indicate a return value,
             // rather an object stating if the command executed successfully)
+            await SendNotificaiton(context);
             await SendCommandAsync(context, argPos);
         }
 

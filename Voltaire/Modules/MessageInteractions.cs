@@ -33,7 +33,7 @@ namespace Voltaire.Modules
         string message,
         bool repliable = false,
         [Summary("channel", "send message to target channel")] SocketChannel channel = null,
-        [Summary("channel-name", "send message to target channel by name")] String channelName = null
+        [Summary("channel-name", "send message to target channel by name or ID")] String channelName = null
       )
       {
         if (Context.Guild == null) {
@@ -50,7 +50,7 @@ namespace Voltaire.Modules
           await SendToGuild.LookupAndSendAsync(Context.Guild, new InteractionBasedContext(Context, Responder), channelName, message, repliable, _database);
           return;
         }
-        await SendToGuild.LookupAndSendAsync(Context.Guild, new InteractionBasedContext(Context, Responder), Context.Channel.Name, message, repliable, _database);
+        await SendToGuild.LookupAndSendAsync(Context.Guild, new InteractionBasedContext(Context, Responder), Context.Channel.Id.ToString(), message, repliable, _database);
       }
 
       [SlashCommand("send-dm", "send an anonymous message to the specified user")]
