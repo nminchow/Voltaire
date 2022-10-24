@@ -70,7 +70,6 @@ namespace Voltaire.Modules
       public async Task SendMessageInteractionHandler(string channelId, string repliableString, Views.Modals.MessagePrompt prompt) {
           var repliable = bool.Parse(repliableString);
 
-          await RespondAsync("Message sent", ephemeral: true);
           await SendToGuild.LookupAndSendAsync(Context.Guild, new InteractionBasedContext(Context, Responder), channelId, prompt.message, repliable, _database);
 
       }
@@ -79,7 +78,6 @@ namespace Voltaire.Modules
       public async Task SendReplyInteractionHandler(string replyHash, string repliableString, Views.Modals.MessagePrompt prompt) {
           var repliable = bool.Parse(repliableString);
 
-          await RespondAsync("Reply sent", ephemeral: true);
           await Controllers.Messages.SendReply.PerformAsync(new InteractionBasedContext(Context, Responder), replyHash, prompt.message, repliable, _database);
       }
     }
