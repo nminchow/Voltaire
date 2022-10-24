@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Discord.Interactions;
-using Discord;
 using System.Linq;
 using Discord.WebSocket;
 
@@ -23,8 +22,10 @@ namespace Voltaire.Modules
 
                 var prompt = $"Anonymous message to #{channel}";
 
+                var truncatedPrompt = prompt.Length > 45 ? $"{prompt.Substring(0, 42)}..." : prompt;
+
                 await Context.Interaction.RespondWithModalAsync<Views.Modals.MessagePrompt>($"send-message:{channelId},{repliable}", null, modifyModal: builder => {
-                    builder.Title = prompt;
+                    builder.Title = truncatedPrompt;
                 });
 
             }
