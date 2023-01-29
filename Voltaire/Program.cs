@@ -90,22 +90,36 @@ namespace Voltaire
             _interactionModules = await _interactions.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
             _interactions.SlashCommandExecuted += SlashCommandExecuted;
             _client.InteractionCreated += HandleInteraction;
+            _client.MessageCommandExecuted += Modules.MessageCommand.MessageCommandHandler;
         }
 
         private async Task RegisterCommands(DiscordSocketClient client)
         {
+            var globalMessageCommand = new MessageCommandBuilder();
+            globalMessageCommand.WithName("Create Thread Anonymously");
+
             if (client.ShardId != 0) return;
             if (LoadConfig.Instance.config["dev_server"] != null) {
                 // await _interactions.AddModulesGloballyAsync(true, new Discord.Interactions.ModuleInfo[] {});
+                var guild = client.Guilds.First(x => x.Id.ToString() == LoadConfig.Instance.config["dev_server"]);
                 await _interactions.AddModulesToGuildAsync(
-                    client.Guilds.First(x => x.Id.ToString() == LoadConfig.Instance.config["dev_server"]),
+                    guild,
                     true,
                     _interactionModules.ToArray()
                 );
+                await guild.BulkOverwriteApplicationCommandAsync(new ApplicationCommandProperties[]
+                {
+                    globalMessageCommand.Build()
+                });
                 return;
             }
+            await client.BulkOverwriteGlobalApplicationCommandsAsync(new ApplicationCommandProperties[]
+            {
+                globalMessageCommand.Build()
+            });
             await _interactions.AddModulesGloballyAsync(true, _interactionModules.ToArray());
         }
+
 
         async Task SlashCommandExecuted(SlashCommandInfo arg1, Discord.IInteractionContext arg2, Discord.Interactions.IResult arg3)
         {
